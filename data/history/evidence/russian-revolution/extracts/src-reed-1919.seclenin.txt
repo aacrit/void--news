@@ -1,0 +1,7 @@
+source: src-reed-1919
+locator: seclenin
+url: https://www.gutenberg.org/cache/epub/3076/pg3076-images.html
+read: 2026-10-09
+note: Project Gutenberg's HTML of eBook #3076, tags removed; whitespace collapsed, nothing else changed
+
+Now Lenin, gripping the edge of the reading stand, letting his little winking eyes travel over the crowd as he stood there waiting, apparently oblivious to the long-rolling ovation, which lasted several minutes. When it finished, he said simply, “We shall now proceed to construct the Socialist order!” Again that overwhelming human roar.

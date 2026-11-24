@@ -1,0 +1,7 @@
+source: src-ictr-akayesu-tj
+locator: para598
+url: https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-96-4/trial-judgements/en/980902.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+
+598. The Chamber defines rape as a physical invasion of a sexual nature, committed on a person under circumstances which are coercive. Sexual violence which includes rape, is considered to be any act of a sexual nature which is committed on a person under circumstances which are coercive. This act must be committed :

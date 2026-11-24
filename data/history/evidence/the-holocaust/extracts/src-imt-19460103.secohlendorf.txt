@@ -1,0 +1,6 @@
+source: src-imt-19460103
+locator: secohlendorf
+url: https://avalon.law.yale.edu/imt/01-03-46.asp
+read: 2026-10-07
+
+COL. AMEN: Do you know how many persons were liquidated by Einsatz Group D under your direction? OHLENDORF: In the year between June 1941 to June 1942 the Einsatzkommandos reported 90,000 people liquidated. COL. AMEN: Did that include men, women, and children? OHLENDORF: Yes.

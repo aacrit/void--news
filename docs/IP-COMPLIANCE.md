@@ -1,4 +1,7 @@
 # IP & Legal Compliance Audit -- void --news
+> Historical. Written before the 2026-09-01 Supabase decommission and the Kokoro switch; the current state is CLAUDE.md.
+
+Last updated: 2026-04-28 (rev 1)
 
 Date: 2026-03-18
 Auditor: Automated compliance review
@@ -101,6 +104,26 @@ Wire services have strict content licensing terms. The AP, in particular, has ag
 3. **MEDIUM PRIORITY**: Consider adding a `crawl-delay` parameter check from `robots.txt` to be a more respectful crawler.
 4. **LOW PRIORITY**: On `robots.txt` fetch failure, consider defaulting to disallowed rather than allowed.
 5. **LOW PRIORITY**: Add a mechanism for publishers to request exclusion (a contact email or web form).
+
+**Status of recommendation 1 (2026-09-22).** The daily pipeline obeys it: `main.py` step 10
+truncates `full_text` to 300 characters after analysis, in a state database that is gitignored
+and dies with the Actions cache anyway. There was a **second retention path nobody had counted**,
+and it was the durable one. `pipeline/editorial/grounding.py` wrote up to 24,000 characters of each
+source article to `frontend/build-data/grounding/` so that the grounded editorial rules E-13 and
+E-14 could still be run after the run that wrote a card. The repo commits `build-data/`. Measured
+on the committed tree: 35 files, 975 records, **519,041 characters of publisher article text**,
+longest single record 10,003 characters, in a public repository's permanent history. The throwaway
+database was protected and the permanent public repo was not.
+
+Closed by storing a verification index instead of the text: the set of multi-digit numbers, for
+E-13, and a Bloom filter of the sources' overlapping 4-word shingles, for E-14. A Bloom filter
+answers membership and cannot be inverted to recover words. The 35 committed records were converted
+in place, keeping every answer (501/501 numbers and 5,826/5,826 within-article 8-word spans still
+verify, 700/700 shuffled spans still rejected), and `tests/test_grounding.py` now fails CI on any
+committed record that is a format-1 prose record or holds a string longer than 12 words.
+
+**Open, and a decision rather than a task:** the prose committed before that conversion remains in
+git history unless the history is rewritten.
 
 ---
 

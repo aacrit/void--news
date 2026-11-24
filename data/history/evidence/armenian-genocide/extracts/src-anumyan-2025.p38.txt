@@ -1,0 +1,7 @@
+source: src-anumyan-2025
+locator: p38
+url: https://journals.ysu.am/arm-fol-angl/article/download/12906/pdf
+read: 2026-09-25
+note: p. 38 (PDF page 11); a copyrighted article, held at most 150 words
+
+Thus, on July 5, 1919, death sentences were pronounced for Talât, Enver, Cemal Pashas and Dr. Nazım. Cavid, Mustafa Şeref, Sheik-Ul-Islam Musa Kazim were sentenced to 15 years in exile; Rifat and Hashim were acquitted (Ibid.). Of 63 court cases related to the abovementioned charges a total of 20 death sentences were pronounced. Remarkably, only 3 sentences were actually carried out.

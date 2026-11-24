@@ -1,0 +1,7 @@
+source: src-talib-1950
+locator: p43
+url: https://archive.org/download/GurbachanSinghTalib1950/5.%20Muslim%20League%20Attack%20Sikhs%20And%20Hindus%20In%20The%20Punjab%20in%201947_djvu.txt
+read: 2026-09-25
+note: the layer's soft hyphens are rejoined
+
+Thus, scouting any suggestion that there could be peace and amity in the country, he advocated exchange of population—the uprooting of millions—and as it later turned out to be, of over twelve millions, and the butchering of about a million. This was the direction in which the Muslim League was inevitably leading the country.

@@ -1,0 +1,8 @@
+source: src-alexievich-gessen-2005
+locator: secfather2
+url: https://www.nobelprize.org/prizes/literature/2015/alexievich/prose/
+read: 2026-10-07
+note: same passage, continued; the inner quotation marks are the child reporting the father's words
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+A year later he got sick. We walked around in the hospital courtyard – this was after his second operation – and that was the first time he told me about Chernobyl. They worked pretty close to the reactor. It was quiet and peaceful and pretty, he said. And as they’re working, things are happening. The gardens are blooming. For who? The people have left the villages. They “cleaned” the things that needed to be left behind. They took off the topsoil that had been contaminated by cesium and strontium, and they washed the roofs. The next day everything would be “clicking” on the dosimeters again. “In parting they shook our hands and gave us certificates of gratitude for our self-sacrifice.”

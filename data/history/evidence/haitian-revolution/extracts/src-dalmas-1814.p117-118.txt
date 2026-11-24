@@ -1,0 +1,9 @@
+source: src-dalmas-1814
+locator: p117-118
+url: https://archive.org/download/histoiredelarv00dalm/histoiredelarv00dalm_djvu.txt
+read: 2026-09-25
+note: tome I, pages 117 to 118: the plan at Le Normand, the ceremony at the Caïman wood, and footnote (2), which the layer prints as Le i4 ao'f'*' and the printed page as Le 14 août; the page header removed
+note: the free copy is the scan's OCR text layer, held as the layer prints it, long s read as f and other misreadings included
+note: line-break hyphenation in the scan's text layer rejoined; nothing else changed
+
+Les dispositions de ce plan avoient été arrêtées quelques jours auparavant entre les principaux chefs , sur l'habitation Le Normand , au Morne Rouge (a). Avant de l'exécuter , ils célébrèrent une espèce de fête ou de sacrifice , au milieu d'un terrain boisé et non cultivé de l'habitation Choiseul , appelé le Cdiman, où les nègres se réunirent en très-grand nombre. Un cochon entièrement noir, entouré de/e«M«*, chargé d'offrandes plus bizarres les mies que les autres, fut l'holocauste offert au génie tout-puissant de la race noire. Les cérémonies religieuses que les nègres (2) Le i4 ao'f'*' pratiquèrent en l'égorgeant, l'avidité avec laquelle Ils burent de son sang, le prix qu'ils mirent à posséder quelques-uns de ses poils, espècede talisman qm, selon eux, devoit les rendre invulnérables servent à caractériser l'Africain. Il étoit naturel qu une caste aussi ig,.o.,ute et aussi abrutie préludât aux attentats les plus épouvantables par les rites superstitieux d'une religion absurde et sanguinaire.

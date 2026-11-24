@@ -1,0 +1,7 @@
+source: src-de-19150531
+locator: para1
+url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs/1915-05-31-DE-001
+read: 2026-09-25
+note: paragraphs counted from the first line after the dateline of the document as the page prints it, enclosure headings included
+
+Enver Pascha beabsichtigt zur Eindämmung armenischer Spionage und um neuen armenischen Massenerhebungen vorzubeugen, unter Benutzung Kriegs-(Ausnahme-) Zustandes eine große Anzahl armenischer Schulen zu schließen, armenische Zeitungen zu unterdrücken, armenische Postkorrespondenz zu untersagen und aus den jetzt insurgierten armenischen Zentren alle nicht ganz einwandfreien Familien in Mesopotamien anzusiedeln. Er bittet dringend, daß wir ihm hierbei nicht in den Arm fallen.

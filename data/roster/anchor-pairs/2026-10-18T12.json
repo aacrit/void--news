@@ -1,0 +1,38 @@
+[
+ {
+  "newsroom": "Euronews",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 24,
+  "a": {
+   "title": "Canada reports 'fatalities and injuries' following incident at military base",
+   "summary": "Canadian Prime Minister Mark Carney said a &quot;serious incident creating a major fire&quot; had occurred at Canadian Forces Base Wainwright in Alberta.",
+   "link": "https://www.euronews.com/2026/10/18/canada-reports-fatalities-and-injuries-following-incident-at-military-base",
+   "published": "Sun, 18 Oct 2026 09:01:50 +0200"
+  },
+  "b": {
+   "title": "Canada fait état de morts et de blessés après un incendie sur une base militaire",
+   "summary": "Le Premier ministre canadien Mark Carney a déclaré qu'un &quot;grave incident à l'origine d'un important incendie&quot; s'était produit à la base des Forces canadiennes Wainwright, en Alberta.",
+   "link": "https://fr.euronews.com/2026/10/18/canada-fait-etat-de-morts-et-de-blesses-apres-un-incendie-sur-une-base-militaire",
+   "published": "Sun, 18 Oct 2026 10:28:40 +0200"
+  }
+ },
+ {
+  "newsroom": "Euronews",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 18,
+  "a": {
+   "title": "Three children and one teacher killed in Oregon elementary school shooting",
+   "summary": "Between 400 and 450 children attend Silver Rail Elementary, where more than 40 staff work, a police spokesperson had said earlier.",
+   "link": "https://www.euronews.com/2026/10/16/four-killed-in-oregon-elementary-school-shooting-including-three-children-aged-5-to-11",
+   "published": "Fri, 16 Oct 2026 05:23:21 +0200"
+  },
+  "b": {
+   "title": "États-Unis : trois enfants et un enseignant tués dans une fusillade dans une école primaire de l'Oregon",
+   "summary": "Entre 400 et 450 élèves fréquentent l'école primaire Silver Rail, où travaillent plus de 40 membres du personnel, avait indiqué plus tôt un porte-parole de la police.",
+   "link": "https://fr.euronews.com/2026/10/16/etats-unis-trois-enfants-et-un-enseignant-tues-dans-une-fusillade-dans-une-ecole-primaire-",
+   "published": "Fri, 16 Oct 2026 08:03:49 +0200"
+  }
+ }
+]

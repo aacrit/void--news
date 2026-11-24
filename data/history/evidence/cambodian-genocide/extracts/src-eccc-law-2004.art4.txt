@@ -1,0 +1,6 @@
+source: src-eccc-law-2004
+locator: art4
+url: https://www.eccc.gov.kh/sites/default/files/legal-documents/KR_Law_as_amended_27_Oct_2004_Eng.pdf
+read: 2026-09-25
+
+Article 4 The Extraordinary Chambers shall have the power to bring to trial all Suspects who committed the crimes of genocide as defined in the Convention on the Prevention and Punishment of the Crime of Genocide of 1948, and which were committed during the period from 17 April 1975 to 6 January 1979. The acts of genocide, which have no statute of limitations, mean any acts committed with the intent to destroy, in whole or in part, a national, ethnical, racial or religious group, such as: • killing members of the group; • causing serious bodily or mental harm to members of the group; • deliberately inflicting on the group conditions of life calculated to bring about its physical destruction in whole or in part; • imposing measures intended to prevent births within the group; • forcibly transferring children from one group to another group.

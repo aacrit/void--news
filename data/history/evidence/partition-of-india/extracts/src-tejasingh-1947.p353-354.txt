@@ -1,0 +1,7 @@
+source: src-tejasingh-1947
+locator: p353-354
+url: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+read: 2026-09-25
+note: the page is the volume's, read from the scan's running numbers, which the OCR layer prints between pages: the passage lies between the two numbers given
+
+The total population Of the Sikhs in the British Punjab according to the census figures of 1941 is 3,767,401. Out of this 1,683,855 live in the seventeen districts which according to the notional division from the western Punjab and 2,073,546 in the Eastern Punjab. This means thatif the notional division is adhered to, and the boundaries are demarcated according to it about 17 lacs i.e. a million and about seven hundred thousand of Sikhs would be left stranded in the Western Punjab, of these 1,368,962 belong to the districts of Gurdaspur, Lahore, Gujranwala, Sheikhupura, Lyallpur and Montgomery which will be the border districts just on the frontier of the two States that are to be sovereign States.

@@ -1,0 +1,8 @@
+source: src-cdm-chronicle-198911
+locator: sec2015
+url: https://www.chronik-der-mauer.de/en/chronicle/_year1989/_month11/?month=11&year=1989&moc=1
+read: 2026-10-09
+note: the 8.15 p.m. entry for 9 November
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+9 November 1989 8.15 p.m. According to a progress report by the East Berlin Volkspolizei, altogether 80 East Berliners have gathered at the border crossing points Bornholmer Straße, Invalidenstraße and Heinrich-Heine-Straße. Instruction to the border guards: to put the people off till the next day and send them back.

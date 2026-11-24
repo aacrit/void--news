@@ -1,0 +1,46 @@
+source: src-frus-19450814
+locator: whole
+url: https://history.state.gov/historicaldocuments/frus1945v06/d440
+read: 2026-10-05
+note: the Swiss Charge's note of 14 August 1945 carrying the Japanese acceptance
+
+Sir : I have the honor to refer to your
+note of August 11, in which you requested me to transmit to my
+Government the reply of the Governments of the United States,
+the United Kingdom, the Union of Soviet Socialist Republics, and
+China to the message from the Japanese Government which was
+communicated in my note of August 10.
+
+At 20.10 today (Swiss Time) the Japanese Minister to Switzerland
+conveyed the following written statement to the Swiss Government
+for transmission to the four Allied governments: 92
+
+“Communication of the Japanese Government of August 14,
+1945, addressed to the Governments of the United States,
+Great Britain, the Soviet Union, and China:
+
+“With reference to the Japanese Government’s note of
+August 10 regarding their acceptance of the provisions
+of the Potsdam declaration and the reply of the
+Governments of the United States, Great Britain, the
+Soviet Union, and China sent by American Secretary of
+State Byrnes under the date of August 11, the Japanese
+Government have the honor to communicate to the
+Governments of the four powers as follows:
+“1. His Majesty the Emperor has issued an
+Imperial rescript regarding Japan’s acceptance of
+the provisions of the Potsdam declaration. 93
+
+“2. His Majesty the Emperor is prepared to
+authorize and ensure the signature by his
+Government and the Imperial General Headquarters
+of the necessary terms for carrying out the
+provisions of the Potsdam declaration. His Majesty
+is also prepared to issue his commands to all the
+military, naval, and air authorities of Japan and
+all the forces under their control wherever
+located to cease active operations, to surrender
+arms and to issue such other orders as may be
+required by the Supreme Commander of the Allied
+Forces for the execution of the above-mentioned
+terms.”

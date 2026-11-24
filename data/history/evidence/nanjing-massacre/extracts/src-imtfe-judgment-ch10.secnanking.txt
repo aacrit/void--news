@@ -1,0 +1,8 @@
+source: src-imtfe-judgment-ch10
+locator: secnanking
+url: https://www.ibiblio.org/hyperwar/PTO/IMTFE/IMTFE-10.html
+read: 2026-10-09
+note: the text is the HyperWar Foundation's HTML transcription of the Judgment (transcribed by Patrick Clancey), whitespace collapsed; its typing errors are kept as it prints them (e.g. 'tow' for 'two'); the transcription's page markers ('--1014--', the printed page of the Judgment) are removed by the builder and the page is given here instead
+note: chapter X, Verdicts, 'MATSUI, Iwane', printed pages 1179 to 1180
+
+With these troops, he captured the city of Nanking on 13th December 1937. Before the fall of Nanking, the Chinese forces withdrew and the occupation was of a defenseless city. Then followed a long succession of most horrible atrocities committed by the Japanese Army upon the helpless citizens. Wholesale massacres, individual murders, rape, looting and arson were committed yb Japanese soldiers. Although the extent of the atrocities was denied by Japanese witnesses, the contrary evidence of neutral witnesses of different nationalities and undoubted responsibility is overwhelming. This orgy of crime started with the capture of the City on the 13th December 1937 and did not cease until early in February 1938. In this period of six or seven weeks, thousands of women were raped, upwards of 100,000 people were killed, and untold property was stolen and burned.

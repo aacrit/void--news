@@ -1,0 +1,7 @@
+source: src-bharadwaj-mirza-2019
+locator: p1
+url: https://kar.kent.ac.uk/77719/1/author_accepted_EEH.pdf
+read: 2026-09-25
+note: author accepted manuscript, page 1; the manuscript's lower-case hindus and muslims are kept
+
+The end of the British Empire in India in 1947 was marked with a mass migration and population transfer of nearly 17 million people. By many accounts this was a human rights disaster involving nearly a million deaths due to the riots that ensued between hindus and muslims on either side of the newly created India-Pakistan border.

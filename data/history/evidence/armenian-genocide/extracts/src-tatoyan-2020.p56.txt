@@ -1,0 +1,7 @@
+source: src-tatoyan-2020
+locator: p56
+url: https://agmipublications.am/index.php/ijags/article/download/26/24
+read: 2026-09-25
+note: p. 56, with the grand-total row of Table 1 as the text layer prints it: the 1914 Ottoman government figure, then the 1913 to 1914 Patriarchate figure
+
+By comparing the Ottoman Armenian population figures provided by the Ottoman government (1914) and those issued by Armenian Patriarchate (1912) prior to WWI, it can be seen that the Armenian patriarchate statistics, compared to that of Ottoman data were about 1.57 times higher. As for the six Armenian provinces (Van, Bitlis, Erzeroum, Kharberd, Diyarbekir and Sebastia) the discrepancy between two sets of data was about 1.83 (see Table 1). Grand total 1,294,851 2,026,700

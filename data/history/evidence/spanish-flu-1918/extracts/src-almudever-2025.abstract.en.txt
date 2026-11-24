@@ -1,0 +1,7 @@
+rendering: official-parallel
+of: src-almudever-2025.abstract
+names: ABC=ABC
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12160415/fullTextXML
+read: 2026-09-25
+
+The newspapers analysed reported the number of people who became ill and died as a result of the influenza epidemic. A total of 3,601 copies were published, highlighting an increase during the second outbreak of the epidemic, with the newspaper ABC publishing the most information about mortality.

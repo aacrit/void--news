@@ -1,0 +1,8 @@
+source: src-peers-1970
+locator: secbunker
+url: https://tile.loc.gov/storage-services/service/ll/llmlp/RDAR-Vol-I/RDAR-Vol-I.pdf
+read: 2026-10-09
+note: the Library of Congress scan of Volume I of the Peers report, its text layer, line breaks folded to spaces; the text layer prints many words letter by letter ('k i l l e d') and some OCR misreadings ('America1' for 'Americal', 'l l t h' for '11th'); all are kept as printed
+note: the testimony of Thompson's door gunner, as the report summarises it
+
+SP4 (now M r . ) Colburn, Thompson's door gunner, t e s t i f i e d t h a t Thompson t o l d h i s crew t h a t i f t h e American troops f i r e d on t h e Vietnamese, while h e (Thompson) was t r y i n g t o g e t them out of t h e bunker, t h e crew was t o f i r e back a t them.

@@ -1,0 +1,10 @@
+source: src-insag7-1992
+locator: item2
+url: https://www-pub.iaea.org/MTCD/publications/PDF/Pub913e_web.pdf
+read: 2026-10-07
+note: section 6, Conclusions on factors contributory to the accident, conclusion (2) from its second sentence, printed page 23 (PDF page 33); the first sentence says INSAG-1 was written on the information the Soviet authorities presented in Vienna in August 1986
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+note: a hyphen breaking a lower-case word across a line end in the text layer is closed up
+note: the PDF is a scan with an OCR text layer; the extract was compared line by line with the rendered page (130 dpi) and agrees with it
+
+The new information now come to light has affected the views presented in INSAG-1 in such a way as to shift the emphasis to the contributions of particular design features, including the design of the control rods and safety systems, and arrangements for presenting important safety information to the operators. The accident is now seen to have been the result of the concurrence of the following major factors: specific physical characteristics of the reactor; specific design features of the reactor control elements; and the fact that the reactor was brought to a state not specified by procedures or investigated by an independent safety body. Most importantly, the physical characteristics of the reactor made possible its unstable behaviour.

@@ -1,0 +1,7 @@
+source: src-bharadwaj-mirza-2019
+locator: p40
+url: https://kar.kent.ac.uk/77719/1/author_accepted_EEH.pdf
+read: 2026-09-25
+note: author accepted manuscript, page 40, the data appendix
+
+The 1951 census of India was carried out in the last three weeks of February 1951 with enumerators revisiting households from the 1st to the 3rd of March of the same year. It is signiﬁcant for having recorded the initial and the most substantial phase of migration inﬂows that resulted from partition. A total of 7.3 million displaced persons were enumerated, of whom 4.7 and 2.55 million had come from West and East Pakistan, respectively, and 0.05 million did not specify their place of origin (Visaria, 1969).

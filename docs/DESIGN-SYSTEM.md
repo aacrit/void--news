@@ -1,556 +1,919 @@
-# void --news — Design System: "Press & Precision"
+# Void News Design System: "Cinematic Press"
 
-**Version:** 1.9
-**Last updated:** 2026-03-23 (rev 8)
+**Version:** 3.1
+**Last updated:** 2026-09-21
 
----
+**What changed in v3.1 (same day):** the browser-chrome layer
+(`styles/brand.css`, section 5), print for the two long reads (section 12),
+the reading rule and the on-air beam (section 10), and the headless sweep as
+the gate on all of it (section 14).
 
-## 1. Design Philosophy
-
-**"Press & Precision"** — A modern newspaper that respects the printing press tradition while embracing the data density of modern interfaces.
-
-**On arrival:** The quiet authority of a broadsheet. Clean, editorial, unhurried.
-**On interaction:** The precision of a data terminal. Rich, layered, immediate.
-
-This duality is the soul of void --news. The newspaper earns trust through restraint. The data layer earns trust through transparency.
-
----
-
-## 2. Typography — Four Voices
-
-| Voice | Font | Weight | Use |
-|-------|------|--------|-----|
-| **Editorial** | Playfair Display | 400, 700 | Headlines, story titles, section headers, pull quotes |
-| **Structural** | Inter | 400, 500, 600 | Body text, navigation, labels, buttons, UI chrome |
-| **Meta** | Barlow Condensed | 400, 500, 600 | Category tags, source counts, timestamps, edition metadata; condensed grotesque in Franklin Gothic / News Gothic newspaper tradition; `--font-meta` CSS variable |
-| **Data** | IBM Plex Mono | 400, 500 | Bias scores, numeric data, BiasLens data labels; humanist monospace with institutional warmth (not a coding font) |
-
-### Type Scale (Fluid)
-
-```css
---text-xs:    clamp(0.5625rem, 0.5rem + 0.25vw, 0.625rem);      /* 9-10px: metadata */
---text-sm:    clamp(0.75rem, 0.7rem + 0.2vw, 0.875rem);          /* 12-14px: captions */
---text-base:  clamp(0.875rem, 0.8rem + 0.3vw, 1rem);             /* 14-16px: body */
---text-lg:    clamp(1.0625rem, 0.95rem + 0.4vw, 1.3rem);         /* 17-21px: subheads */
---text-xl:    clamp(1.25rem, 1.1rem + 0.6vw, 1.75rem);           /* 20-28px: headlines */
---text-hero:  clamp(1.5rem, 1.3rem + 1.2vw, 3rem);               /* 24-48px: lead story */
-```
-
-### Editorial Rules
-
-- Headlines: Playfair Display 700, sentence case
-- Body: Inter 400, 1.6 line height, max 65ch measure
-- Meta labels: Barlow Condensed 500, all-caps for category tags, condensed letter-spacing
-- Data labels: IBM Plex Mono 400, all-caps for axis labels, tabular-nums
-- Never mix voices within a single element
-- Headline hierarchy: hero > xl > lg (max 3 levels visible at once)
+**What changed in v3.0:** rewritten against the code after the frame was
+unified: one masthead and footer for every route, sections as skins rather
+than forks, one share-card composer, the three lean states, and the token,
+easing and radius rules stated as the standard.
+**Deleted:** the edition switch and its row of chips, the three-lens bias mark
+and the axis inspector panel that went with it, the dot matrix and the stamp
+before them, the per-edition colour grades, the Film chapter inventory, and
+the old product name. All are gone from the code; they are gone from here.
 
 ---
 
-## 3. Color System
+## 1. Philosophy, and the one brand rule
 
-### Light Mode — "Morning Edition"
+**Cinematic Press.** The editorial authority of a broadsheet, shot through a
+cinema lens. Warm paper, film grain, a vignette and a shallow depth of field
+on arrival; the precision of a data terminal on interaction.
 
-Warm paper tones. Think aged broadsheet under morning light, not sterile white.
+The newspaper earns trust through restraint. The data layer earns trust
+through transparency. The cinematic layer carries the feeling.
+
+**The brand rule (CLAUDE.md, "Brand"), which governs every surface a mark is
+drawn on:**
+
+> `VOID NEWS` is the only word that gets a lockup. A section gets a nameplate
+> in its accent. A programme gets a title.
+
+So: no VOID HISTORY and no VOID WEEKLY, on the site, the share cards or the
+podcast covers. The masthead reads `VOID NEWS` with a nameplate beside it
+(`History`, `Weekly`, `Paper`). Programmes (On Air, The Argument, History
+audio) are set as typographic titles, never as marks. Page titles are
+`Page | Void News` for a landing and `Page | Section | Void News` for a leaf,
+from `sectionTitle()` in `frontend/app/lib/siteMeta.ts`.
+
+---
+
+## 2. Typography: four voices
+
+Loaded once, in `frontend/app/layout.tsx`, through `next/font/google`. Nothing
+else may name a family.
+
+| Voice | Family | Weights | Variable | Use |
+|---|---|---|---|---|
+| Editorial | Playfair Display | 400, 700 | `--font-editorial` | Headlines, story titles, section headers, pull quotes, nameplates |
+| Structural | Inter | 400, 500, 600 | `--font-structural` | Body text, navigation, labels, buttons, UI chrome |
+| Meta | Barlow Condensed | 400, 500, 600 | `--font-meta` | Category tags, source counts, timestamps; a condensed grotesque in the Franklin Gothic tradition |
+| Data | IBM Plex Mono | 400 | `--font-data` | Bias scores, numeric data, tabular figures |
+
+Playfair and Inter preload; Barlow and IBM Plex do not, so the two families on
+the critical path stay uncontended at first paint.
+
+**Never write a `font-family` literal.** `next/font` registers hashed family
+names, so a rule that spells `'IBM Plex Mono'` silently renders in the
+fallback. Reference the four variables.
+
+### Scale (`frontend/app/styles/tokens.css`)
 
 ```css
-:root[data-mode="light"] {
-  /* Surfaces */
-  --bg-primary:    #F0EBDD;   /* Warm paper */
-  --bg-secondary:  #E8E2D4;   /* Aged newsprint */
-  --bg-card:       #F5F0E4;   /* Clean card surface */
-  --bg-elevated:   #F5F0E4;   /* Elevated surfaces */
-
-  /* Text */
-  --fg-primary:    #1A1A1A;   /* Near-black ink */
-  --fg-secondary:  #4A4A4A;   /* Secondary text */
-  --fg-tertiary:   #7A7A7A;   /* Captions, metadata */
-  --fg-muted:      #A0A0A0;   /* Disabled, placeholder */
-
-  /* Borders & Dividers */
-  --border-subtle: #E8E2DB;   /* Light warm rule */
-  --border-strong: #C8C0B5;   /* Column dividers */
-  --divider:       #D4CCC2;   /* Section dividers (newspaper rules) */
-}
+--text-xxs:   clamp(0.625rem, 0.55rem + 0.25vw, 0.75rem);
+--text-xs:    clamp(0.5625rem, 0.5rem + 0.25vw, 0.625rem);
+--text-sm:    clamp(0.75rem, 0.7rem + 0.2vw, 0.875rem);
+--text-base:  clamp(0.875rem, 0.8rem + 0.3vw, 1rem);
+--text-lg:    clamp(1.0625rem, 0.95rem + 0.4vw, 1.3rem);
+--text-xl:    clamp(1.25rem, 1.1rem + 0.6vw, 1.75rem);
+--text-hero:  clamp(1.5rem, 1.3rem + 1.2vw, 3rem);
+--type-lead-headline: clamp(1.8rem, 1.36rem + 1.92vw, 3.6rem);
 ```
 
-### Dark Mode — "Evening Edition"
+`--type-lead-headline` is the rank-0 hero. `--type-digest-headline` and
+`--type-wire-headline` both alias `--type-card-headline`: the three-tier
+display scale collapsed to two when the feed went to twenty.
 
-Dark walnut warmth. Retains newspaper character — not terminal black, not pure dark.
+Utility classes in `styles/typography.css`: `.text-hero` (tracking -0.03em),
+`.text-xl` (-0.015em), `.text-lg` (-0.005em), `.text-label` (0.08em, caps),
+`.text-caption`, `.text-data` (tabular-nums, line-height 1.3), `.text-score`,
+`.text-timestamp`, `.category-tag` (0.04em, caps).
+
+### Rules
+
+- Headlines: Playfair 700, sentence case.
+- Body: Inter 400, line-height 1.6, measure capped (65ch in the feed, 72ch on
+  prose pages through `--measure-prose`).
+- Never mix voices inside one element.
+- At most three headline levels visible at once.
+- No em dash or en dash in any page-facing string. Gated by
+  `frontend/test/copy-facts.test.mjs`.
+
+---
+
+## 3. Colour
+
+### Light, "Morning Edition" (`:root, :root[data-mode="light"]`)
 
 ```css
-:root[data-mode="dark"] {
-  /* Surfaces */
-  --bg-primary:    #1C1A17;   /* Dark walnut */
-  --bg-secondary:  #252320;   /* Warm dark */
-  --bg-card:       #2A2725;   /* Card surface */
-  --bg-elevated:   #333028;   /* Elevated surfaces */
-
-  /* Text */
-  --fg-primary:    #EDE8E0;   /* Warm cream text */
-  --fg-secondary:  #B8B0A5;   /* Secondary */
-  --fg-tertiary:   #8A8278;   /* Tertiary */
-  --fg-muted:      #5A5550;   /* Disabled */
-
-  /* Borders & Dividers */
-  --border-subtle: #3A3530;   /* Subtle warm rule */
-  --border-strong: #4A4540;   /* Column dividers */
-  --divider:       #403B35;   /* Section dividers */
-}
+--bg-primary:    #F0EBDD;  /* warm paper */
+--bg-secondary:  #E8E2D4;  /* aged newsprint */
+--bg-card:       #F5F0E4;
+--bg-elevated:   #F5F0E4;
+--fg-primary:    #1A1A1A;
+--fg-secondary:  #4A4540;
+--fg-tertiary:   #686260;
+--fg-muted:      #52504A;  /* 4.5:1 on paper */
+--border-subtle: #E8E2DB;
+--border-strong: #C8C0B5;
+--divider:       #D4CCC2;
 ```
 
-### Bias Color System
-
-Colors are consistent across light/dark modes for instant recognition. Designed for accessibility (min 4.5:1 contrast on both backgrounds).
-
-#### Political Lean Spectrum (7-point)
+### Dark, "Evening Edition" (`:root[data-mode="dark"]`)
 
 ```css
---bias-far-left:     #1D4ED8;  /* Deep blue — far left */
---bias-left:         #3B82F6;  /* Blue — left lean */
---bias-center-left:  #93C5FD;  /* Light blue — center-left */
---bias-center:       #9CA3AF;  /* Neutral gray — center */
---bias-center-right: #FCA5A5;  /* Light red / salmon — center-right */
---bias-right:        #EF4444;  /* Red — right lean */
---bias-far-right:    #B91C1C;  /* Deep red — far right */
+--bg-primary:    #1C1A17;  /* dark walnut, not terminal black */
+--bg-secondary:  #252320;
+--bg-card:       #2A2725;
+--bg-elevated:   #333028;
+--fg-primary:    #EDE8E0;
+--fg-secondary:  #B8B0A5;
+--fg-tertiary:   #A09890;
+--fg-muted:      #9A938B;
+--border-subtle: #3A3530;
+--border-strong: #4A4540;
+--divider:       #403B35;
 ```
 
-Dark mode overrides (in `tokens.css` under `[data-mode="dark"]`): blues boosted for saturation on dark walnut; `--bias-right` brightened to `#F87171`.
+### The lean spectrum: blue, green, red
 
-Source `political_lean_baseline` values: `far-left`, `left`, `center-left`, `center`, `center-right`, `right`, `far-right`, `varies`. Enforced by DB check constraint (migration 007).
+Green is reserved for the centre, so a story at the centre does not read as
+"grey, therefore unmeasured". Depth encodes distance from the centre.
 
-#### Sensationalism Scale
+| Token | Light | Dark |
+|---|---|---|
+| `--bias-far-left` | `#0E2E70` | `#5088D0` |
+| `--bias-left` | `#1B5298` | `#6498D8` |
+| `--bias-center-left` | `#2E78B4` | `#78AEDE` |
+| `--bias-center` | `#2B784A` | `#48B870` |
+| `--bias-center-right` | `#C4503E` | `#D05C48` |
+| `--bias-right` | `#9C2C22` | `#CC3E34` |
+| `--bias-far-right` | `#6E1610` | `#B02E26` |
+
+Every value clears 4.5:1 on its own paper. Any tilt left is the blue family,
+any tilt right the red family, and nothing else in the product may use those
+two families for a non-bias purpose.
+
+Three further ramps, the same in both modes: `--sense-low|medium|high`
+(`#22C55E` / `#EAB308` / `#EF4444`), `--rigor-high|medium|low` (the same
+three), and `--type-reporting|analysis|opinion` (`#3B82F6` / `#8B5CF6` /
+`#F97316`).
+
+### Section accents
+
+`--palette-news` `#B26F52` (terracotta), `--palette-weekly` `#B91C1C`
+(magazine red), `--palette-history` `#5C4033` (burnt umber), each with a
+dark-mode counterpart. A section gets this accent and nothing else.
+
+### The cinematic layer
+
+Consumed tokens, all of which adapt between modes:
+
+| Group | Tokens | What they do |
+|---|---|---|
+| Amber | `--cin-amber` (`#946B15`) and its bright, dim, ghost, glow variants | Warm accent, rim light, hover |
+| Ash and paper | `--cin-ash*`, `--cin-paper-highlight`, `--cin-paper-shadow` | Neutral tones, paper texture shifts |
+| Grain | `--cin-grain-opacity` (0.035 light, lower in dark) | SVG `feTurbulence` overlay on `.page-container::after`, normal blending in both modes (a blend mode on a fixed full-viewport layer re-blends the page every frame it moves); hidden below 768px |
+| Vignette | `--cin-vignette-color` | Edge darkening on `.page-container::before`, one stop above the grain |
+| Grade | `--cin-grade`, `--cin-grade-editorial` | Page-level filter chain (contrast, saturate, sepia) |
+| Image grade | `--img-grade-feed \| deepdive \| weekly \| epaper \| history` | Per-surface variants applied to `img` |
+| Shadows | `--shadow-cinematic-contact \| ambient \| dramatic \| lifted` | Three-tier depth through `color-mix` |
+| Elevation | `--shadow-e0..e3`, `--blur-e1..e3` (8/16/24px) | Surface, floating chrome, popout, modal |
+| Z | `--z-base` 1, `--z-card` 2, `--z-sticky` 10, `--z-nav` 20, `--z-dropdown` 30, `--z-tooltip` 40, `--z-cinematic` 45, `--z-overlay` 50, `--z-player` 60, `--z-modal` 100, `--z-popup` 150 | One scale |
+
+Applying `filter` to a page container creates a containing block that breaks
+`position: fixed` descendants, which is why the page grade is scoped and why
+the image grades exist as separate variants.
+
+---
+
+## 4. One token system, with section overrides
+
+**The standard.** There is one token file, `frontend/app/styles/tokens.css`.
+A section may override exactly five things: an accent ramp, its paper
+(`--bg-primary`), its card surface (`--bg-card`), its grain
+(`--cin-grain-opacity`) and its grade (`--cin-grade`). Nothing else. A section
+that needs a value the globals do not have asks for the global; it does not
+open a private namespace.
+
+The rest of the standard, stated so a reviewer can fail a diff against it:
+
+- **Fifteen easings, all named.** The five of v3.0 (`--ease-cinematic`,
+  `--ease-whip`, `--ease-rack`, `--ease-out`, `--ease-unfold`) plus the nine
+  the code was already using as literals and now names: `--ease-spring`
+  `(0.34, 1.56, 0.64, 1)` (the overshoot; `--spring` is a `linear()` curve
+  and stays), `--ease-sine`, `--ease-out-quad`, `--ease-classic`,
+  `--ease-shake`, `--ease-stamp`, `--ease-hard-cut`, and `--ease-archive-snap`
+  and `--ease-lectern-turn` promoted from History. No raw `cubic-bezier(`
+  outside `tokens.css`; `--ease-steadicam`, `--ease-dramatic`,
+  `--ease-whip-out`, `--ease-in`, `--ease-in-out` are gone, unreferenced.
+- **Six durations.** `--dur-fast` 150ms, `--dur-step` 260ms, `--dur-normal`
+  300ms, `--dur-reveal` 350ms, `--dur-morph` 400ms, `--dur-slow` 600ms.
+  `--dur-instant` and `--dur-micro` are gone. A literal that matches a token
+  is the token; 200ms has no token and stays a literal.
+- **No `font-family` literal.** The four variables only (`onair.css` named
+  the raw `--font-playfair` family for 29 rules; it names the semantic
+  tokens now).
+- **Five radii.** `--radius-none` 0, `--radius-sm` 1px, `--radius-md` 2px,
+  `--radius-pill` 999px, `--radius-sheet` 16px 16px 0 0. The 62 literal
+  radii that predate the scale each carry a `stylelint-disable-next-line`
+  with the reason; the list only shrinks. The product is newsprint, not an
+  app.
+- **One reduced-motion block**, in `animations.css`, global: durations to
+  0ms (not .01ms: at .01ms a transition still starts, and `HistoryLanding`
+  read a start value and drew the timeline 330px off), `scroll-behavior:
+  auto` on `*` with `!important` (the old `html` rule lost to the `smooth`
+  that `globals.css` set after its imports, so under reduced motion the
+  page had always scrolled smoothly). 52 per-file blocks that set a state
+  (opacity, transform, display, stroke) stay; 15 that only repeated the
+  global one are gone.
+- **Every keyframe defined once.** `pullSpin`, `skbFadeIn` lost their
+  byte-identical twins; `onboardDialogInSheet`, `fpBroadcastInCentered` and
+  `wire-input-shake` are the variants that used to shadow their namesakes.
+- **188 global tokens** (267 declarations across the light and dark blocks),
+  down from 326 names: 138 unreferenced names deleted, the derivation in
+  `frontend/test/css-tokens-purge.txt`.
+- **One image grade with variants**, applied to `img`, never to a page
+  container.
+- **One shadow ladder, one z-index scale, one spacing scale**
+  (`--space-1` through `--space-8`).
+
+**Gates.** `frontend/test/css-lint.mjs` (stylelint, three rules, in
+`npm test`): no `cubic-bezier(` outside `tokens.css`, no `font-family` value
+off the four semantic tokens, no literal `border-radius` without a disable
+and its reason. `frontend/test/css-parity.test.mjs`: every class selector is
+referenced by markup (1,168 of 3,109 were not on 2026-09-21; the pre-purge
+report is `css-parity-baseline.txt`). `games.css` and `revolt.css` are exempt
+from both: hidden routes, kept for their return.
+
+---
+
+## 5. The frame: one masthead, one footer
+
+`NavBar` and `Footer` are mounted once, in `frontend/app/layout.tsx`, above
+and below `{children}`. **No section renders its own topbar.**
+
+`frontend/app/components/NavBar.tsx`:
+
+- **Section from the pathname.** `sectionForPath()` runs the same on the
+  server and the client, so the served HTML already carries the right
+  nameplate and the right `aria-current`, with no flash.
+- **Nameplate** beside the wordmark for `history`, `weekly`, `paper` and
+  `audio` (On Air's page wears the Audio nameplate: it is a programme inside
+  the section, and the nameplate links to the section). Every other route
+  gets the experimental badge and the tagline instead.
+- **Section links**: Audio, History, Weekly. **Page links**: Sources,
+  Feedback, About. The current page carries `aria-current="page"` and a 2px
+  accent rule under the label, no arrow; Audio is current on `/onair/` too.
+  At rest the links are neutral; on hover and focus each draws its own
+  accent in from the left (History umber, Weekly red, Audio teal), the same
+  device the nameplate uses. On Air and Listen were two links for one
+  section until 2026-09-21; Listen was a page of feed addresses and 301s to
+  `/audio`, which holds every programme, its play buttons and the feeds.
+- **Dateline only on daily surfaces.** `DATED_SECTIONS` is news, On Air,
+  Sources and a story page. The date is the build-time UTC string passed down
+  from the layout; without it the masthead shows no date rather than the
+  viewer's clock.
+- **Search on the front page only.** The button raises a DOM event
+  (`SEARCH_EVENT`) that `HomeContent` listens for, so the masthead holds no
+  feed state.
+- **Theme toggle hidden below 768px**, where the drawer carries it, so it is
+  not rendered twice.
+- **Scroll-compact**: `data-scroll-compact` goes on past 80px and off at 40px,
+  through a single rAF-throttled listener. It scales the logo and fades the
+  tagline and never changes the bar's height: the 6px it used to lose was
+  compensated by scroll anchoring at the top of every client-side navigation,
+  which landed the page at scrollY 6 with its first pixels under the bar
+  (2026-09-21). `html { scroll-padding-top }` keeps navigations and in-page
+  anchors below the bar.
+
+`Footer.tsx` carries ten destinations: On Air, History, Weekly, Paper, Audio,
+About, Sources, Feedback, Press, Privacy.
+
+### Section skins
+
+A section declares its palette on `:root` while it is mounted, so the masthead
+and footer, which sit outside the section container, can wear the same paper:
 
 ```css
---sense-low:     #22C55E;   /* Green — measured, factual tone */
---sense-medium:  #EAB308;   /* Yellow — moderate sensationalism */
---sense-high:    #EF4444;   /* Red — inflammatory, clickbait */
+:root:has(.hist-page) { --hist-bg: …; --hist-ink: …; --hist-accent: …; }
+:root:has(.wk-page)   { --wk-accent: …; --wk-paper: …; }
+:root:has(.np-root)   { … }
 ```
 
-#### Opinion vs. Reporting
+Declared at the top of `styles/history.css`, `styles/weekly.css` and
+`paper/paper.css`; consumed by the "Section skins" block in
+`styles/components.css`, which swaps `--nav-accent`, the background and the
+border on `.nav-header` and `.site-footer`, and paints `body` in the section's
+paper so the page does not end in a seam of a different colour. Paper
+additionally neutralises the chrome for print. The floating player is the same
+pattern, one variable deep.
+
+### One transport, two mounts
+
+The broadcast console existed twice: once in `FloatingPlayer`'s broadcast view
+and once again as `OnAirPage`'s portal, which `onair.css` admitted in its own
+header ("mirrors `.fp__broadcast`"). At 1440px both were on screen at once,
+showing one episode through two implementations that could disagree.
+
+There is one console now, and two places it mounts. What they are ABOUT
+differs, on purpose:
+
+| Mount | Subject | Why |
+|---|---|---|
+| `/onair` (`OnAirPage`) | **today's broadcast**, whoever owns the element | A page has a subject. One that renamed itself after whatever was loaded is how it came to print "ON AIR, World Edition, 23 min" over a documentary. Another programme in the element is named in one line above the portal instead |
+| `OnAirPanel` | **what is playing** | It is chrome, not a destination: it reports the element |
+
+The pill stands down wherever a fuller transport already has the reader:
+on `/onair`, and while the panel is open.
+
+**Two tiers, not three.** The player used to carry a middle state between the
+pill and the console (`.fp__bar`, a compact transport bar). With the console
+moved out into the panel, that tier had neither a way in nor a purpose, so it
+went with it: `FloatingPlayer.tsx` fell from 813 lines to 158 and is now the
+pill and nothing else. The one gate that would have caught the leftovers is
+`css-parity`, which flagged six classes as dead the moment the branch could no
+longer render.
+
+### The On Air panel (`components/OnAirPanel.tsx`)
+
+Two forms, and only one of them is modal.
+
+| | ≥1024px | <1024px |
+|---|---|---|
+| Geometry | right-anchored pane, `--onair-pane-w` = `clamp(360px, 30vw, 480px)`; the canvas shifts by the same token | bottom sheet, full screen below 768px |
+| Scrim | none | dims the page, `.oap__scrim` |
+| Body scroll | left alone | locked, saved and restored |
+| `aria-modal` | absent | `"true"` |
+| Tab | may leave the panel | trapped |
+
+The split is the honest one: at 1024px and up the page behind stays visible,
+scrollable and readable, so claiming `aria-modal` would tell a screen reader
+the article had gone away while a sighted reader can still use it.
+
+Both forms take `role="dialog"`, an `aria-label` naming the programme and the
+episode, Escape, a pushed history entry so the back gesture closes the panel
+rather than leaving the route, and focus restored to the control that opened
+it. The mechanics are `MobileSidePanel`'s, **including** the reason its close
+goes through `history.back()` rather than calling the close handler directly.
+
+The restore is written as an outcome, not a mechanism: focus lands on a
+control. The opener is usually the pill, which the panel suppresses while it
+is open, so by the time the close effect reads `document.activeElement` that
+button is gone and the answer is `<body>`; the restore therefore falls back to
+the pill or the On Air tab once they are back. Measured before the fix: a
+keyboard reader who pressed Escape landed on `<body>`.
+
+The pane moved from the left edge to the right on 2026-09-21. On the left it
+sat between the reader and the masthead's own wordmark and pushed the canvas
+off the edge the eye starts at; right is where a reader reaches for a
+companion surface, and it matches the nav drawer. The width became one token
+in the same pass: the old `calc(100vw - 1400px - 80px)` resolves below its own
+320px floor at every viewport under 1800px, so a pane that read as responsive
+was a constant that happened to be written as a calculation.
+
+`z-index: var(--z-player)`, with the scrim one below it.
+
+### The experimental banner
+
+`components/ExperimentalBanner.tsx` sits **below** the masthead and renders
+only from the second visit on. A first-time reader, usually arriving from a
+shared link, meets a headline before a bug-report request; the masthead's
+badge carries the posture until then. A visit is counted once per browser
+session, a dismissal lasts fourteen days, and nothing renders when storage is
+unavailable.
+
+### The browser wears the section (`styles/brand.css`)
+
+Six touches, each a token and a rule, none of them script, all of them
+asserted by `scripts/verify-headless.mjs` so that a touch which quietly rots
+fails a gate instead of fading out:
+
+| Touch | Rule | Section-aware by |
+|---|---|---|
+| Status bar | `theme-color` from the `viewport` export of the root, History and Weekly layouts: the section's **paper**, never its accent. `ThemeToggle` rewrites both metas from `--nav-paper`, the custom property the masthead is painted with (a property does not transition, so it is already the new value the moment the mode flips) | the layout that exports it |
+| Scrollbar | `html { scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb) transparent }` plus the WebKit pseudo-elements, no radius | `:root:has(.hist-page)` and `:has(.wk-page)` retint `--scrollbar-thumb` with the section accent mixed into its paper |
+| Selection | 24% of the accent under the ink, `color-mix`; the old inversion survives only under `@supports not (color-mix)` | the same two selectors swap the accent |
+| Nameplate | `.nav-nameplate::after` draws a 1px rule in from the left on hover, focus and `aria-current`, on `--dur-step` and `--ease-unfold` | `--nav-accent` |
+| Reading rule | on a long read only (`.story-page`, `.hist-hearing-page`, `.wk-issue`), a 2px brass `.nav-header::after` scales with `animation-timeline: scroll(root block)`; nothing under reduced motion or where the timeline is unsupported | brass, deliberately not the accent |
+| On air | `NavBar` sets `data-playing` from `useAudio().isPlaying`; the wordmark's beam rocks three degrees each way over six seconds in brass (`brand-on-air`), never the lean sweep, off under reduced motion | brass |
+
+What is NOT in the layer, with the reason: the loading skeleton's ink doodle
+(a rare client refetch state with inline radii, not worth a rule) and
+cross-document view transitions (they would cross-fade the sticky masthead
+against itself, and the React API is behind an experimental flag).
+
+---
+
+## 6. Layout
+
+### Canvas
+
+`--canvas-max: min(92vw, 1600px)`. The home page's `.page-main`, `.nav-inner`
+and `.site-footer` spell the expression out instead of reading the token, for
+a documented Chromium bfcache defect (`styles/layout.css`, top). That
+exception belongs to the frame alone; any new route consumes the token.
+
+### Zones (`styles/layout-zones.css`)
+
+One grid definition for the feed, the lead split and the Deep Dive body.
+
+| Zone | Selector | Behaviour |
+|---|---|---|
+| Lead split | `.lead-split` | 50/50 image and text when rank 0 has a cached image; one column on a phone |
+| Lead twin | `.lead-twin` | **`1.3fr 1fr` at 1024px and up, with rank 1's headline one notch down.** The ranker had already decided an order; two identical halves discarded it |
+| Feed grid | `.feed-grid` | `align-items: start`, `grid-auto-rows: max-content`, so cards with different headline sizes do not ragged-baseline |
+| Wire grid | `desktop-feed.css` | 5 columns at 1440px and up, 4 at 1024 to 1439 |
+| Bias snapshot | `.bias-snapshot--inline`, `--rail` | Horizontal strip in the Deep Dive header; vertical column in the right rail at 1280px and up |
+| Deep Dive body | `.dd-body--2col` | `1.7fr 1fr` at 1280px, `1.6fr 1fr` at 1440px and up, one column below |
+
+### Spacing
 
 ```css
---type-reporting: #3B82F6;   /* Blue — factual reporting */
---type-analysis:  #8B5CF6;   /* Purple — analysis/explainer */
---type-opinion:   #F97316;   /* Orange — opinion/editorial */
-```
-
-#### Factual Rigor
-
-```css
---rigor-high:    #22C55E;   /* Green — well-sourced, data-backed */
---rigor-medium:  #EAB308;   /* Yellow — partially sourced */
---rigor-low:     #EF4444;   /* Red — unsourced claims */
+--space-1: clamp(0.125rem, 0.1rem + 0.1vw, 0.25rem);   /* 2-4px   */
+--space-2: clamp(0.25rem,  0.2rem + 0.2vw, 0.5rem);    /* 4-8px   */
+--space-3: clamp(0.5rem,   0.4rem + 0.4vw, 0.75rem);   /* 8-12px  */
+--space-4: clamp(0.75rem,  0.6rem + 0.6vw, 1rem);      /* 12-16px */
+--space-5: clamp(1rem,     0.8rem + 0.8vw, 1.5rem);    /* 16-24px */
+--space-6: clamp(1.5rem,   1rem + 1.5vw, 2.5rem);      /* 24-40px */
+--space-7: clamp(2rem,     1.5rem + 2vw, 4rem);        /* 32-64px */
+--space-8: clamp(3rem,     2rem + 3vw, 6rem);          /* 48-96px */
 ```
 
 ---
 
-## 4. BiasLens — "Three Lenses" (The Core Visual Language)
+## 7. The feed: cards, the lean label, the skybox
 
-BiasLens is void --news's signature visual element. Three distinctive micro-visualizations, each encoding a different dimension of bias analysis. Replaces the earlier Dot Matrix (removed) and BiasStamp (removed) approaches.
+### The one lean word
 
-**Component:** `BiasLens.tsx` (active) -- `BiasStamp.tsx` and `DotMatrix` are deleted.
+A story's card, its Sigil's `aria-label` and popup, the Deep Dive chip and
+Paper's caption all name its coverage with ONE rule, `storyShapeLabel()` in
+`frontend/app/lib/biasColors.ts`, which reads the roster's shape
+(`leanShape()`), never a gated mean. Until 2026-09-26 the printed word came
+from the shape while the `aria-label`, popup and chip came from the older
+`storyLeanLabel()` mean ladder, so a card printing "Leans left" was announced
+as "Not measured". `storyLeanLabel()` still exists for tests of the ladder and
+names no story on any surface.
 
-### The Three Lenses
+| Shape | The card reads | When (constants in `biasColors.ts`) |
+|---|---|---|
+| `leans` | **Leans left** / **Leans right** | At least `SHAPE_MIN_WINGS` (5) wing articles and one wing outnumbers the other by about 2 to 1 (`LABEL_MIN_SHARE_TILT`) |
+| `split` | **Split** | Both wings at least 2, roughly even, under half of the roster in the centre |
+| `balanced` | **Balanced** | Both wings at least 2, roughly even, at least half in the centre |
+| `consensus` | **Consensus** | At least 75% (`SHAPE_CONSENSUS_SHARE`) of 8 or more measured articles in the centre |
+| `thin` | **N measured** | Fewer than 6 measured articles, or fewer than 5 on the wings; the card states the count |
+| (unscored) | **Unscored** | No measured article |
 
-```
-[Story Headline]
-[Source Name] · [Time]   /  (3)  ■
-                         N   R   P
-```
+The legend ("What the coverage labels mean") renders `LEAN_SHAPE_LEGEND`, whose
+definitions are built from those constants, and `legend-matches-cards` in
+`verify-headless.mjs` asserts every printed word is defined.
 
-| Lens | Name | Visual | Encoding |
-|------|------|--------|----------|
-| 1 (N) | **The Needle** | Tilting line with pivot dot | Political lean: rotates -30 to +30 degrees from center. Color from lean spectrum (blue left, gray center, red right). |
-| 2 (R) | **The Signal Ring** | SVG ring (Harvey ball) with source count | Coverage/confidence composite: ring fill 0-100%. Source count displayed in center. Color: green (strong) / yellow (moderate) / red (weak). |
-| 3 (P) | **The Prism** | Morphing shape (square to circle) | Opinion vs. reporting: square = factual reporting, circle = opinion. Color: blue (reporting) / purple (analysis) / orange (opinion). |
+**The beam tilts the way the word says.** Its sign comes from the roster
+(`leanShapeDirection`), its magnitude from the mean through the perceptual
+expansion, with a 6 degree floor, and its hue is clamped to that side.
 
-### Sizes
+**No number in the dial.** The source count is a caption under the word
+("33 sources"): outlets that covered the story. "N measured" is the other
+quantity, articles whose lean was measured.
 
-- **sm** (story cards): Needle 18px, Ring 18px, Prism 14px. Gap 6px.
-- **lg** (lead story, deep dive header): Needle 28px, Ring 28px, Prism 22px. Gap 10px.
+**The caption shows on phones too** (`styles/mobile-feed.css`), at 10px, nowrap,
+allowed to run wider than the mark.
 
-### Interaction
+### The skybox is one object
 
-- **Desktop hover**: Each lens has its own independent popup with title, score, spectrum bar, and rationale sub-scores (when available from pipeline analysis).
-- **Mobile tap**: Same popup positioned near the lens element.
-- **Deep Dive source list**: Per-source BiasLens (sm) inline next to each source name.
-- **Pending state**: When bias scores are fallback placeholders (not yet analyzed), the entire lens group renders at 35% opacity with grayscale filter and a "Pending" label.
-
-### Accessibility
-
-- Each lens has `role="img"` with descriptive `aria-label` (e.g., "Political lean: Center-Left, score 42").
-- Popups use `role="tooltip"` with `aria-describedby` linking.
-- Keyboard accessible: Tab to focus, Enter/Space to toggle popup, Escape to close.
-- Color is never the sole differentiator -- shape (needle angle, ring fill, square-to-circle morph) encodes the data independently.
-- Min 4.5:1 contrast on both light and dark backgrounds.
-
----
-
-## 5. Layout System
-
-### Desktop — "Broadsheet Grid"
-
-```
-┌──────────────────────────────────────────────────────┐
-│  void --news              [World] [US]    [◐ Dark]   │ ← Top nav
-├──────────────────────────────────────────────────────┤
-│                                                      │
-│  ┌─────────────────────────┐ ┌──────────────────┐   │
-│  │                         │ │                  │   │
-│  │     LEAD STORY          │ │   STORY 2        │   │
-│  │     (large card)        │ │   (medium card)  │   │
-│  │                         │ │                  │   │
-│  ├─────────────────────────┤ ├──────────────────┤   │
-│  │  STORY 3  │  STORY 4   │ │   STORY 5        │   │
-│  │  (small)  │  (small)   │ │   (medium)       │   │
-│  └───────────┴────────────┘ └──────────────────┘   │
-│                                                      │
-│  ┌───────┬───────┬───────┬───────┬───────┐          │
-│  │ ST 6  │ ST 7  │ ST 8  │ ST 9  │ ST 10 │          │ ← Dense grid
-│  └───────┴───────┴───────┴───────┴───────┘          │
-│                                                      │
-│  Last updated: 6:00 AM CT    [↻ Refresh]             │
-└──────────────────────────────────────────────────────┘
-```
-
-- Lead story gets hero treatment (large card, hero typography)
-- Stories 2-5: medium cards in a 2-column asymmetric grid
-- Stories 6+: compact cards in a dense 3-5 column grid
-- Column dividers use thin rules (newspaper tradition)
-- Generous whitespace between sections
-
-### Mobile — "Tabloid Stack"
-
-```
-┌──────────────────┐
-│ void --news   ☰  │ ← Minimal header
-├──────────────────┤
-│ [World] [US]     │ ← Section tabs
-├──────────────────┤
-│                  │
-│  LEAD STORY      │
-│  (full-width)    │
-│  ● ● ○ ● ●      │
-│                  │
-├──────────────────┤
-│  STORY 2         │
-│  ● ● ● ○ ●      │
-├──────────────────┤
-│  STORY 3         │
-│  ○ ● ● ● ●      │
-├──────────────────┤
-│  ...             │
-│                  │
-├──────────────────┤
-│  [World] [US]    │ ← Bottom nav
-│  Last: 6:00 AM   │
-└──────────────────┘
-```
-
-- Single column, full-width cards
-- Dot matrix inline below each headline
-- Bottom navigation (thumb-reachable)
-- Pull-down area shows "Last updated" + refresh
-- Critical actions in bottom 40% of screen
-
-### Deep Dive — Desktop
-
-```
-┌──────────────────────────────────────────────────────┐  ← 55% width, min 560px
-│  ← Back          Story headline [BiasLens]            │
-├──────────────────────────────────────────────────────┤
-│                                                      │
-│  [Summary as lede text — no "What happened" heading] │
-│  [viewport-responsive height; "Read more" at 600+ chars]│
-│                                                      │
-│  ┌── dd-analysis-row (single flex row) ────────────┐ │
-│  │  [Sigil]  [── gradient track w/ favicons ──]    │ │
-│  │                             [Press Analysis ▶]  │ │
-│  └─────────────────────────────────────────────────┘ │
-│  ┌── (Press Analysis expanded) ───────────────────┐  │
-│  │  [4-axis scorecard — BiasInspectorInline]      │  │
-│  │  [tap axis to expand sub-scores + AI reasoning]│  │
-│  └────────────────────────────────────────────────┘  │
-│                                                      │
-│  SOURCE PERSPECTIVES (2-column grid)                 │
-│  ┌── Agreement ──────┐  ┌── Divergence ────────┐    │
-│  │ ✓ [agree point]   │  │ ⚠ [diverge point]    │    │
-│  │   (green border)  │  │   (red border)       │    │
-│  └───────────────────┘  └──────────────────────┘    │
-│                                                      │
-│  COVERAGE BREAKDOWN                                  │
-│  ┌─────────────────────────────────────────┐        │
-│  │  Source A (NYT)        ● ● ○ ● ●  [→]  │        │
-│  │  Source B (Fox)        ● ○ ● ○ ●  [→]  │        │
-│  │  Source C (BBC)        ○ ● ● ● ○  [→]  │        │
-│  └─────────────────────────────────────────┘        │
-│                                                      │
-└──────────────────────────────────────────────────────┘
-```
-
-Desktop: 55% width side panel (min-width 560px, no max-width cap); main feed blurred (6px backdrop blur) when open. Analysis row (`dd-analysis-row`) places Sigil + Spectrum + Press Analysis ▶ trigger in a single flex row. Press Analysis expands inline via `grid-template-rows 0fr→1fr`. Source Perspectives shows Agreement | Divergence in a 2-column grid. Progressive disclosure: press analysis collapsed behind ▶ trigger by default.
-
-### Deep Dive — Mobile
-
-- Full-screen modal sliding up from bottom; iOS bottom-sheet style: `border-radius: 16px 16px 0 0`, drag indicator pill, `-webkit-overflow-scrolling: touch` momentum scrolling
-- `padding-bottom: env(safe-area-inset-bottom)` for home indicator; `padding-top: env(safe-area-inset-top)` for notch
-- Backdrop blur reduced to 2px (6px is too expensive on low-end devices)
-- Slot-machine cascade: `opacity 150ms ease-out, transform 250ms ease-out` (no spring — avoids GPU jitter); `translateY(8px) → 0` (shallower than 12px desktop)
-- Content reveal delay: 30ms (prevents blank header flash)
-- Analysis row stacks vertically on mobile (dd-analysis-row: `flex-direction: column`)
-- Source Perspectives collapses to single column on mobile (dd-perspectives-grid: `grid-template-columns: 1fr`)
-- Press Analysis expand: 300ms ease-out on mobile
-- Each source row is tappable → opens article in browser
-- Source rows use `flex-wrap: wrap` so metadata wraps instead of overflowing on narrow viewports
-
-### Mobile Layout Rules (max-width: 767px)
-
-| Element | Rule | Rationale |
-|---------|------|-----------|
-| `.page-main`, `.nav-inner`, `.site-footer` | padding: `--space-5` (~16px) | Recovers 32px content width vs desktop `--space-7` |
-| `.lead-story__headline`, `.lead-story__summary` | `max-width` constraints removed | Container constrains width; `ch` limits are redundant and wasteful on mobile |
-| `.story-card__headline`, `.lead-story__headline` | `overflow-wrap: break-word` (global) | Prevents long words from causing horizontal overflow |
-| `.section-header` | `flex-wrap: wrap` | RefreshButton timestamp wraps instead of overflowing |
-| Deep Dive source rows | `flex-wrap: wrap` | Source metadata wraps on narrow viewports |
+`styles/skybox-banner.css`, end of file. The compact skybox used to be two
+peer-weighted columns, The Brief and Opinion, each claiming the day in one
+read above the first headline. The Brief keeps its column; **Opinion folds to
+a single line beneath it** (label, lean badge, headline), still a tap target
+that expands in place. The Brief's preview clamps to two lines, and the first
+headline moves up a row.
 
 ---
 
-## 6. Story Card Anatomy
+## 8. Deep Dive
 
-### Desktop Card (Medium)
+Three shells, one reading order (redesign 2026-09-26,
+`docs/proposals/DEEP-DIVE-REDESIGN-2026-09-26.md`).
 
-```
-┌────────────────────────────────────────────┐
-│  POLITICS                     2h ago       │  ← Category tag + time
-│                                            │
-│  Headline in Playfair Display              │  ← Editorial voice
-│  700 weight, --text-xl                     │
-│                                            │
-│  Brief summary in Inter 400, 2 lines max.  │  ← Structural voice
-│  Truncated with ellipsis if longer.        │
-│                                            │
-│  12 sources  /  (12)  ■                    │  ← Data voice + BiasLens (sm)
-│              N   R    P                    │
-└────────────────────────────────────────────┘
-```
+**Desktop: `components/InlineDeepDive.tsx`.** An in-flow block inside the feed,
+opened AFTER the end of the opened card's visual row (`lib/useGridColumns.ts`
+mirrors the grid bands), or under the lead block for a lead. The opened card
+stays, undimmed, marked `data-open`. No backdrop, no scroll lock, no focus
+trap; it is an `<article>` labelled by its `h2`, never `role="dialog"`.
 
-### Mobile Card
+**Phones: `components/DeepDive.tsx`.** Its own page, replacing the feed, under
+the one masthead.
 
-```
-┌──────────────────────────────────┐
-│  POLITICS · 2h ago               │
-│                                  │
-│  Headline in Playfair            │
-│  Display 700                     │
-│                                  │
-│  Brief summary in Inter...       │
-│                                  │
-│  12 sources  /  (12)  ■          │
-└──────────────────────────────────┘
-```
+**The static page: `/story/<id>/`** (`StandaloneDeepDive.tsx`), prerendered
+for every printed story.
 
-### Lead Story Card (Desktop)
+**An open story has an address** (`lib/deepDiveHistory.ts`). Opening pushes the
+story's permalink as a shallow entry and sets the title that page serves; Next's
+patched `pushState` keeps the feed mounted. Back closes, Forward reopens, a
+reload lands on the static page. Previous/next REPLACE the entry, so one Back
+always returns to the feed. Close gives focus back to the opening card. Esc
+stands down for an open modal, the On Air panel or a Sigil popup.
 
-- Full-width or 2/3 width
-- Hero typography (--text-hero for headline)
-- 3-4 line summary
-- Source count badge prominent
-- BiasLens (lg) — larger Needle (28px), Ring (28px), Prism (22px)
+**Walking the edition.** A bar sticks under the masthead (`--masthead-h`,
+published by `NavBar`): n/20, previous, next, share, close. J / K and the arrows
+walk stories while a Deep Dive is open. Every shell ends in `DeepDiveNext`: the
+next story by name and its place, or after the last, the end of the edition.
+The static page walks its OWN edition (`edition_position`), labelled with its
+date when it is not today's.
+
+**Reading order:** the headline, the meta line (one source count), the chip
+(the card's word, factual rigor N/100), **The Story** (`DeepDiveSummary`: a lede
+and paragraphs at `--measure-read`, split in the renderer by
+`lib/summaryParagraphs.ts`, which never changes the text and never splits a
+disputed-claim mark), **The Spread** (the Bench, with the legend beside its
+heading), what they agree on and where they split, **The coverage**
+(`CoverageList`: every source, open by default, on the Bench's seven rungs,
+unmeasured sources last and never under Center, headline links out), the claim
+check, the history link, and the ending.
+
+`verify.css` and `deep-dive-page.css` ship with the lazy chunk rather than
+globally.
+
+### The Bench (2026-09-21)
+
+`DeepDiveSpectrum` is now a filter in front of `components/Bench.tsx`, and the
+Bench is the Deep Dive's lean panel. Seven strict columns, one per rung of the
+lean ladder, far left to far right. One circular mark per source, seated in
+its rung's column and stacked up off the rule, so **the height of a column is
+the count in that bucket**. It is also the sole source display: the separate
+roster was removed in 2026-08-10 and has not come back.
+
+What it replaced, and why, because the old view is still the one most other
+products ship. It was a kernel density estimate over the 0-100 lean axis, drawn
+as an ink wave with favicon pins strung along a line beneath it and an amber
+plumb line at the tier-weighted mean.
+
+- **The distribution is not continuous.** The engine anchors an article on its
+  outlet's baseline and moves it by what the text does, so 74% of measured
+  articles land exactly on one of the seven baselines and 87% within two
+  points. A curve over seven spikes paints hills nothing stands on, and
+  nothing can be counted off it.
+- **The plumb line answered the wrong question.** A mean returns the empty
+  middle of a bimodal roster: 7 left / 2 centre / 8 right and 0 left /
+  11 centre / 2 right both come out near 50.
+- **The pins disagreed with the curve.** They sat at continuous positions on a
+  strip below a smoothed shape, so no part of the panel was a count.
+
+**The mark size is chosen from the data**, in `lib/bench.ts`, and that module
+is the whole of the design decision. Measured on the 2026-09-21 feed (35
+clusters, one entry per source name, unscored rows excluded) the busiest
+bucket in a story runs 2 to 40, median 11, so a fixed 20px mark in a single
+file would need 880px of height for the worst story. `packBench` walks
+`perRow` up from 1 and takes the largest mark that fits at the first width
+that works: **`perRow` is the histogram's resolution**, and marks shrink before
+resolution is given up. Half the feed packs at `perRow` 1, a true single file
+where every count has its own height. Below 13px the mark drops its favicon
+and draws as a plain lean-coloured disc rather than pretending to carry a logo.
+
+The first draft took the widest sub-row the column allowed, which put a bucket
+of 4 and a bucket of 5 in one row each: counts 1 through 5 all drew a column
+one mark high. `test/bench.test.mjs` holds the arithmetic to the corpus (
+regenerate it with `python3 tests/bench_corpus.py`) and the `bench` scenario in
+`verify-headless.mjs` holds the served page to the same claim at 1440 and 390.
+
+A mark names its source: hover on a fine pointer, tap on a coarse one, and the
+card carries the outlet, its tier, its lean label and score, and the article's
+own headline where the surface has one. Its siblings rack-focus back to 0.32
+opacity so the named one is the only subject.
+
+Marks are **circles** because a circle has no direction of its own. A square in
+a row of squares reads as a bar segment, and the bar here is the column, not
+the source.
+
+The archival cross-link into History renders again.
 
 ---
 
-## 7. Animation System
+## 9. Mobile
 
-Adapted from DondeAI's "Ink & Momentum" motion system.
+`MobileTabBar.tsx` is the single primary navigation surface below 768px:
+three zones, a raised centre brand anchor between two side tabs.
+
+```
+[ On Air ]        (( Home ))        [ Menu ]
+```
+
+Home is the Sigil mark in the news terracotta, larger than the side tabs,
+punching through the bar. On Air opens the player **panel** over the current
+page, with a small teal dot for the playing state; it used to push `/onair`,
+which cost a reader three screens into a story their place to reach a
+transport that was already on screen as a pill. Menu opens `MobileSidePanel`,
+which carries the theme control and the destinations the masthead drops.
+
+Layout rules below 767px (`styles/responsive.css`, `styles/mobile-feed.css`):
+
+| Element | Rule | Why |
+|---|---|---|
+| `.page-main`, `.nav-inner`, `.site-footer` | padding `--space-5` | Recovers about 32px of content width |
+| Lead headline and summary | `max-width` removed | The container constrains width; a `ch` cap is wasted |
+| All headlines | `overflow-wrap: break-word` | A long word must not force a horizontal scroll |
+| `.section-header` | `flex-wrap: wrap` | The timestamp wraps instead of overflowing |
+| Touch targets | 44x44px minimum | WCAG |
+
+---
+
+## 10. Motion
 
 ### Principles
 
-1. **Purposeful** — every animation communicates state change, never decorative
-2. **Asymmetric for panels** — Deep Dive open uses `--spring-bouncy` (500ms, genuine overshoot); close uses `--spring-snappy` (380ms, tight). Micro-interactions (chips, toggles) remain symmetric.
-3. **Accessible** — all → 0ms under `prefers-reduced-motion: reduce`
-4. **Performant** — only animate transform and opacity (GPU composite)
-5. **Interruptible** — no animation locks
-6. **High-refresh ready** — rAF snap via `setTimeout(0)` for 90/120Hz reliability
+1. Every animation communicates a state change.
+2. Only `transform` and `opacity` animate.
+3. Nothing locks: an animation is always interruptible.
+4. A double rAF snap before a transition, for 90Hz and 120Hz displays.
+5. Everything collapses to 0ms under `prefers-reduced-motion: reduce`.
 
-### Spring Presets
+### Tokens
 
-| Preset | Stiffness | Damping | Mass | Use |
-|--------|-----------|---------|------|-----|
-| snappy | 600 | 35 | 1 | Buttons, filter chips, toggles; Deep Dive close (380ms) |
-| smooth | 280 | 22 | 1 | Card expansion, panel slides |
-| gentle | 150 | 12 | 1.2 | View transitions (feed ↔ deep dive) |
-| bouncy | — | — | — | Deep Dive open (500ms, genuine overshoot); `--spring-bouncy` CSS token |
+Springs, as `linear()` curves in `tokens.css`: `--spring` (the default),
+`--spring-bouncy`, `--spring-snappy`, `--spring-gentle`, `--spring-elastic`,
+`--spring-beam` (tighter, so a second oscillation reads as mass).
 
-### Duration Tokens
+Durations: `--dur-fast` 150ms, `--dur-step` 260ms, `--dur-normal` 300ms,
+`--dur-reveal` 350ms, `--dur-morph` 400ms, `--dur-slow` 600ms.
 
-| Token | Value | Use |
-|-------|-------|-----|
-| --dur-instant | 0ms | Reduced motion, immediate feedback |
-| --dur-fast | 150ms | Hover states, small reveals |
-| --dur-normal | 300ms | Card interactions, tooltips |
-| --dur-morph | 400ms | View transitions |
-| --dur-step | 450ms | Step-by-step reveals, stagger sequences |
-| --dur-slow | 600ms | Page-level animations |
+Easings, the fifteen the system names (section 4): `--ease-cinematic`
+`cubic-bezier(0.22, 1, 0.36, 1)` for the primary deceleration, `--ease-whip`
+`(0.25, 0, 0, 1)`, `--ease-rack` `(0.4, 0, 0.2, 1)` for a focus pull,
+`--ease-out` `(0.16, 1, 0.3, 1)`, `--ease-unfold` `(0.14, 0.8, 0.26, 1)`,
+`--ease-spring` `(0.34, 1.56, 0.64, 1)` for an overshoot, and the nine
+one-offs named after what they do.
 
-### Key Animations
+### What moves
 
-| Element | Trigger | Animation | Duration |
-|---------|---------|-----------|----------|
-| Story card | Page load | fadeInUp (opacity + translateY 12px→0) | 300ms, 40ms stagger |
-| Dot matrix | Card appear | Dots fade in left-to-right | 150ms, 30ms stagger |
-| Bias tooltip | Hover/tap | Scale from 0.95→1, opacity 0→1 | 150ms ease-out |
-| Deep Dive panel | Click story | Slide in from right (desktop) / bottom (mobile); JS-driven translateX/translateY | Open: `--spring-bouncy` 500ms (genuine overshoot); Close: `--spring-snappy` 380ms; fallback: 200ms opacity ramp |
-| Deep Dive content sections | Panel open | Cascade: translateY 12px→0; desktop: content reveal 180ms; mobile: opacity 150ms + transform 250ms ease-out (no spring) | Desktop reveal delay 120ms, mobile 30ms |
-| Press Analysis expand | Click ▶ trigger | grid-template-rows 0fr→1fr | var(--dur-morph) ease-out desktop; 300ms ease-out mobile |
-| Filter chips | Select | Scale 1→0.97→1, fill color wipe | 200ms spring |
-| Refresh confirm | Tap refresh | Modal scale from 0.95, backdrop fade | 300ms ease-out |
-| Dark mode toggle | Tap | Cross-fade colors, 0 layout shift | 400ms ease-out |
-| Source list expand | Tap "12 sources" | Height auto with spring, items stagger | 300ms, 30ms stagger |
+| Element | Trigger | Motion |
+|---|---|---|
+| Story card | Reveal in view | `anim-stagger` keyframes, 260ms, 40ms apart |
+| Cold open | Page load | Nav settles at 80ms, skybox dollies in at 200ms, lead at 320ms, feed at 480ms |
+| Sigil beam | Data arrives | Tilt to the lean angle on `--spring-beam`, only on a confident read |
+| Card lift | Hover, fine pointer only | `translateY(-2px)` plus an elevation bump, 180ms |
+| Press state | Pointer down | `scale(0.98)`, 80ms |
+| Inline Deep Dive | Open | Section cascade, `translateY(12px)` to 0 |
+| Theme toggle | Tap | Cross-fade plus a 700ms warmth swell on `.page-main`, zero layout shift |
+| History timeline | Scroll | Native snap, plus a CSS scroll-driven parallax (section 13) |
+| Reading rule | Scroll, long reads only | `.nav-header::after` scales 0 to 1 on a scroll timeline, no listener |
+| Wordmark beam | Audio playing | `brand-on-air`, 3 degrees each way over 6s, brass |
+| Nameplate rule | Hover, focus, current | `scaleX(0)` to 1 from the left, `--dur-step` on `--ease-unfold` |
 
-### Reduced Motion
+### Reduced motion
 
 ```css
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0ms !important;
+    animation-delay: 0ms !important;
     transition-duration: 0ms !important;
+    transition-delay: 0ms !important;
   }
 }
 ```
 
----
-
-## 8. Component Inventory
-
-Active components in `frontend/app/components/`:
-
-| Component | Purpose | Bias Visualization |
-|-----------|---------|-------------------|
-| `BiasInspector` | "Press Analysis" 4-axis scorecard (Lean, Sensationalism, Factual Rigor, Framing). Three exports: `BiasInspectorInline` (rendered inline in Deep Dive, expanded via ▶ trigger — no dialog wrapper), `BiasInspectorTrigger` + `BiasInspectorPanel` (legacy pop-out, kept for backward compat). Each axis row is collapsible — expand for sub-scores + Gemini reasoning text. | Cluster-averaged across all sources |
-| `BiasLens` | Three Lenses bias visualization (Needle, Ring, Prism) | Primary -- used on all story cards and deep dive source list |
-| `StoryCard` | Standard story card with headline, summary, metadata, BiasLens | Inline BiasLens (sm) |
-| `LeadStory` | Hero story card, larger typography | Inline BiasLens (lg) |
-| `DeepDive` | Slide-in panel: FLIP morph open/close. "Read more" overflow detected via ResizeObserver; gradient overlay hidden when content fits (`dd-collapsible--fits`). `dd-analysis-row`: Sigil + `DeepDiveSpectrum` + "How was this scored?" trigger in one row on desktop, stacked on mobile. Press Analysis expands via `grid-template-rows 0fr→1fr`; expand panel max-height 60vh with overflow-y scroll. Source Perspectives: 2-column Agreement\|Divergence grid (desktop), single column (mobile). Action buttons WCAG 44×44px. Open: `--spring-bouncy` 500ms (overshoot); Close: `--spring-snappy` 380ms. Content reveal 180ms desktop, 30ms mobile. Backdrop blur 6px desktop, 2px mobile. iOS bottom-sheet. Panel `opacity:0` CSS safety + JS fallback 200ms opacity ramp. | Per-source BiasLens (sm) |
-| `DeepDiveSpectrum` | Continuous lean spectrum for Deep Dive panel. 7-zone gradient bar (Far Left → Far Right) with full zone labels (smaller font on mobile). Logos positioned at exact `politicalLean` % (0–100) on a relative track — not bucketed into columns. No max-height cap. 3-row algorithm for dense source clustering. "+N more" expand button when >6 sources (COMPACT_LIMIT). Each logo is a link to the source article (opens in new tab). Tooltip on hover/focus: source name, lean label + colored dot, lean score, tier, "Click to read article". Spring-bouncy hover scale. Responsive: 26px logos desktop, 22px mobile. CSS: `dd-spectrum-*` classes in `spectrum.css`. | -- |
-| `HomeContent` | News feed container: edition switching, lean filter, opinion mode, story grid | -- |
-| `OpEdPage` | Opinion/editorial feed view | -- |
-| `OpinionCard` | Op-ed story card | -- |
-| `FilterBar` | Category filter chips | -- |
-| `NavBar` | Section navigation (World/US/India) with logo and theme toggle. Desktop: dateline row below masthead with compact edition badge pills (`nav-dateline-row__badge`), time-of-day badge (Morning/Evening auto-detected from edition timezone), "Edition" label, full date, and regional timestamp (`getEditionTimestamp()`: US → "9 AM ET", World → "HH:MM UTC", India → "HH:MM IST"). India edition uses Ashoka Chakra SVG icon (circle + 12 spokes, stroke-only, `IndiaIcon` component). Mobile: dateline row hidden, bottom nav bar with edition icons. | -- |
-| `RefreshButton` | Refresh with "last updated" timestamp | -- |
-| `ThemeToggle` | Light/dark mode toggle | -- |
-| `LoadingSkeleton` | Animated skeleton loading state | -- |
-| `ErrorBoundary` | Error boundary wrapper | -- |
-| `Footer` | Page footer with last-updated info | -- |
-| `LogoFull` | Combination mark: void circle + scale beam icon + "void --news" wordmark as single SVG. Use in NavBar (desktop), Footer, error pages. Direction 5 "Negative Space O" — hollow O in "void", monospace "--news". | -- |
-| `LogoIcon` | Icon-only wrapper around `ScaleIcon`. Use in mobile nav, loading indicators, compact contexts. `animation="none"` shows void circle only (favicon mark). | -- |
-| `LogoWordmark` | Text-only "void --news" SVG — no icon mark. Hollow-O treatment. Use for edition lines, attribution, compact footers, print contexts. | -- |
-| `ScaleIcon` | "Void Circle + Scale Beam" hybrid brand icon. Hollow ring as primary mark with scale beam passing through as fulcrum, weight ticks at beam ends, post + base below. 8 animation states: `idle` (gentle tipping), `loading` (dramatic tipping), `hover` (snappy tip), `analyzing` (deliberate read), `balanced` (spring settle), `pulse` (scale pulse), `draw` (stroke reveal on mount), `none` (void circle only — favicon mark). All animations respect `prefers-reduced-motion`. | -- |
-| `PageToggle` | Switches between Feed and Sources views. | -- |
-| `SpectrumChart` | `/sources` political lean spectrum. Gradient bar on top; all sources below in 7 lean zone columns (mixed tiers, no tier split). Logos overlap at −3px margin, fan out to 2px on zone hover. Zone counts shown below each column. Collapsed to ~4 rows by default; single "Show all N" expand button reveals all. Each zone scrollable at 60vh cap when expanded. Tooltip shows name, lean, tier, country, credibility notes. | -- |
-| `Sigil` | Compact bias sigil using `SigilData` type. Inline bias indicator variant. | -- |
-
-**Removed components:** `BiasStamp.tsx` (517 lines, superseded by BiasLens), `DotMatrix`, `BiasTooltip`, `UnifiedSummary` (consensus/divergence is now inline in DeepDive).
-
-### Logo Animation Deployment
-
-| Context | Component | Animation State |
-|---------|-----------|----------------|
-| NavBar (mobile, on mount) | `LogoIcon` | `draw` → transitions to `idle` after 800ms |
-| NavBar (desktop) | `LogoFull` | static SVG (idle beam embedded) |
-| LoadingSkeleton | `LogoIcon` | `loading` |
-| ErrorBoundary | `LogoIcon` | `balanced` |
-| DeepDive panel header | `LogoIcon` | `analyzing` |
-| Empty state | `LogoIcon` | `analyzing` |
-| RefreshButton (idle) | `LogoIcon` | `idle` |
-| RefreshButton (refreshing) | `LogoIcon` | `loading` |
-| Footer | `LogoIcon` | `idle` |
-| Favicon (`/public/icon.svg`) | Static SVG | void circle only (`none` equivalent) |
-
-Add `.si-hoverable` class to any ancestor to activate hover animation on `LogoIcon` / `ScaleIcon`.
+One block is the standard. Motion that cannot simply be zeroed, such as the
+History parallax, is wrapped in
+`@media (prefers-reduced-motion: no-preference)` instead of being switched off
+afterwards.
 
 ---
 
-## 9. Spacing Scale
+## 11. Share cards: one composer
 
-```css
---space-1:  clamp(0.125rem, 0.1rem + 0.1vw, 0.25rem);    /* 2-4px: tight */
---space-2:  clamp(0.25rem, 0.2rem + 0.2vw, 0.5rem);       /* 4-8px: compact */
---space-3:  clamp(0.5rem, 0.4rem + 0.4vw, 0.75rem);       /* 8-12px: default */
---space-4:  clamp(0.75rem, 0.6rem + 0.6vw, 1rem);          /* 12-16px: comfortable */
---space-5:  clamp(1rem, 0.8rem + 0.8vw, 1.5rem);           /* 16-24px: section */
---space-6:  clamp(1.5rem, 1rem + 1.5vw, 2.5rem);           /* 24-40px: major section */
---space-7:  clamp(2rem, 1.5rem + 2vw, 4rem);               /* 32-64px: page margin */
+`frontend/app/lib/ogCard.tsx` draws every card the product emits. The grammar,
+in the order the eye reads it:
+
+```
+[brass Sigil]  VOID NEWS          the lockup, identical on every card
+──────────────────────────
+▌ History                         the section nameplate, in its accent
+The Cyrus Cylinder                the card's own content
+539 BCE  ·  Middle East
+▓▓▓▓▓▓▓                           the lean spectrum, where there is one
+tagline                    news.voidvision.org
 ```
 
----
+Before it there were three looks for one brand, and one of them named products
+that do not exist. The Sigil is the coverage ring with the level balance beam,
+the same footed geometry as `ScaleIcon.tsx`, `SigilWordmark.tsx` and
+`public/favicon.svg`, drawn in brass.
 
-## 10. Elevation & Depth
-
-Glass morphism adapted from DondeAI, muted for newspaper aesthetic.
-
-| Level | Blur | Shadow | Use |
-|-------|------|--------|-----|
-| E0 Surface | 0 | none | Base content, cards |
-| E1 Floating | 8px | subtle | Header, nav bars |
-| E2 Popout | 16px | medium | Tooltips, bias popups |
-| E3 Modal | 24px | strong | Deep dive overlay (mobile), confirmation dialogs |
-
-Shadow values are warmer in light mode, cooler in dark mode to maintain the newspaper feel.
-
----
-
-## 11. Iconography
-
-Minimal. Line-style icons only. No filled icons except for active/selected states.
-
-- **Category icons**: Minimal line illustrations (politics gavel, economy chart, health cross, etc.)
-- **Navigation**: Standard line icons (home, search, settings, back)
-- **Bias**: BiasLens Three Lenses (Needle, Ring, Prism) — no traditional icons needed
-- **Actions**: Minimal line (refresh, external link, expand, collapse)
+- `og-image.png` is rendered by `node brand/ci/render_og.mjs`. It is never
+  hand-edited.
+- **Per-story cards are emitted for the latest edition only**
+  (`story/[id]/ogCard.tsx`, `EDITIONS_WITH_CARDS = 1`). The archive is over
+  1,500 rows and every card is a build-time render; older permalinks keep the
+  site-wide brand card.
+- **A card states a lean only when the read is confident.** It runs the same
+  `leanLabelState` gate as the feed card. A share card is the most public and
+  least correctable surface in the product, and it has no room to explain what
+  "Contested" means, so the line is left out and the source count stands alone.
+- Editing the JSX: satori needs an explicit `display` on every element with
+  more than one child. Keep the `display: "flex"` even where it looks
+  redundant.
 
 ---
 
-## 12. Accessibility Requirements
+## 12. Prose pages, and Paper
 
-### WCAG 2.1 AA Compliance
+### Prose pages
 
-- **Contrast**: 4.5:1 for normal text, 3:1 for large text — all modes
-- **Focus**: Visible focus indicators on all interactive elements (`:focus-visible`)
-- **Keyboard**: Full keyboard navigation (Tab, Enter, Escape, Arrow keys)
-- **Screen reader**: Semantic HTML, ARIA labels, live regions for dynamic content
-- **Reduced motion**: All animations instant under `prefers-reduced-motion`
-- **Touch targets**: ≥ 44×44px on mobile
-- **Zoom**: Content readable at 200% zoom, no horizontal scroll
-- **Color independence**: BiasLens uses shape + angle + fill + morph (never color alone) — Needle angle, Ring fill percentage, and Prism square-to-circle morph all encode data independently of color.
+`styles/prose-page.css` is the shared reading surface for Audio, Press and
+Privacy. It replaced `about.css`, which shipped 1,102 lines to four routes and
+matched nothing in any component. One measure (`--measure-prose: 72ch`, set as
+a property so a page that needs more room widens the token rather than
+overriding the rule), one type ramp off `--text-*`, spacing from `--space-*`,
+radii from the three tokens. Page files layer on top and win, being imported
+after.
 
-### BiasLens Screen Reader Pattern
+### Print for the long reads (`styles/brand.css`)
 
-```html
-<!-- Each lens has role="img" with descriptive aria-label -->
-<div class="bias-lens" role="group" aria-label="Bias analysis for this article">
-  <div class="bias-lens__needle" role="img" aria-label="Political lean: Center-Left, score 42"></div>
-  <div class="bias-lens__ring" role="img" aria-label="Coverage confidence: 67%, 8 sources"></div>
-  <div class="bias-lens__prism" role="img" aria-label="Article type: Reporting (factual)"></div>
-</div>
-<!-- Popups use role="tooltip" with aria-describedby linking -->
-```
+A Deep Dive page and a History event print the way Paper does: the masthead,
+footer, bars, banner, player, vignette and rail are gone, the paper is white
+and the ink black, every reveal is revealed, and the sheet opens with
+`components/PrintMast.tsx` (the wordmark and the page's own address, hidden on
+screen). Paper keeps its own sheet.
+
+### Paper (`frontend/app/paper/paper.css`)
+
+The printable front page, scoped to `.np-root`: the same twenty stories as the
+home page, in the same order, read from `build-data/feed.json`, every headline
+a link to its Deep Dive.
+
+- **Two voices, the site's own.** Playfair sets the nameplate, headlines and
+  decks; Inter sets labels, bylines and body. Two further families were
+  referenced through variables nothing defined, so the broadsheet had been
+  rendering in Georgia since it was written; both went rather than being wired
+  up to add a fourth and fifth face.
+- **Six tokens**: `--np-paper` `#F4F1EC`, `--np-ink` `#111111`,
+  `--np-ink-mid`, `--np-ink-light`, `--np-rule`, `--np-rule-dark`, with a
+  dark-mode override block. Nothing here is a bias colour.
+- **Six reading columns on a desktop, three in tablet landscape, one on a
+  phone** (`@media (max-width: 767px)`). A broadsheet grid that keeps six
+  columns on a 390px screen is a photograph of a newspaper, not a newspaper.
+- No classifieds, no datelines, no weather, no edition route.
+- Gated by P-01 to P-04 in `scripts/verify_sections.py` and
+  `tests/test_paper.py`.
 
 ---
 
-## 13. Design Token Summary
+## 13. History: "Archival Cinema"
 
-All values via CSS custom properties. No hardcoded values in components.
+`.hist-page` namespace, `styles/history.css`. Foxed vellum, iron gall ink,
+aged brass. The palette is `--hist-*`, declared on `:root` while a History
+page is mounted: `--hist-accent` burnt umber, `--hist-brass` aged brass,
+`--hist-paper` `#F2EDE0`, `--hist-ink` `#2C2418`, plus six perspective
+identity colours `--hist-persp-a` through `-f`.
 
-| Category | Token Prefix | Example |
-|----------|-------------|---------|
-| Colors (surface) | `--bg-` | `--bg-primary`, `--bg-card` |
-| Colors (text) | `--fg-` | `--fg-primary`, `--fg-muted` |
-| Colors (bias) | `--bias-`, `--sense-`, `--type-`, `--rigor-` | `--bias-left`, `--sense-low` |
-| Typography | `--text-` | `--text-hero`, `--text-base` |
-| Spacing | `--space-` | `--space-3`, `--space-6` |
-| Animation | `--dur-`, `--spring`, `--ease-` | `--dur-normal`, `--ease-out` |
-| Borders | `--border-` | `--border-subtle`, `--divider` |
-| Elevation | `--blur-`, `--shadow-` | `--blur-e2`, `--shadow-e1` |
-| Z-index | `--z-` | `--z-base(1)`, `--z-modal(100)` |
+### The landing
+
+`/history` is a **Server Component** (`frontend/app/history/page.tsx`). It
+reads the catalogue at build and hands it down as a prop. It used to be a
+client component that fetched in an effect, so a crawler saw an empty `<main>`
+and a reader saw one italic line until the round trip landed. There is an
+`<h1>`, every card, and era, region and thread browse links in the served
+HTML.
+
+**The timeline scrolls natively.** What used to be here: a `wheel` listener
+with `preventDefault()` turning vertical delta into horizontal velocity, a rAF
+friction loop with its own snap at rest, a second rAF loop that scrolled
+whenever the pointer came within 60px of a screen edge, and a third listener
+writing `transform` on the background every frame. Three drivers, one
+scrollbar, and physics no other section uses.
+
+Now:
+
+- `scroll-snap-type: x mandatory` on the container, desktop only (below 768px
+  the timeline is a vertical scroll and there is nothing for `x` to act on).
+- **`scroll-snap-align: center`, not `start`.** Every affordance on the page
+  already centres: the focused-index reader measures from
+  `scrollLeft + clientWidth / 2`, and the year ribbon, the era pills and the
+  prev and next pair all call `scrollIntoView({ inline: "center" })`. With
+  `start` the browser would re-snap a card flush left after each of those had
+  just centred it.
+- **A prev and next caret pair**, for a mouse with no horizontal wheel, each
+  naming its destination. It replaced the edge-scroll zones, which moved the
+  scrollbar under the pointer without being asked.
+- **Parallax is a CSS scroll-driven animation**: the background bands travel
+  30% of the cards' distance over the container's inline scroll range, inside
+  `@media (prefers-reduced-motion: no-preference)` and
+  `@supports (animation-timeline: scroll(nearest inline))`. No support means
+  no parallax, which is also what a reduced-motion reader gets.
+
+### The museum grammar
+
+The event page walks the reader through exhibits without didactic headers:
+hero, the inscribed one-line crack, the Record block, context, perspectives,
+omissions, evidence, exit. The Record block merges key facts and key figures
+into one ruled `dl` under a chisel-grain texture (`feTurbulence fractalNoise`,
+horizontal bias, multiply at 7%, screen in dark mode). Each perspective shows
+one lead argument, the rest behind a count and a directional glyph, the way a
+vitrine makes you lean in. Connection types are drawn as glyphs, not labels:
+`caused` is a down arrow, `consequence` and `response-to` an up arrow,
+`influenced` and `parallel` a centred dot.
+
+---
+
+## 14. Accessibility
+
+- **Contrast** 4.5:1 for body text, 3:1 for large, in both modes. Every lean
+  colour is checked against its own paper.
+- **Focus** visible on every interactive element, through `:focus-visible`.
+- **Keyboard** throughout: Tab, Enter, Escape, arrows. The Hearing adds `j`
+  and `k` anywhere the reader is not typing.
+- **Screen readers**: semantic HTML, `aria-current="page"` on the masthead,
+  live regions for the era header.
+- **Colour is never the sole carrier.** The Sigil encodes lean as a beam angle
+  and coverage as a ring fill; the lean state is also written out in words.
+- **Reduced motion** collapses everything, and motion that cannot collapse is
+  gated behind `no-preference` instead.
+- **Touch targets** 44x44px minimum.
+- **Zoom** to 200% with no horizontal scroll, asserted by
+  `frontend/scripts/verify-responsive.mjs`.
+- **The sweep.** `frontend/scripts/verify-headless.mjs` loads every route
+  family at 390, 768, 1024 and 1440 in both modes and asserts: no console or
+  hydration error, no same-origin 4xx, no dangling link, one `h1`, one
+  masthead and footer with the right `data-section` and `aria-current`, a
+  name on every control, no dash in chrome, the skip link first in the Tab
+  order with a visible ring, and axe-core at WCAG 2.1 AA (critical and
+  serious fail). Then the scenarios: Deep Dive inline and full page, search by
+  three routes, the theme toggle and both `theme-color` metas, the drawer's
+  focus trap, the Sigil's popup, the shortcuts overlay telling the truth,
+  the banner's second-visit rule, the player's presence per route, Paper
+  parity, and the brand layer above; then the journeys: search typed to a
+  result and Enter into the story, the phone Deep Dive's share landing the
+  permalink on the clipboard, the Audio hub loading each programme into the
+  one player, History's long-view toggle and the event's Listen island,
+  Weekly loading The Argument on arrival, the Sources picker and the axis
+  dots opening their detail, the About demo answering its sliders, an empty
+  feedback submit refused in the page with nothing sent, every client-side
+  navigation landing at scrollY 0 below the masthead, and the podcast feeds,
+  manifest, service worker and robots file present. `--quick` runs in CI;
+  the full grid by hand before a release. Its first run found six contrast failures (the
+  dateline's stacked opacities, the player clock and chapter title, the
+  History nameplate in dark, the long-view toggle), a control nested in a
+  control (the player pill), a focusable row under `aria-hidden` (the year
+  ribbon), a doubled masthead on the phone Deep Dive, and a lead Sigil whose
+  popup closed a frame after it opened because the hover shift on its
+  headline had trapped it under the stretched link.
+---
+
+## 15. Containment: `overflow-x: clip`, never `hidden`
+
+**This is a system-wide rule, and it cost a rail and a topbar that had never
+once pinned.**
+
+`overflow-x: hidden` establishes a scroll container. A scroll container between
+the viewport and a `position: sticky` descendant kills the stickiness silently:
+the CSS is correct, the element simply never pins, and nothing in devtools says
+why. On the History section four ancestors carried it, so the Hearing's rail
+measured **y = -3130** at scrollY 4000, and the topbar had never pinned on any
+History page either.
+
+Use `overflow-x: clip` for horizontal containment. It clips without creating a
+scroll container, so sticky survives. `layout.css` already carried this note for
+`.page-container`; it had simply never been applied to `history.css`.
+
+The exception is a rule that pairs with a real `overflow-y: auto` on a genuine
+scroller (`.hist-tl-full`, `.hist-overlay`, `.hist-reel--vertical`). Those want
+to be scroll containers.
+
+`frontend/scripts/verify-responsive.mjs` asserts this by scrolling to 4000 and
+checking the rail and topbar are still in the viewport.
+
+## 16. The Hearing's rail
+
+`/history/[slug]` is a server component; the rail is one of three client
+islands.
+
+- **Labels are legible at rest.** Hierarchy is weight and ink, not visibility:
+  the current station is 700 / `--hist-ink`, the rest are 500 /
+  `--hist-ink-muted`, plus the brass wash already on the current glyph.
+  Showing only the current label left the reader with bare `01 02 03`.
+- **Height-capped with an internal scroll.** Fifteen labelled stations can
+  outgrow a short viewport, so the slot and the rail carry
+  `max-height: var(--hist-rail-cap)`, the `<ol>` scrolls, and a JS effect keeps
+  the current station in view. The track anchors to the rail, not the list, so
+  it does not scroll away.
+- **A prev/next caret pair** rides the ends of the track and names its
+  destination. `j`/`k` move between stations anywhere the reader is not typing.
+  Plain `ArrowUp`/`ArrowDown` are bound **only** when focus is inside the rail:
+  taking line-by-line scroll away from a reader mid-account, on a page whose
+  argument is that it is a long read, costs more than the shortcut is worth.
+- **Tokens:** `--hist-rail-bar-h` (44px), `--hist-rail-caret` (16px),
+  `--hist-rail-cap`, and `--hist-rail-col` widening from 17ch to 21ch at
+  1280px.
+
+### There is no scroll-snap on the spine, and there should not be
+
+Measured on `partition-of-india`: the OPEN is 66 words, scenes run 89 to 209,
+and the five account sections run **603 to 883 words**, which is three to five
+viewport heights each. Mandatory snap would grab the reader at an account's top
+and fight every gesture for 800 words. Navigation here is an affordance, not a
+constraint. Recorded so it is not re-proposed.
+
+### The full-bleed trap
+
+A `grid-column: full` child cancels the container's `padding-inline` with a
+negative margin. That arithmetic only works while the flanking tracks exist.
+The text track is `min(--hist-measure, 100%)`, so below the measure it claims
+the entire content box and the column gaps have nowhere to go: the grid
+overflows by exactly `4 x gap`. At 390px that put a rest at 438px against a
+390px viewport, cropping rather than scrolling because an ancestor clipped it.
+The gap is therefore scoped to the widths where the flanks exist.

@@ -1,0 +1,56 @@
+[
+ {
+  "newsroom": "France 24",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 29,
+  "a": {
+   "title": "Ligue 1: Paris Saint-Germain aim to build on recent progress at Strasbourg",
+   "summary": "Fresh from their impressive 4-2 Champions League win on Manchester City’s home turf on Wednesday, PSG travel to Strasbourg on Saturday in Ligue 1. They aim to secure a fourth consecutive league win and maintain their growing momentum ahead of Tuesday's Champions League showdown with Barcelona.",
+   "link": "https://www.france24.com/en/tv-shows/sports/20261017-ligue-1-paris-saint-germain-aim-to-build-on-recent-progress-at-strasbourg",
+   "published": "Sat, 17 Oct 2026 09:41:44 GMT"
+  },
+  "b": {
+   "title": "Ligue 1 : le Paris Saint-Germain veut confirmer ses progrès à Strasbourg",
+   "summary": "Dans la foulée de leur succès de prestige cette semaine sur la pelouse de Manchester City, les Parisiens se déplacent samedi à Strasbourg pour la 7e journée de Ligue 1. Objectif : remporter un quatrième succès de suite en championnat et confirmer la montée en puissance observée en Angleterre, avant de recevoir mardi le redoutable FC Barcelone.",
+   "link": "https://www.france24.com/fr/%C3%A9missions/sports/20261017-ligue-1-paris-saint-germain-psg-confirmer-strasbourg",
+   "published": "Sat, 17 Oct 2026 11:32:21 GMT"
+  }
+ },
+ {
+  "newsroom": "Euronews",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 21,
+  "a": {
+   "title": "Europe Today: Kallas speaks exclusively to Euronews as crucial EU summit kicks off",
+   "summary": "Kaja Kallas, the EU's top diplomat, speaks exclusively to Maria Tadeo as EU leaders arrive in Brussels for a crucial EU summit on spiralling energy prices, an unfinished seven-year budget, and Donald Trump's pressure on Ukraine. We also interview Abu Abughazaleh, the Jordanian Investment Minister.",
+   "link": "https://www.euronews.com/2026/10/15/europe-today-kallas-speaks-exclusively-to-euronews-as-crucial-eu-summit-kicks-off",
+   "published": "Thu, 15 Oct 2026 08:01:43 +0200"
+  },
+  "b": {
+   "title": "Europe Today : Kallas s'exprime en exclusivité sur Euronews au début d'un sommet crucial de l'UE",
+   "summary": "Kaja Kallas à Euronews : sommet de l'UE à Bruxelles sur l'énergie, le budget et l'Ukraine, et entretien avec le ministre jordanien de l'Investissement.",
+   "link": "https://fr.euronews.com/2026/10/15/europe-today-kallas-sexprime-en-exclusivite-sur-euronews-au-debut-dun-sommet-crucial-de-lu",
+   "published": "Thu, 15 Oct 2026 08:02:24 +0200"
+  }
+ },
+ {
+  "newsroom": "Euronews",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 18,
+  "a": {
+   "title": "Three children and one teacher killed in Oregon elementary school shooting",
+   "summary": "Between 400 and 450 children attend Silver Rail Elementary, where more than 40 staff work, a police spokesperson had said earlier.",
+   "link": "https://www.euronews.com/2026/10/16/four-killed-in-oregon-elementary-school-shooting-including-three-children-aged-5-to-11",
+   "published": "Fri, 16 Oct 2026 05:23:21 +0200"
+  },
+  "b": {
+   "title": "États-Unis : trois enfants et un enseignant tués dans une fusillade dans une école primaire de l'Oregon",
+   "summary": "Entre 400 et 450 élèves fréquentent l'école primaire Silver Rail, où travaillent plus de 40 membres du personnel, avait indiqué plus tôt un porte-parole de la police.",
+   "link": "https://fr.euronews.com/2026/10/16/etats-unis-trois-enfants-et-un-enseignant-tues-dans-une-fusillade-dans-une-ecole-primaire-",
+   "published": "Fri, 16 Oct 2026 08:03:49 +0200"
+  }
+ }
+]

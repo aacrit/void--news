@@ -1,0 +1,7 @@
+source: src-ictr-ruggiu-js
+locator: dispositif
+url: https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-97-32/trial-judgements/en/000601.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+
+SENTENCES Georges Ruggiu Born on 12 October 1957 in Verviers, Province of Lieges, Belgium. To : COUNT 1 (direct and public incitement to commit Genocide): twelve (12) years of imprisonment; COUNT 2 (Crime against humanity): twelve (12) years of imprisonment; DECIDES that Georges Ruggiu shall serve his two sentences concurrently;

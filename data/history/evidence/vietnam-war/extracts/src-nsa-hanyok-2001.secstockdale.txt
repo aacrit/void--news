@@ -1,0 +1,8 @@
+source: src-nsa-hanyok-2001
+locator: secstockdale
+url: https://www.nsa.gov/portals/75/documents/news-features/declassified-documents/gulf-of-tonkin/articles/release-1/rel1_skunks_bogies.pdf
+read: 2026-10-09
+note: NSA's declassified PDF of the Cryptologic Quarterly article, its text layer, line breaks folded to spaces; the classification markings the text layer garbles ('TeP 8E6AE"fl', '(SI/SI)') and line-end hyphens are kept as printed
+note: Stockdale's words are quoted by the article from his later writing, footnote 2
+
+However, within the government, the events of 4 August were never that clear. Even as the last flare fizzled in the dark waters of the South China Sea on that August night, there were conflicting narratives and interpretations of what had happened.James Stockdale, then a navy pilot at the scene, who had "the best seat in the house from which to detect boats," saw nothing. "No boats," he would later write, "no boat wakes, no ricochets off boats, no boat impacts, no torpedo wakes - nothing but black sea and American fire- power." 2 The commander of the Maddox task force, Captain John J. Herrick, was not entirely certain what had transpired. (Captain Herrick actually was the commander of the destroyer divi- sion to which the Maddox belonged. For this mis- sion, he was aboard as the on-site commander.) Hours after the incident, he would radio the Commander-in-Chief, Pacific (CINCPAC) telling them that he was doubtful of many aspects of the "attack."

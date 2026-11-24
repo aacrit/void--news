@@ -1,0 +1,7 @@
+source: src-radcliffe-bengal
+locator: item2
+url: https://archive.org/download/dli.csl.1040/1040_djvu.txt
+read: 2026-09-25
+note: item n is paragraph n of Annexure A, the schedule of the Bengal award
+
+2. A line shall then be drawn from the point where the boundary between the Thanas of Haripur and Raiganj in the District of Dinajpur meets the border of the Province of Bihar to the point where the boundary between the District of 24 Parganas and Khulna meets the Bay of Bengal. This line shall follow the course indicated in the following paragraphs. So much of the Province of Bengal as lies to the west of it shall belong to West Bengal. Subject to what has been provided in paragraph 1 above with regard to the Districts of Darjeeling and Jalpaiguri, the remainder of the Province of Bengal shall belong to East Bengal.

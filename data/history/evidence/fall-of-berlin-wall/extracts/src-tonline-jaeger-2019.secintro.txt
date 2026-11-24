@@ -1,0 +1,8 @@
+source: src-tonline-jaeger-2019
+locator: secintro
+url: https://www.t-online.de/nachrichten/panorama/wissen/geschichte/id_86669552/grenzoeffner-harald-jaeger-man-sagt-ich-habe-die-mauer-geoeffnet-.html
+read: 2026-10-09
+note: the article's introduction, written by t-online, not by Jäger
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Tausende DDR-Bürger strömen zur Grenzübergangsstelle Bornholmer Straße in Ost-Berlin – es ist der Abend des 9. November 1989. Dort trägt Oberstleutnant Harald Jäger die Verantwortung. Die Menschen verlangen Zutritt nach West-Berlin, wie es ihnen ZK-Mitglied Günter Schabowski gerade erst in einer im Fernsehen übertragenen Pressekonferenz verheißen hat. Die Situation ist angespannt. Jäger, Mitarbeiter der Staatssicherheit und stellvertretender Leiter der Passkontrolleinheit an der Bornholmer Straße, ist auf sich allein gestellt. Und trifft eine Entscheidung.

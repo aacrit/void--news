@@ -1,0 +1,7 @@
+source: src-wevelsiep-2015
+locator: para2
+url: https://theologie-geschichte.de/ojs2/index.php/tg/article/download/746/791
+read: 2026-09-25
+note: the second paragraph of the introduction of the HTML galley; a copyrighted article, held at most 150 words
+
+Demnach ließen am 24. April 1915 die jungtürkischen Machthaber im Osmanischen Reich 200 armenische Nationalisten in Istanbul verhaften und später ermorden, wurden christliche Armenier der Kollaboration mit den Russen verdächtigt und offiziell aus dem Osten des Landes deportiert. Im Zuge dieser Deportationen kam es zu einem der größten Verbrechen des angehenden 20. Jahrhunderts, wurde eine Anzahl von Personen, deren Schätzungen von 800.000 bis 1,5 Millionen variiert, getötet

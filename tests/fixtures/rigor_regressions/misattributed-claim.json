@@ -1,0 +1,18 @@
+{
+ "class": "misattributed-claim",
+ "gate": "none",
+ "product": "brief",
+ "covers": [
+  "pipeline/editorial/corrections.json#2026-11-20-tldr-poland-distance",
+  "pipeline/editorial/corrections.json#2026-11-20-radio-2019-brexit-and-lull"
+ ],
+ "known_gap": "A claim the sources give to one party, written as another's: a reason one official did not give, attributed to 'White House officials'; a two-month lull the BBC gives to Kuwait, written across the whole Gulf. Every word and number is in the sources, so E-13, E-14 and check_names all pass; only reading what the sentence asserts against what each source asserts would catch it, and no deterministic rule here does.",
+ "planted": {
+  "evidence": "The official said Trump supported letting the director go, as he believed he lacked the proper cyber credentials. The departure followed outages at banks.",
+  "sentence": "White House officials stated that Trump sought the change following outages at banks."
+ },
+ "clean": {
+  "evidence": "The official said Trump supported letting the director go, as he believed he lacked the proper cyber credentials. The departure followed outages at banks.",
+  "sentence": "The departure followed outages at banks."
+ }
+}

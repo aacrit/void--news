@@ -1,0 +1,8 @@
+source: src-armistice-19530727
+locator: secdone
+url: https://www.usfk.mil/portals/105/documents/sofa/g_armistice_agreement.pdf
+read: 2026-10-09
+note: the closing line and the two signature blocks this copy prints (the senior delegates); the commanders' signatures are in src-pc1953-armistice
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Done at Panmunjom, Korea at 10:00 hours on the 27th day of July 1953, in English, Korean and Chinese, all texts being equally authentic. NAM IL General, Korea People's Army Senior Delegate, Delegation of the Korean People's Army and the Chinese People's WILLIAM K. HARRISON, JR. Lieutenant General, United States Army Senior Delegate, United Nations Command Delegation

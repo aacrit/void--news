@@ -1,0 +1,101 @@
+{
+ "collected_at": "2026-11-08T15:36:42Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 27,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16275755/under-16s-banned-Vinted-eBay-fears-groomed-online.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Under-16s to be banned from Vinted and eBay over fears they could be groomed in online marketplaces",
+      "published": "Sun, 08 Nov 2026 14:33:59 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/politics/under16s-ban-vinted-ebay-nandy-37855274",
+      "title": "Under 16s face Vinted and eBay ban over concerns strangers are contacting them",
+      "published": "Sun, 8 Nov 2026 12:53:08 +0000"
+     }
+    },
+    {
+     "score": 25,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16275789/Remembrance-Sunday-live-King-Charles-senior-royals-join-PM-Cenotaph-Britain-pays-respect-fallen-soldiers.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Remembrance Sunday live: Kate joins Queen Camilla in paying tribute to Britain's fallen heroes as King Charles and Prince William lead the nation in emotional memorial service at the Cenotaph",
+      "published": "Sun, 08 Nov 2026 15:26:22 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/royals/remembrance-sunday-king-charles-kate-37855212",
+      "title": "Remembrance Sunday live: Kate’s moving tribute to fallen as she joins King in leading nation in silence",
+      "published": "Sun, 8 Nov 2026 13:03:58 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 116,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.jpost.com/influencers-26/50jews-26/article-908123",
+      "title": "No. 2: Benjamin Netanyahu: Shaping Israel’s politics and global image for a generation",
+      "published": "Thu, 10 Sep 2026 18:30:37 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/elections/2026-11-08/ty-article/.premium/gadi-eisenkot-officially-gets-first-chance-to-form-israels-next-government/000001a1-bba1-d903-a3b3-bbab998f0000",
+      "title": "Gadi Eisenkot receives first chance to form Israel's next government by President Herzog",
+      "published": "Sun, 08 Nov 2026 17:02:55 +0200"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 24,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/diplomacy/brothers-in-arms-erdogan-receives-warm-welcome-in-azerbaijan",
+      "title": "Brothers in arms: Erdoğan receives warm welcome in Azerbaijan",
+      "published": "Sun, 08 Nov 2026 13:10:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/erdogans-family-business-ties-complicate-azerbaijan-dispute/",
+      "title": "Erdogan’s family business ties complicate Azerbaijan dispute",
+      "published": "Mon, 26 Oct 2026 23:01:29 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 310,
+    "left": 10
+   }
+  }
+ }
+}

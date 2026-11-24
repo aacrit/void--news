@@ -1,0 +1,7 @@
+source: src-truman-19450806
+locator: para2
+url: https://www.trumanlibrary.gov/library/public-papers/93/statement-president-announcing-use-bomb-hiroshima
+read: 2026-10-05
+note: paragraph 2
+
+The Japanese began the war from the air at Pearl Harbor. They have been repaid many fold. And the end is not yet. With this bomb we have now added a new and revolutionary increase in destruction to supplement the growing power of our armed forces. In their present form these bombs are now in production and even more powerful forms are in development.

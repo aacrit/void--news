@@ -1,0 +1,6 @@
+source: src-med-1946-ch7
+locator: secnagasaki
+url: https://avalon.law.yale.edu/20th_century/mp07.asp
+read: 2026-10-05
+
+On the morning of August 9th, 1945, at about 7:50 A.M., Japanese time, an air raid alert was sounded in Nagasaki, but the "All clear" signal was given at 8:30. When only two B-29 superfortresses were sighted at 10:53 the Japanese apparently assumed that the planes were only on reconnaissance and no further alarm was given. A few moments later, at 11:00 o'clock, the observation B-29 dropped instruments attached to three parachutes and at 11:02 the other plane released the atomic bomb.

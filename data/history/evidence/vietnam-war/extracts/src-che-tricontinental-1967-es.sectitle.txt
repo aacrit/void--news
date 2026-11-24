@@ -1,0 +1,7 @@
+source: src-che-tricontinental-1967-es
+locator: sectitle
+url: https://www.marxists.org/espanol/guevara/04_67.htm
+read: 2026-10-09
+note: the Spanish page's heading and provenance; the page is served as Windows-1252 and is decoded so
+
+Ernesto Che Guevara "CREAR DOS, TRES ... MUCHOS VIETNAM" Mensaje a los pueblos del mundo a través de la Tricontinental Primera edición: En La Habana, Cuba, el 16 de abril de 1967, en forma de folleto como suplemento especial para la revista Tricontinental, órgano del Secretariado Ejecutivo de la Organización de Solidaridad de los Pueblos de África, Asia y América Latina (OSPAAAL). Esta edición: Marxists Internet Archive, 1999; Corregida, enero 2013. Fuente del texto: Biblioteca de Textos Marxistas en Internet.

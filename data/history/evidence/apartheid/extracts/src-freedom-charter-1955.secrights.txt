@@ -1,0 +1,7 @@
+source: src-freedom-charter-1955
+locator: secrights
+url: https://omalley.nelsonmandela.org/index.php/site/q/03lv01538/04lv01600/05lv01611/06lv01612.htm
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+
+All shall be free to travel without restriction from countryside to town, from province to province, and from South Africa abroad; Pass Laws, permits and all other laws restricting these freedoms shall be abolished.

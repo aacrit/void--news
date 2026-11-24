@@ -1,0 +1,7 @@
+source: src-smith-1776
+locator: secdearest
+url: https://www.gutenberg.org/cache/epub/3300/pg3300.txt
+read: 2026-10-09
+note: Book III, chapter II; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+The experience of all ages and nations, I believe, demonstrates that the work done by slaves, though it appears to cost only their maintenance, is in the end the dearest of any. A person who can acquire no property can have no other interest but to eat as much and to labour as little as possible. Whatever work he does beyond what is sufficient to purchase his own maintenance, can be squeezed out of him by violence only, and not by any interest of his own.

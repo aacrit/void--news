@@ -1,0 +1,396 @@
+# The documentary score for "The Armenian Genocide", as note data on sampled
+# real instruments. Rendered by pipeline/history/score.py; the samples live in
+# ~/.cache/void-score-samples (never in the repository) and are pinned by sha256.
+#
+# The music claims nothing about the event. Nothing here imitates a named
+# instrument of the region or of the empire, a mode, a chant, a hymn, a folk
+# tune, a bell, a march or a bugle: the palette is a tuba, a solo violin
+# plucked, and a vibraphone bowed, each presented as what it is, and none of
+# the seven earlier composed scores uses any of them. This is a story of a
+# thing that was described for twenty-nine years and could not be named, of
+# columns walking into a desert, of cables that were read and followed by
+# nothing, and of a century of counting votes, so the score is given restraint
+# rather than lament: the LINE IS NEVER HELD. The violin only plucks, so every
+# note of the theme is touched and gone, and the one sustaining voice above the
+# floor, the bowed vibraphone, is kept to the fifth for the whole episode and
+# plays a note of the line exactly once, at the close. The tuba holds one note
+# at a time, soft, and breathes where a player would, so nothing in it is a
+# call. Grief and testimony carry silence: testimony and rupture have no bed
+# at all (mood.py), and the grief bed is the tuba alone for thirty-five of its
+# forty seconds.
+#
+# The theme is built from the house cell (tonic, fifth, tonic, third: the shape
+# of the On Air motif), in E flat, in the minor mode with the sixth and seventh
+# left unraised, at 52 beats a minute in two-beat bars: eight bars, sixteen
+# beats of 1.154 s, then the floor alone. Bars 1 to 4 state the cell on E flat
+# and step down home. Bars 5 to 8 rise by step, F, G flat, A flat, to B flat,
+# then fall, A flat, G flat, and STOP on the third, two steps short of home,
+# and the plucked G flat dies over the tuba's E flat; the title is spoken into
+# that. The outro completes the fall, A flat, G flat, F, E flat, and on the
+# E flat the bowed vibraphone enters in the line's own register and holds the
+# note the line never held, once. The grief bed states the fall and stops where
+# the theme stops.
+#
+# Cues are keyed to the producer's moods and segment kinds, never to a line of
+# text, so the cinematic variant renders from this manifest whatever moods it
+# picks. Where each cue plays is the producer's (mood_plan): the theme under
+# the TITLE, the first word 1.2 s before its end; beds under the spoken body by
+# mood, ducked to the mood's floor; transitions in the clear before a scene;
+# the rupture entry on the last word of the moment, or 1,200 ms after a clip's
+# trailing silence, never under it; the outro at the close, with the house
+# promo riding its held bars, so it is at most 13.75 s and silent at its end.
+slug: armenian-genocide
+title: The Armenian Genocide
+version: 1
+key: Eb
+mode: minor, with the sixth and seventh left unraised; the theme stops on the third and only the outro completes the fall
+tempo_bpm: 52
+house_cell: [0, 7, 0, 3]
+textures: []
+
+instruments:
+  tuba:
+    library: VSCO 2 Community Edition (Versilian Studios), Tuba, sustain, softest layer (v1), the "Mid" microphone. The files are named an octave below what they sound (the file "D#1" measures 77.8 Hz, Eb2, by two independent estimators, within 1 cent; "A#1" measures 116.6 Hz, Bb2, within 3 cents); `note` is the sounding pitch. Every note it plays is a recording of that note, unshifted. The Eb2 is the deepest floor in the series, and it carries on a small speaker because its third harmonic (233 Hz) measures as strong as its fundamental and 61% of its energy sits above 150 Hz. It plays one note at a time, as a tuba does, and breathes at the halfway bar of every long hold
+    role_as_presented: a tuba
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme asks for credit and that the samples not be sold on their own)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VSCO-2-CE/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios and Sam Gossner, VSCO 2 Community Edition
+    kind: sustain
+    attack_s: 0.6
+    release_s: 1.0
+    gain_db: 0.0
+    # The Eb2 recording is 7.87 s and is a diminuendo for its whole length: it
+    # falls 9 dB from its first quarter second to its last, in 0.25 s frames,
+    # with no region flatter than 3 dB over 3 s. It therefore has NO loop
+    # region, and the one named below (the flattest stretch) is set so that
+    # if a hold ever reached it the seam would be a 3 dB step rather than a
+    # 9 dB one; no cue in this manifest reaches it. The longest Eb2 hold is
+    # 5.6 beats, 6.46 s, plus the 1.0 s release, 7.46 s against 7.86 s after
+    # the onset trim, so every hold ends in the renderer's release inside the
+    # recording's own fade, and nothing loops. The Bb2 is 9.92 s and steady
+    # within 2.5 dB from 0.5 s to 9 s; it is held for under a second here.
+    samples:
+      - {file: vsco2ce/Brass/Tuba/sus/Tuba3_sus_D#1_v1_rr1_Mid.wav, note: Eb2, loop_start_s: 3.5, loop_end_s: 6.5, sha256: 04bc8b6878adab4df91d14ad102372377e2d6da80e9b7d011120679a7e0b056e, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Brass/Tuba/sus/Tuba3_sus_D%231_v1_rr1_Mid.wav"}
+      - {file: vsco2ce/Brass/Tuba/sus/Tuba3_sus_A#1_v1_rr1_Mid.wav, note: Bb2, loop_start_s: 2.0, loop_end_s: 9.0, sha256: cee95c4c80bb8673c37e757e21c4435df4796eacfbe7911a3efd1c0e0c35f7db, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Brass/Tuba/sus/Tuba3_sus_A%231_v1_rr1_Mid.wav"}
+
+  violin_pizz:
+    library: VSCO 2 Community Edition (Versilian Studios), Solo Violin, pizzicato, soft layer (p). The files are named at the pitch they sound (the file "A4" measures 440.0 Hz on its attack, where a pluck still has a pitch, by two independent estimators; "E4" 328.5 Hz, "G4" 390.6 Hz, "A3" 219.5 Hz, "E5" 661 Hz); `note` is the sounding pitch. Each note is the round robin the pitch check finds nearest in tune (E4 the second take, 8 cents under, against 12 for the first; G4 the first, 6 under, against 16; A4 the first, within 1 cent). The line's Eb is one semitone under the recorded E, its F one over; its Gb one under the G, its Ab one over; its Bb one over the A. Every pluck is 40 dB down inside 1.5 s, so the count is dry on its own
+    role_as_presented: a solo violin, plucked
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme asks for credit and that the samples not be sold on their own)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VSCO-2-CE/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios and Sam Gossner, VSCO 2 Community Edition
+    kind: pluck
+    release_s: 0.4
+    gain_db: 0.0
+    samples:
+      - {file: vsco2ce/Strings/Solo Violin/Pizz/LLVln_Pizz_A3_p_RR1.wav, note: A3, sha256: 9a7cc4d7c6c848e6302f1a35e499781240ccf66c5acf72779f0da03b91bf73e9, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Violin/Pizz/LLVln_Pizz_A3_p_RR1.wav"}
+      - {file: vsco2ce/Strings/Solo Violin/Pizz/LLVln_Pizz_E4_p_RR2.wav, note: E4, sha256: ea8fa4d781ecaf2f6d79a4d477b90d3dbb0b57cc57db9af6492dc7d39dbe1d6a, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Violin/Pizz/LLVln_Pizz_E4_p_RR2.wav"}
+      - {file: vsco2ce/Strings/Solo Violin/Pizz/LLVln_Pizz_G4_p_RR1.wav, note: G4, sha256: 8117f03620a33be4d6ee0f6d631cab022e035b222d7780e9d94cdcca843568cd, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Violin/Pizz/LLVln_Pizz_G4_p_RR1.wav"}
+      - {file: vsco2ce/Strings/Solo Violin/Pizz/LLVln_Pizz_A4_p_RR1.wav, note: A4, sha256: 43bc6f4e22da0bbb56de421f97f2c609df9193036b126c581df8e37303e795e0, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Violin/Pizz/LLVln_Pizz_A4_p_RR1.wav"}
+      - {file: vsco2ce/Strings/Solo Violin/Pizz/LLVln_Pizz_E5_p_RR1.wav, note: E5, sha256: 9590a957b38d05f1cab495b77a9a8895b8308c37a1a1077092cdf46f9dc57ffb, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Violin/Pizz/LLVln_Pizz_E5_p_RR1.wav"}
+
+  vibes_bowed:
+    library: Versilian Community Sample Library (VCSL, Versilian Studios), Vibraphone, bowed, the "Main" microphone. The files are named an octave below what they sound (the file "E3" measures 329.4 Hz, E4, by two independent estimators, within 3 cents; "A4" measures 879.9 Hz, A5, within 4 cents); `note` is the sounding pitch. The Bb it holds under the episode is one semitone over the recorded A; the Eb it holds once, at the close, is one semitone under the recorded E. Each recording is a bow stroke on one bar, then the bar left to ring, so the sound swells for about 1.5 s on its own, holds, and dies over ten seconds when the bow lifts
+    role_as_presented: a vibraphone, bowed
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme calls it public domain, no royalties, no credit, no special terms)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VCSL/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios, Versilian Community Sample Library
+    kind: sustain
+    attack_s: 0.3
+    release_s: 2.0
+    gain_db: 0.0
+    # Loop regions are the bowed part of each recording, measured in 0.5 s
+    # frames: the A5 holds within 3 dB from 1 s to 6 s after its onset, then
+    # the bow lifts and the bar decays about 5 dB a second; the E4 holds
+    # within 2 dB from 1 s to 6 s, then the same. No cue holds the vibraphone
+    # past its recording (the longest hold is 7 beats, 8.1 s, plus the 2 s
+    # release, 10.1 s against 14.1 s of the A5 after the pitch shift), so
+    # nothing loops today; the regions are set for any hold that one day does.
+    samples:
+      - {file: vcsl/Idiophones/Struck Idiophones/Vibraphone/Bowed/Vibes_bowed_E3_rr1_Main.wav, note: E4, loop_start_s: 1.5, loop_end_s: 6.0, sha256: bd41a203f16bf090677d8cc3ec0778c0f8865ae965cb0e5fe37c0a08ece8e09f, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Idiophones/Struck%20Idiophones/Vibraphone/Bowed/Vibes_bowed_E3_rr1_Main.wav"}
+      - {file: vcsl/Idiophones/Struck Idiophones/Vibraphone/Bowed/Vibes_bowed_A4_rr1_Main.wav, note: A5, loop_start_s: 1.5, loop_end_s: 6.0, sha256: 78be0c9d01f464cb76a46a398b3ae7ed412e9ae3d573f76c99a6821a1a04279f, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Idiophones/Struck%20Idiophones/Vibraphone/Bowed/Vibes_bowed_A4_rr1_Main.wav"}
+
+# Note rows are [instrument, note, start in beats, length in beats or null, velocity].
+# null length on a pluck lets the recording decay on its own. One beat is 1.154 s.
+cues:
+  # Statement 1, under the TITLE: the plucked line once over the tuba's Eb.
+  # Bars 1 to 4 are the cell on Eb and the step home; bars 5 to 8 the rise
+  # by step to Bb, the fall, and the stop on Gb, the third, at beat 14. The
+  # bowed vibraphone enters on the fifth under the rise and rings out under
+  # the stop. The tuba breathes at bar 4 and at bar 7, each release running
+  # into the next attack so the breath is a dip and not a gap (the first cut
+  # left a 0.5 s hole 25 dB deep at the halfway bar, measured in 0.25 s
+  # frames), and holds under the silence the line leaves: the title's first
+  # word lands at 18.8 s, in the last second of that hold.
+  theme:
+    claims: []
+    length_s: 20.0
+    peak_dbfs: -13.0
+    room_wet: 1.0
+    notes:
+      - [violin_pizz, Eb4, 0, null, 0.70]
+      - [violin_pizz, Bb4, 2, null, 0.60]
+      - [violin_pizz, Eb4, 3, null, 0.66]
+      - [violin_pizz, Gb4, 4, null, 0.64]
+      - [violin_pizz, F4, 6, null, 0.62]
+      - [violin_pizz, Eb4, 7, null, 0.66]
+      - [violin_pizz, F4, 8, null, 0.60]
+      - [violin_pizz, Gb4, 9, null, 0.62]
+      - [violin_pizz, Ab4, 10, null, 0.62]
+      - [violin_pizz, Bb4, 11, null, 0.60]
+      - [violin_pizz, Ab4, 13, null, 0.62]
+      - [violin_pizz, Gb4, 14, null, 0.66]
+      - [tuba, Eb2, 0, 5.6, 0.46]
+      - [tuba, Eb2, 6.0, 5.6, 0.44]
+      - [tuba, Eb2, 12.0, 4.0, 0.46]
+      - [vibes_bowed, Bb5, 8, 6, 0.22]
+
+  # Statement 3, at the close: the fall completed, Ab, Gb, F, onto Eb, and on
+  # the Eb the bowed vibraphone enters in the line's own register and holds
+  # the note the plucked line never held, over the tuba's Eb. Everything
+  # released by 10.1 s and faded to silence inside 13.0 s so the house promo
+  # can ride it.
+  outro:
+    claims: []
+    length_s: 13.0
+    peak_dbfs: -13.0
+    room_wet: 1.0
+    fade_out_ms: 2400
+    tail_silence: true
+    notes:
+      - [violin_pizz, Ab4, 0, null, 0.62]
+      - [violin_pizz, Gb4, 1, null, 0.60]
+      - [violin_pizz, F4, 2, null, 0.60]
+      - [violin_pizz, Eb4, 3, null, 0.66]
+      - [vibes_bowed, Eb4, 3, 4, 0.34]
+      - [tuba, Eb2, 0, 5.6, 0.42]
+
+  # On the last word of a rupture scene, or after a recording's trailing
+  # silence: the theme's last two notes, Ab onto Gb, plucked over the tuba's
+  # Eb on a swell, the vibraphone's fifth faint above, inside the 6 s
+  # mood_plan opens.
+  rupture_entry:
+    claims: []
+    length_s: 6.0
+    peak_dbfs: -15.0
+    room_wet: 1.4
+    swell: [0.5, 2.8, 2.7]
+    notes:
+      - [violin_pizz, Ab4, 0.3, null, 0.60]
+      - [violin_pizz, Gb4, 1.3, null, 0.64]
+      - [tuba, Eb2, 0, 3.2, 0.46]
+      - [vibes_bowed, Bb5, 0, 2.0, 0.18]
+
+  # The change of voice (a consul's dispatch, a minister's recorded words, a
+  # remark to commanders): one plucked note, touched.
+  sting:to_document:
+    claims: []
+    length_s: 0.9
+    peak_dbfs: -22.0
+    room_wet: 0.6
+    fade_out_ms: 150
+    notes:
+      - [violin_pizz, Eb4, 0, 0.3, 0.60]
+
+  # The music returning after a recording, once its trailing silence is over.
+  # The live script carries no clip, so this key is defined for the producer's
+  # grammar and fires only if the cinematic variant admits one.
+  sting:from_clip:
+    claims: []
+    length_s: 2.4
+    peak_dbfs: -20.0
+    room_wet: 1.0
+    swell: [0.8, 0.6, 1.0]
+    notes:
+      - [tuba, Bb2, 0, 0.9, 0.46]
+      - [violin_pizz, Eb5, 0, 1.2, 0.44]
+
+  # Dread (the arrests, the disarmed battalions, the road, the desert camps):
+  # the tuba's Eb held in five breaths of 6.5 s on a 6.9 s cycle, as a player
+  # holds a soft long tone, each release running into the next attack so the
+  # breath is a dip and not a gap (9 dB in 0.25 s frames, measured, and no
+  # frame more than 10 dB under the loudest), and each hold ending inside the
+  # recording's own fade. The cycle is six beats, not eight, because the Eb2 recording is
+  # 7.87 s: on an eight-beat cycle the floor fell 20 dB for 1.5 s four times a
+  # loop (measured in 0.25 s frames), so the bed is thirty beats, five breaths.
+  # The bowed vibraphone faint on Bb, the fifth, three octaves and more above,
+  # in six breaths, each of its breaths taken while the tuba is full and each
+  # of the tuba's while the vibraphone is, the last hold running a quarter
+  # beat past the seam so its release crosses into its own attack. So one of
+  # the two is always sounding, no hold outlasts its recording, and nothing in
+  # this bed loops a sample. The stack is a hollow fifth with no third
+  # anywhere; one plucked low Bb every 17 s, off the seam.
+  bed:dread:
+    claims: []
+    length_s: 34.615
+    fold: true
+    rms_dbfs: -34.0
+    room_wet: 0.6
+    notes:
+      - [tuba, Eb2, 0.4, 5.6, 0.60]
+      - [tuba, Eb2, 6.4, 5.6, 0.58]
+      - [tuba, Eb2, 12.4, 5.6, 0.60]
+      - [tuba, Eb2, 18.4, 5.6, 0.58]
+      - [tuba, Eb2, 24.4, 5.6, 0.60]
+      - [vibes_bowed, Bb5, 0, 3.0, 0.16]
+      - [vibes_bowed, Bb5, 3.7, 5.3, 0.16]
+      - [vibes_bowed, Bb5, 9.7, 5.3, 0.15]
+      - [vibes_bowed, Bb5, 15.7, 5.3, 0.16]
+      - [vibes_bowed, Bb5, 21.7, 5.3, 0.15]
+      - [vibes_bowed, Bb5, 27.7, 2.55, 0.16]
+      - [violin_pizz, Bb3, 1, null, 0.30]
+      - [violin_pizz, Bb3, 16, null, 0.26]
+
+  # Procedure (the deportation law, the counts of the arrested, the cables
+  # and their dates, the convention, the parliaments): the plucked violin
+  # keeping the count, dry. The house cell, one note every 1.154 s, the last
+  # note alternating.
+  bed:procedure:
+    claims: []
+    length_s: 36.923
+    fold: true
+    rms_dbfs: -33.0
+    room_wet: 0.0
+    notes:
+      - [violin_pizz, Eb4, 0, null, 0.62]
+      - [violin_pizz, Bb4, 1, null, 0.46]
+      - [violin_pizz, Eb4, 2, null, 0.52]
+      - [violin_pizz, Gb4, 3, null, 0.46]
+      - [violin_pizz, Eb4, 4, null, 0.62]
+      - [violin_pizz, Bb4, 5, null, 0.46]
+      - [violin_pizz, Eb4, 6, null, 0.52]
+      - [violin_pizz, F4, 7, null, 0.46]
+      - [violin_pizz, Eb4, 8, null, 0.62]
+      - [violin_pizz, Bb4, 9, null, 0.46]
+      - [violin_pizz, Eb4, 10, null, 0.52]
+      - [violin_pizz, Gb4, 11, null, 0.46]
+      - [violin_pizz, Eb4, 12, null, 0.62]
+      - [violin_pizz, Bb4, 13, null, 0.46]
+      - [violin_pizz, Eb4, 14, null, 0.52]
+      - [violin_pizz, F4, 15, null, 0.46]
+      - [violin_pizz, Eb4, 16, null, 0.62]
+      - [violin_pizz, Bb4, 17, null, 0.46]
+      - [violin_pizz, Eb4, 18, null, 0.52]
+      - [violin_pizz, Gb4, 19, null, 0.46]
+      - [violin_pizz, Eb4, 20, null, 0.62]
+      - [violin_pizz, Bb4, 21, null, 0.46]
+      - [violin_pizz, Eb4, 22, null, 0.52]
+      - [violin_pizz, F4, 23, null, 0.46]
+      - [violin_pizz, Eb4, 24, null, 0.62]
+      - [violin_pizz, Bb4, 25, null, 0.46]
+      - [violin_pizz, Eb4, 26, null, 0.52]
+      - [violin_pizz, Gb4, 27, null, 0.46]
+      - [violin_pizz, Eb4, 28, null, 0.62]
+      - [violin_pizz, Bb4, 29, null, 0.46]
+      - [violin_pizz, Eb4, 30, null, 0.52]
+      - [violin_pizz, F4, 31, null, 0.46]
+
+  # Reckoning (the turn, the five accounts, what each leaves out): the
+  # plucked violin alone on Eb every 2.3 s, the lower Eb every 18 s. No
+  # melody, the thinnest bed, under the deepest duck. The count starts on
+  # the second beat, not the first, so the loop's seam falls inside a
+  # decaying pluck rather than on an attack (the sparse-bed seam rule).
+  bed:reckoning:
+    claims: []
+    length_s: 36.923
+    fold: true
+    rms_dbfs: -35.0
+    room_wet: 0.3
+    notes:
+      - [violin_pizz, Eb4, 1, null, 0.55]
+      - [violin_pizz, Eb5, 3, null, 0.40]
+      - [violin_pizz, Eb5, 5, null, 0.40]
+      - [violin_pizz, Eb5, 7, null, 0.40]
+      - [violin_pizz, Eb5, 9, null, 0.40]
+      - [violin_pizz, Eb5, 11, null, 0.40]
+      - [violin_pizz, Eb5, 13, null, 0.40]
+      - [violin_pizz, Eb5, 15, null, 0.40]
+      - [violin_pizz, Eb4, 17, null, 0.55]
+      - [violin_pizz, Eb5, 19, null, 0.40]
+      - [violin_pizz, Eb5, 21, null, 0.40]
+      - [violin_pizz, Eb5, 23, null, 0.40]
+      - [violin_pizz, Eb5, 25, null, 0.40]
+      - [violin_pizz, Eb5, 27, null, 0.40]
+      - [violin_pizz, Eb5, 29, null, 0.40]
+      - [violin_pizz, Eb5, 31, null, 0.40]
+
+  # Grief (the river, the survivor who played herself, the diaspora, the
+  # close): the tuba's Eb alone, faint, in five breaths of 6.5 s on an 8.1 s
+  # cycle, so the bed falls near-silent for about a second and a half five
+  # times a loop (1.5 s more than 10 dB under its loudest frame, measured, with
+  # 0.6 s of nothing between the release and the next attack), which is what
+  # grief is given here; the dread bed's breaths overlap, these do not. The
+  # plucked violin, quiet, states the theme's fall once, Bb, Ab, and stops on
+  # Gb where the theme stops, and is then silent. The last 35 s of the loop
+  # are the tuba alone. No hold outlasts its recording, so nothing here loops
+  # a sample. Thirty-five beats, so the cycle divides the loop.
+  bed:grief:
+    claims: []
+    length_s: 40.385
+    fold: true
+    rms_dbfs: -35.0
+    room_wet: 1.0
+    notes:
+      - [tuba, Eb2, 0.4, 5.6, 0.42]
+      - [tuba, Eb2, 7.4, 5.6, 0.40]
+      - [tuba, Eb2, 14.4, 5.6, 0.42]
+      - [tuba, Eb2, 21.4, 5.6, 0.40]
+      - [tuba, Eb2, 28.4, 5.6, 0.42]
+      - [violin_pizz, Bb4, 2, null, 0.34]
+      - [violin_pizz, Ab4, 3, null, 0.34]
+      - [violin_pizz, Gb4, 4, null, 0.36]
+
+  # Into a dread scene, in the clear: the tuba's Eb swelling with the
+  # vibraphone's Bb faint above it, one plucked low Bb.
+  transition:dread:
+    claims: []
+    length_s: 3.8
+    peak_dbfs: -14.0
+    room_wet: 1.0
+    swell: [0.3, 2.1, 1.4]
+    notes:
+      - [tuba, Eb2, 0, 1.8, 0.55]
+      - [vibes_bowed, Bb5, 0, 1.8, 0.20]
+      - [violin_pizz, Bb3, 0.2, null, 0.42]
+
+  # Into a procedure scene: three strokes of the count, dry.
+  transition:procedure:
+    claims: []
+    length_s: 4.6
+    peak_dbfs: -14.0
+    room_wet: 0.0
+    fade_out_ms: 900
+    notes:
+      - [violin_pizz, Eb4, 0, null, 0.62]
+      - [violin_pizz, Bb4, 1, null, 0.50]
+      - [violin_pizz, Eb4, 2, null, 0.52]
+
+  # Into a grief scene: the fall stopping short, Ab onto Gb, plucked, the
+  # tuba's Eb under it.
+  transition:grief:
+    claims: []
+    length_s: 4.8
+    peak_dbfs: -14.0
+    room_wet: 1.0
+    notes:
+      - [violin_pizz, Ab4, 0, null, 0.50]
+      - [violin_pizz, Gb4, 1, null, 0.52]
+      - [tuba, Eb2, 0, 2.4, 0.42]
+
+  # Into the turn and the accounts: the count arriving.
+  transition:reckoning:
+    claims: []
+    length_s: 4.2
+    peak_dbfs: -14.0
+    room_wet: 0.3
+    fade_out_ms: 800
+    notes:
+      - [violin_pizz, Eb4, 0, null, 0.58]
+      - [violin_pizz, Eb5, 1, null, 0.46]
+      - [violin_pizz, Eb5, 2, null, 0.46]

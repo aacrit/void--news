@@ -1,0 +1,9 @@
+source: src-frus-19450814
+locator: fn93
+url: https://history.state.gov/historicaldocuments/frus1945v06/d440
+read: 2026-10-05
+note: FRUS's footnote 93 on the broadcast of the rescript; the footnote continues with the newspaper's date, cut at the comma by this slice
+
+For text of rescript
+broadcast at noon, August 15 (Japan time), see the
+New York Times , August 15,

@@ -1,0 +1,8 @@
+source: src-bundestag-volkskammer
+locator: secelection
+url: https://www.bundestag.de/en/parliament/history/parliamentarism/peoples_chamber/peoples_chamber-201326
+read: 2026-10-09
+note: the Bundestag's English page
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Turnout was registered at 93.4%. The clear winners of the election, with 48% of the vote, were the three parties that had formed the Alliance for Germany, namely the CDU (East), Democratic Awakening (DA) and the German Social Union (DSU). They had campaigned on a platform of rapid monetary union and the earliest possible unification of Germany. Second place, with a 21.8% share of the vote, went to the Social Democrats - SPD (East) - who had been ahead in the opinion polls for a long time, followed by the PDS with 16.3% and the League of Free Democrats with 5.3%. Representatives of the popular protest movement such as Alliance 90 and the Green Party + Independent Women’s League (UFV), which had played a crucial role in the campaign for political change, won only 2.9% and 2% of the vote respectively.

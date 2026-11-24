@@ -1,0 +1,126 @@
+{
+ "collected_at": "2026-11-20T17:20:53Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 38,
+     "right": {
+      "url": "https://www.dailymail.com/news/royals/article-16309417/Prince-Harry-jokes-hes-squeezing-American-accents-Archie-seven-Lilibet-five-moving-Britain-despite-Californian-twang.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Prince Harry jokes he's 'squeezing' the American accents out of Archie, seven, and Lilibet, five, after moving back to Britain - despite his own 'Californian' twang",
+      "published": "Fri, 20 Nov 2026 16:32:11 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/tv/tv-news/prince-harry-accused-making-plea-37900073",
+      "title": "Prince Harry accused of making plea for TV roles on This Morning debut",
+      "published": "Fri, 20 Nov 2026 16:12:02 +0000"
+     }
+    },
+    {
+     "score": 32,
+     "right": {
+      "url": "https://www.dailymail.com/news/royals/article-16308449/Prince-Harry-Alison-Hammond-Dermot-OLeary-ITV.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Harry appears on This Morning as he downs shots of whisky, tells Alison and Dermot 'it's great to be back', gives his view on the new James Bond and reveals how Archie and Lilibet are getting on at school",
+      "published": "Fri, 20 Nov 2026 15:13:54 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/tv/tv-news/prince-harry-this-morning-interview-37900005",
+      "title": "Prince Harry's biggest This Morning revelations - from whisky shots Meghan's festive gumbo",
+      "published": "Fri, 20 Nov 2026 16:16:39 +0000"
+     }
+    },
+    {
+     "score": 24,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16309721/Bodies-two-men-Loch-Leven-glider-crash.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Bodies of two men are found after Loch Leven glider crash",
+      "published": "Fri, 20 Nov 2026 17:15:49 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/loch-leven-glider-plane-crash-37900506",
+      "title": "Two bodies found after Loch Leven glider crash as plane plunged into lake",
+      "published": "Fri, 20 Nov 2026 16:57:05 +0000"
+     }
+    },
+    {
+     "score": 22,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16309343/Anti-migrant-activist-Danny-Tommo-jailed-15-months-slashing-migrant-boat-English-Channel.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Anti-migrant activist Danny Tommo sobs as he's jailed for 15 months for slashing small boat in Channel - as judge brands him an 'attention seeker'",
+      "published": "Fri, 20 Nov 2026 16:10:56 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/danny-tommo-migrant-dinghy-jailed-37899951",
+      "title": "Anti-migrant activist Danny Tommo jailed for slashing Channel dinghy with knife",
+      "published": "Fri, 20 Nov 2026 15:15:32 +0000"
+     }
+    },
+    {
+     "score": 22,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16309307/Mother-death-BBL-accidental-inquest-Britains-Lip-King-killed-her.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Mother-of-five's death after receiving BBL was 'accidental', inquest concludes - as video shows 'Britain's Lip King' laughing as victim yelps in pain during procedure that killed her",
+      "published": "Fri, 20 Nov 2026 16:53:18 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/alice-webb-brazilian-butt-lift-37900335",
+      "title": "Mum's BBL death ruled accidental after 'Lip King' injected seven times recommended filler",
+      "published": "Fri, 20 Nov 2026 16:22:46 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 137,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/11/islamic-school-in-new-jersey-reports-no-foreign-ties-in-irs-filings-despite-proven-links-to-turkey/",
+      "title": "Islamic school in New Jersey reports no foreign ties in IRS filings despite proven links to Turkey",
+      "published": "Tue, 17 Nov 2026 23:01:12 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 298,
+    "left": 10
+   }
+  }
+ }
+}

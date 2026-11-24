@@ -1,0 +1,8 @@
+source: src-hertle-nooke-2017
+locator: secdefinition
+url: https://www.chronik-der-mauer.de/system/files/dokument_pdf/2017_08_08_Hertle_Nooke_140_Victims_Berlin_Wall_FINAL_0.pdf
+read: 2026-10-09
+note: p. 1, 'Definition': the criterion the count rests on
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+We regard the “provable causal and spatial connection of a death with an attempted escape or a direct or indirect cause or lack of action by the ‘border organs’ in the border territory” as the decisive factor. In simpler terms: the criteria are either an attempted escape or a temporal and spatial link between the death and the border regime.

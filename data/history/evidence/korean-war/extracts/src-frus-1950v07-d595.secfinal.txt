@@ -1,0 +1,8 @@
+source: src-frus-1950v07-d595
+locator: secfinal
+url: https://history.state.gov/historicaldocuments/frus1950v07/d595
+read: 2026-10-09
+note: telegram from New Delhi, 3 October 1950, paragraph 4
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Panikkar in commenting on Chou En-lai’s statement said he was convinced that Chinese decision was final and that crossing line by US forces would therefore mean extension Korean conflict.

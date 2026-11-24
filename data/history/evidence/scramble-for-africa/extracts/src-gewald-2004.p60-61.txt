@@ -1,0 +1,17 @@
+source: src-gewald-2004
+locator: p60-61
+url: https://scholarlypublications.universiteitleiden.nl/access/item:2888838/view
+read: 2026-09-25
+note: sliced from the PDF's text layer; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed
+note: the Leiden repository copy prints two book pages per PDF page; the locator is the book's
+
+to impose their vision of'order' on the territory and its inhabitants. The
+personal involvement of the German Kaiser, Wilhelm II, in deciding how
+the war was to be fought in German South West Africa signalled the
+highest authorization and endorsement for acts committed in the name of
+Imperial Germany. In a conscious policy of genocide, German soldiers and
+settlers sought, shot, beat, hanged, starved, and raped Herero men, women,
+and children. When the war fmally ended, no fewer than 80 per cent of
+the Herero had lost their lives. Those who remained in Namibia, primarily
+women and children, survived in concentration camps as forced laborers
+employed on state, military, and civilian projects (Gewald, 1999: 141-230).

@@ -1,0 +1,8 @@
+source: src-app-nixon-19740808
+locator: secjudgments
+url: https://www.presidency.ucsb.edu/documents/address-the-nation-announcing-decision-resign-the-office-president-the-united-states
+read: 2026-10-09
+note: The American Presidency Project's text, from the Public Papers of the Presidents
+note: the double hyphens are the Project's
+
+I regret deeply any injuries that may have been done in the course of the events that led to this decision. I would say only that if some of my judgments were wrong--and some were wrong--they were made in what I believed at the time to be the best interest of the Nation.

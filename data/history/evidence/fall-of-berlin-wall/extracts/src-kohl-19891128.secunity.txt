@@ -1,0 +1,8 @@
+source: src-kohl-19891128
+locator: secunity
+url: https://germanhistorydocs.org/en/a-new-germany-1990-2023/helmut-kohl-s-ten-point-plan-for-german-unity-november-28-1989.pdf
+read: 2026-10-09
+note: the same text, point five
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+No one knows today what a reunified Germany will ultimately look like. That unity will come, however, when the people in Germany want it – of this, I am certain.

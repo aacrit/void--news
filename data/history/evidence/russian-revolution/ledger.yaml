@@ -1,0 +1,883 @@
+# The evidence ledger for russian-revolution (docs/proposals/HISTORY-THESIS-PAGE.md §3, §4c, §8).
+# Begun 2026-10-09 for the History episode's writer brief: the sources its document voice
+# may read from and the record its narration is checked against. Every entry was fetched on
+# 2026-10-09 from the URL it names; every extract under extracts/ was sliced from the fetched
+# copy by a builder script (start marker to end marker, out/ledger-russian-revolution/build.py),
+# never retyped. Whitespace runs are collapsed to single spaces and nothing else is changed;
+# where a scan's OCR layer is the free copy the extract keeps the layer's glyphs (misreadings,
+# pre-reform spelling read as other letters) and says so in a note. Nothing here was written
+# from memory.
+#
+# Dates. Russian documents of 1917 and January 1918 are dated in the Old Style (Julian)
+# calendar, thirteen days behind the New Style. Golder (1927) converts every date to the New
+# Style; FRUS dates its telegrams New Style; the Soviet decrees and Lenin's texts print Old
+# Style, sometimes with the New in brackets ("January 6 (19)"). Each extract is dated as it
+# prints; the brief says which calendar a date is in.
+#
+# Translations. Where a PUBLISHED English is held it is its own entry with its translator
+# named: Golder 1927 (Emanuel Aronsberg and others, revised by Golder) for the abdication
+# manifesto, Grand Duke Michael's act and Order No. 1; the Progress Publishers Collected
+# Works (Bernard Isaacs for the April Theses; Yuri Sdobnikov and George Hanna for volume 26;
+# George Hanna for volume 30) as the Marxists Internet Archive prints them; Max Eastman for
+# Trotsky; the FRUS translation of the Brest-Litovsk treaty. Every `.en.txt` rendering in
+# this ledger is a Void translation, made here at $0 and never to be presented as a
+# published quotation. Khabalov's recital of the Tsar's telegram is held in Russian ONLY,
+# deliberately (see gaps).
+#
+# This is NOT a thesis ledger: no positions, contested claims, exhibits or analyses are
+# adjudicated, and the event renders the Hearing. The bar of §4e is not claimed. Election
+# returns and execution figures are carried below as each producer's figure with its
+# method, never averaged.
+slug: russian-revolution
+bootstrapped: 2026-10-09
+
+entries:
+  # ----------------------------------------------------------- Tier A: the monarchy's end
+  - id: src-khabalov-1917
+    tier: A
+    kind: testimony
+    author: General S. S. Khabalov, questioned by the Extraordinary Commission of Inquiry of the Provisional Government
+    title: "Допрос С. С. Хабалова (the questioning of S. S. Khabalov), in Падение царского режима, т. 1"
+    container: "Падение царского режима. Стенографические отчеты допросов и показаний, данных в 1917 г. в Чрезвычайной Следственной Комиссии Временного Правительства, т. 1, ed. P. E. Shchegolev"
+    publisher: Государственное издательство
+    place: Leningrad
+    year: 1924
+    edition: "the 1924 printing of volume 1, read from the Internet Archive scan's text layer"
+    volume: "1"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "padenietsarskogorezhimat1doprosyanh16", hathitrust: null, url: "https://archive.org/details/padenietsarskogorezhimat1doprosyanh16"}
+    access:
+      free_copy: "https://archive.org/download/padenietsarskogorezhimat1doprosyanh16/padenietsarskogorezhimat1doprosyanh16_djvu.txt"
+      verified_at: 2026-10-09
+      verified_by: archive-item-fetch
+      verified_title: "Падение царского режима. Т. 1. Допросы: А. Н. Хвостова, Е. К. Климовича, А. Д. Протопопова, С. С. Хабалова, А. Т. Васильева, Б. В. Штюрмера, В. Л. Бурцева, А. Н. Наумова, кн. М. М. Андроникова"
+    language: ru
+    region_of_authorship: europe
+    producer: provisional-government-commission
+    position: null
+    rights: public
+    perspective: [white, peasant]
+    shows: "the commander's own account, under questioning in 1917, of the telegram he received 'around nine o'clock' over the Emperor's signature: «Повелеваю завтра же прекратить в столице беспорядки, недопустимые в тяжелое время войны с Германией и Австрией. Николай»; and that, asked where the telegram is now, he cannot say: he passed it to the chief of staff and does not remember whether it came back"
+    does_not_show: "the telegram itself (Khabalov recites it; he does not produce it), its date (the passage held gives the hour, not the day), or the day the troops fired"
+
+  - id: src-nicholas-manifesto-golder
+    tier: A
+    kind: edict
+    author: Nicholas II, Emperor of Russia, in Frank A. Golder's English
+    title: "Manifesto of Nicholas II (his abdication), in Documents of Russian History 1914-1917"
+    container: "Documents of Russian History 1914-1917, ed. Frank Alfred Golder, ch. XIX 'Abdication of the Romanovs', pp. 297 to 298"
+    publisher: The Century Co.
+    place: New York
+    year: 1927
+    edition: "Golder's sourcebook (translations by Emanuel Aronsberg and others, revised by Golder, 'aimed at brevity and clarity rather than literality', his preface), the Universal Digital Library copy read from the Internet Archive scan"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "documentsofrussi027937mbp", hathitrust: null, url: "https://archive.org/details/documentsofrussi027937mbp"}
+    access:
+      free_copy: "https://archive.org/download/documentsofrussi027937mbp/documentsofrussi027937mbp_djvu.txt"
+      verified_at: 2026-10-09
+      verified_by: archive-item-fetch
+      verified_title: "Documents Of Russian History 1914 1917"
+    language: en
+    region_of_authorship: europe
+    producer: nicholas-ii
+    position: null
+    rights: public
+    perspective: [white]
+    translation: "published translation in Golder (1927): Emanuel Aronsberg and others, revised by Frank A. Golder"
+    shows: "the manifesto's operative words: 'we, in agreement with the State Duma, think it best to abdicate the throne of the Russian State and to lay down the Supreme Power'; the throne passed to Grand Duke Michael Alexandrovich 'Not wishing to be separated from our beloved son'; signed 'NICHOLAS. March 15, 1917, 3 P. M. City of Pskov.' (New Style)"
+    does_not_show: "the railway car, the pen, or anything about how it was signed; Golder's English is not literal by his own account (see src-nicholas-manifesto-ru)"
+
+  - id: src-nicholas-manifesto-ru
+    tier: A
+    kind: edict
+    author: Nicholas II, Emperor of Russia, as the Presidential Library quotes him
+    title: "Отречение от престола императора Николая II: «Решение моё твёрдо и непреклонно»"
+    container: "Президентская библиотека имени Б. Н. Ельцина, news article quoting the manifesto"
+    publisher: Президентская библиотека имени Б. Н. Ельцина
+    place: Saint Petersburg
+    year: 1917
+    edition: "the Library's article as served on 2026-10-09; it quotes the manifesto with cuts marked '…'"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.prlib.ru/news/1292269"}
+    access:
+      free_copy: "https://www.prlib.ru/news/1292269"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Отречение от престола императора Николая II: «Решение моё твёрдо и непреклонно» | Президентская библиотека имени Б.Н. Ельцина"
+    language: ru
+    region_of_authorship: europe
+    producer: nicholas-ii
+    position: null
+    rights: public
+    perspective: [white]
+    shows: "the Russian of the operative sentence: «признали мы за благо отречься от престола государства Российского и сложить с себя верховную власть»; the Library dates the signing 15 (2) March 1917 and quotes the signature 'г. Псков. 2 марта, 15 час. 1917 г.'"
+    does_not_show: "the whole manifesto (the article cuts it); the archival original, which the Library's article does not reproduce in its text"
+
+  - id: src-nicholas-diary-ru
+    tier: A
+    kind: memoir
+    author: Nicholas II, his diary, as the Presidential Library quotes it
+    title: "Diary of Nicholas II, entry for 2 March 1917, quoted in 'Отречение от престола императора Николая II'"
+    container: "Президентская библиотека имени Б. Н. Ельцина, news article"
+    publisher: Президентская библиотека имени Б. Н. Ельцина
+    place: Saint Petersburg
+    year: 1917
+    edition: "the Library's article as served on 2026-10-09; the entry is quoted with a cut marked '<…>'"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.prlib.ru/news/1292269"}
+    access:
+      free_copy: "https://www.prlib.ru/news/1292269"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Отречение от престола императора Николая II: «Решение моё твёрдо и непреклонно» | Президентская библиотека имени Б.Н. Ельцина"
+    language: ru
+    region_of_authorship: europe
+    producer: nicholas-ii
+    position: null
+    rights: public
+    perspective: [white]
+    shows: "the entry's last words, «Кругом измена и трусость, и обман» (Void translation: 'All around, treason and cowardice, and deceit'), after 'I agreed' and 'At one o'clock at night I left Pskov with a heavy feeling of what I had lived through'"
+    does_not_show: "the cut part of the entry; Golder prints an English of the whole entry (dated March 15, New Style), but in all three Internet Archive copies of Golder the OCR layer is unreadable at its last line (see gaps)"
+
+  - id: src-michael-golder
+    tier: A
+    kind: edict
+    author: Grand Duke Michael Alexandrovich, in Frank A. Golder's English
+    title: "Abdication of Grand Duke Michael Alexandrovich, in Documents of Russian History 1914-1917"
+    container: "Documents of Russian History 1914-1917, ed. Frank Alfred Golder, pp. 298 to 299"
+    publisher: The Century Co.
+    place: New York
+    year: 1927
+    edition: "as src-nicholas-manifesto-golder"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "documentsofrussi027937mbp", hathitrust: null, url: "https://archive.org/details/documentsofrussi027937mbp"}
+    access:
+      free_copy: "https://archive.org/download/documentsofrussi027937mbp/documentsofrussi027937mbp_djvu.txt"
+      verified_at: 2026-10-09
+      verified_by: archive-item-fetch
+      verified_title: "Documents Of Russian History 1914 1917"
+    language: en
+    region_of_authorship: europe
+    producer: grand-duke-michael
+    position: null
+    rights: public
+    perspective: [white, academic]
+    translation: "published translation in Golder (1927)"
+    shows: "that Michael did not refuse outright: he decided 'to accept the supreme power, only if that be the desire of our great people, expressed at a general election for their representatives to the Constituent Assembly', and asked all citizens to submit to the Provisional Government until a Constituent Assembly 'selected by universal, direct, equal, and secret ballot'; dated March 16, 1917 (New Style), Petrograd"
+    does_not_show: "the Russian text; who drafted it"
+
+  # ----------------------------------------------------------- Tier A: the Soviet
+  - id: src-order1-golder
+    tier: A
+    kind: edict
+    author: The Petrograd Soviet of Workers' and Soldiers' Deputies, in Frank A. Golder's English
+    title: "Order No. 1, in Documents of Russian History 1914-1917"
+    container: "Documents of Russian History 1914-1917, ed. Frank Alfred Golder, pp. 386 to 388"
+    publisher: The Century Co.
+    place: New York
+    year: 1927
+    edition: "as src-nicholas-manifesto-golder; Golder dates it March 14, 1917 (New Style) and cites 'Izvestiia', No. 3, March 15, 1917"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "documentsofrussi027937mbp", hathitrust: null, url: "https://archive.org/details/documentsofrussi027937mbp"}
+    access:
+      free_copy: "https://archive.org/download/documentsofrussi027937mbp/documentsofrussi027937mbp_djvu.txt"
+      verified_at: 2026-10-09
+      verified_by: archive-item-fetch
+      verified_title: "Documents Of Russian History 1914 1917"
+    language: en
+    region_of_authorship: europe
+    producer: petrograd-soviet
+    position: null
+    rights: public
+    perspective: [peasant, bolshevik, white]
+    translation: "published translation in Golder (1927)"
+    shows: "point 3, the military branch subordinated in political actions to the Soviet and its own committees; point 4, 'The orders of the military commission of the State Duma shall be executed only in such cases as do not conflict with the orders and resolutions of the Soviet'; point 5, arms under the control of company and battalion committees and 'in no case be turned over to officers, even at their demand'"
+    does_not_show: "any clause making obedience to OFFICERS conditional on the Soviet: point 4 names the Duma's military commission; point 6 keeps 'the strictest military discipline' in the ranks and on duty"
+
+  - id: src-order1-ru
+    tier: A
+    kind: edict
+    author: Петроградский совет рабочих и солдатских депутатов (the Petrograd Soviet)
+    title: "Приказ № 1. 1 марта 1917 г."
+    container: "the rusempire.ru collection of legal acts of the Russian Empire"
+    publisher: "rusempire.ru (Российская Империя: история государства Российского)"
+    place: null
+    year: 1917
+    edition: "the site's text as served; the page names no printed source"
+    volume: null
+    document_number: "Приказ № 1"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.rusempire.ru/rossijskaya-imperiya/pravovye-akty-rossijskoj-imperii/658-prikaz-1-1-marta-1917-g.html"}
+    access:
+      free_copy: "https://www.rusempire.ru/rossijskaya-imperiya/pravovye-akty-rossijskoj-imperii/658-prikaz-1-1-marta-1917-g.html"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Приказ № 1. 1 марта 1917 г. - Российская Империя - история государства Российского"
+    language: ru
+    region_of_authorship: europe
+    producer: petrograd-soviet
+    position: null
+    rights: public
+    perspective: [peasant]
+    shows: "point 4 in Russian, «Приказы военной комиссии Государственной думы следует исполнять, за исключением тех случаев, когда они противоречат приказам и постановлениям Совета рабочих и солдатских депутатов», and the date 1 марта 1917 г. (Old Style)"
+    does_not_show: "the newspaper the text was first printed in (Golder names Izvestiia No. 3); the site is a secondary transcription and is used only as a check on Golder's English"
+
+  # ----------------------------------------------------------- Tier A: Lenin and the Congress of Soviets
+  - id: src-april-theses-en
+    tier: A
+    kind: primary-document
+    author: V. I. Lenin, translated by Bernard Isaacs
+    title: "The Tasks of the Proletariat in the Present Revolution (the April Theses)"
+    container: "Lenin, Collected Works, vol. 24, pp. 19 to 26, Progress Publishers, Moscow, 1964, as the Marxists Internet Archive prints it"
+    publisher: Marxists Internet Archive
+    place: null
+    year: 1917
+    edition: "published in Pravda No. 26, April 7, 1917, signed N. Lenin (the page's note); translation by Bernard Isaacs"
+    volume: "24"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.marxists.org/archive/lenin/works/1917/apr/04.htm"}
+    access:
+      free_copy: "https://www.marxists.org/archive/lenin/works/1917/apr/04.htm"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "V. I. Lenin: The Tasks of the Proletariat in the Present Revolution (a.k.a. the April Theses)"
+    language: en
+    region_of_authorship: europe
+    producer: lenin
+    position: null
+    rights: public
+    perspective: [bolshevik]
+    translation: "published translation, Bernard Isaacs (Progress Publishers, 1964); the page marks it public domain"
+    shows: "Lenin's own: 'I did not arrive in Petrograd until the night of April 3'; thesis 3, 'No support for the Provisional Government'; thesis 5, 'Not a parliamentary republic ... but a republic of Soviets of Workers', Agricultural Labourers' and Peasants' Deputies throughout the country, from top to bottom'"
+    does_not_show: "the phrase 'All Power to the Soviets' in the theses held (thesis 4 preaches 'the necessity of transferring the entire state power to the Soviets', not held as an extract); the sealed train; the reaction of his party"
+
+  - id: src-april-theses-ru
+    tier: A
+    kind: primary-document
+    author: Н. Ленин (V. I. Lenin)
+    title: "О задачах пролетариата в данной революции"
+    container: "the Marxists Internet Archive's Russian Lenin archive"
+    publisher: Marxists Internet Archive
+    place: null
+    year: 1917
+    edition: "the page's note: printed 7 (20) April 1917 in Pravda No. 26; it names its original as a magister.msk.ru page"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.marxists.org/russkij/lenin/1917/04/07a.htm"}
+    access:
+      free_copy: "https://www.marxists.org/russkij/lenin/1917/04/07a.htm"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Ленин. О задачах пролетариата в данной революции"
+    language: ru
+    region_of_authorship: europe
+    producer: lenin
+    position: null
+    rights: public
+    perspective: [bolshevik]
+    shows: "thesis 3 in Russian, «Никакой поддержки Временному правительству»"
+    does_not_show: "an edition statement beyond the newspaper; used as the Russian behind src-april-theses-en"
+
+  - id: src-lenin-19170914
+    tier: A
+    kind: letter
+    author: V. I. Lenin, translated by Yuri Sdobnikov and George Hanna
+    title: "The Bolsheviks Must Assume Power. A Letter to the Central Committee and the Petrograd and Moscow Committees of the R.S.D.L.P.(B.)"
+    container: "Lenin, Collected Works, vol. 26, pp. 19 to 21, Progress Publishers, Moscow, 1972, as the Marxists Internet Archive prints it"
+    publisher: Marxists Internet Archive
+    place: null
+    year: 1917
+    edition: "written September 12-14, 1917, first published 1921 (the page's note)"
+    volume: "26"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.marxists.org/archive/lenin/works/1917/sep/14.htm"}
+    access:
+      free_copy: "https://www.marxists.org/archive/lenin/works/1917/sep/14.htm"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "The Bolsheviks Must Assume Power"
+    language: en
+    region_of_authorship: europe
+    producer: lenin
+    position: null
+    rights: copyright
+    perspective: [bolshevik, white]
+    translation: "published translation, Yuri Sdobnikov and George Hanna, edited by George Hanna (Progress Publishers, 1972)"
+    shows: "'The Bolsheviks, having obtained a majority in the Soviets of Workers' and Soldiers' Deputies of both capitals, can and must take state power into their own hands'; 'We must not be deceived by the election figures: elections prove nothing'; 'It would be naive to wait for a \"formal\" majority for the Bolsheviks ... History will not forgive us if we do not assume power now.'"
+    does_not_show: "that the letter is of October 24 (the event YAML's context for 'History will not forgive us ...'): it is of September 12-14; the October 24 letter (src-lenin-19171024) uses different words"
+
+  - id: src-lenin-19171024
+    tier: A
+    kind: letter
+    author: V. I. Lenin, translated by Yuri Sdobnikov and George Hanna
+    title: "Letter to Central Committee Members (October 24, 1917)"
+    container: "Lenin, Collected Works, vol. 26, pp. 234 to 235, Progress Publishers, Moscow, 1972, as the Marxists Internet Archive prints it"
+    publisher: Marxists Internet Archive
+    place: null
+    year: 1917
+    edition: "the page's source line"
+    volume: "26"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.marxists.org/archive/lenin/works/1917/oct/24.htm"}
+    access:
+      free_copy: "https://www.marxists.org/archive/lenin/works/1917/oct/24.htm"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Letter to Central Committee Members"
+    language: en
+    region_of_authorship: europe
+    producer: lenin
+    position: null
+    rights: copyright
+    perspective: [bolshevik]
+    translation: "published translation, Yuri Sdobnikov and George Hanna, edited by George Hanna (Progress Publishers, 1972)"
+    shows: "'We must at all costs, this very evening, this very night, arrest the government ... We must not wait! We may lose everything!'; 'History will not forgive revolutionaries for procrastinating when they could be victorious today'"
+    does_not_show: "the words 'History will not forgive us if we do not assume power now', which are the September letter's"
+
+  - id: src-decree-peace-en
+    tier: A
+    kind: edict
+    author: The Second All-Russia Congress of Soviets, on Lenin's report, in the Collected Works' English
+    title: "Decree on Peace (Report on Peace, October 26 (November 8), 1917)"
+    container: "Lenin, Collected Works, vol. 26, as the Marxists Internet Archive prints it"
+    publisher: Marxists Internet Archive
+    place: null
+    year: 1917
+    edition: "the page names no translator; the Archive's other pages of volume 26 name Yuri Sdobnikov and George Hanna"
+    volume: "26"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.marxists.org/archive/lenin/works/1917/oct/25-26/26b.htm"}
+    access:
+      free_copy: "https://www.marxists.org/archive/lenin/works/1917/oct/25-26/26b.htm"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Second All-Russia Congress of Soviets — 02"
+    language: en
+    region_of_authorship: europe
+    producer: congress-of-soviets
+    position: null
+    rights: copyright
+    perspective: [bolshevik, western]
+    translation: "published translation in the Collected Works, vol. 26 (Progress Publishers); this page names no translator"
+    shows: "the government 'created by the Revolution of October 24-25' calls on all the belligerent peoples 'to start immediate negotiations for a just, democratic peace', meaning 'an immediate peace without annexations ... and without indemnities'"
+    does_not_show: "the vote on the decree or the hour"
+
+  - id: src-decree-peace-ru
+    tier: A
+    kind: edict
+    author: II Всероссийский Съезд Советов (the Second All-Russia Congress of Soviets)
+    title: "№ 2. Декрет II Всероссийского Съезда Советов Рабочих, Солдатских и Крестьянских Депутатов. О мире."
+    container: "Собрание узаконений и распоряжений правительства за 1917-1918 гг., Управление делами Совнаркома СССР, М. 1942, стр. 2-3, as istmat.org prints it"
+    publisher: "istmat.org (Проект «Исторические Материалы»)"
+    place: Moscow
+    year: 1917
+    edition: "the site's text of the 1942 Sobranie uzakonenii; its record says first published in No. 1 of the Gazeta Vremennogo Rabochego i Krest'ianskogo Pravitel'stva of 28 October 1917"
+    volume: null
+    document_number: "статья 2"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://istmat.org/node/27648"}
+    access:
+      free_copy: "https://istmat.org/node/27648"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "№ 2. Декрет II Всероссийского Съезда Советов Рабочих, Солдатских и Крестьянских Депутатов. О мире. | Проект «Исторические Материалы»"
+    language: ru
+    region_of_authorship: europe
+    producer: congress-of-soviets
+    position: null
+    rights: public
+    perspective: [bolshevik]
+    shows: "the decree's opening in Russian, «предлагает всем воюющим народам и их правительствам начать немедленно переговоры о справедливом, демократическом мире»"
+    does_not_show: "used as the Russian behind src-decree-peace-en"
+
+  - id: src-decree-land-en
+    tier: A
+    kind: edict
+    author: The Second All-Russia Congress of Soviets, on Lenin's report, in the Collected Works' English
+    title: "Decree on Land (Report on Land, October 26 (November 8), 1917)"
+    container: "Lenin, Collected Works, vol. 26, as the Marxists Internet Archive prints it"
+    publisher: Marxists Internet Archive
+    place: null
+    year: 1917
+    edition: "the page names no translator; as src-decree-peace-en"
+    volume: "26"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.marxists.org/archive/lenin/works/1917/oct/25-26/26d.htm"}
+    access:
+      free_copy: "https://www.marxists.org/archive/lenin/works/1917/oct/25-26/26d.htm"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Second All-Russia Congress of Soviets — 04"
+    language: en
+    region_of_authorship: europe
+    producer: congress-of-soviets
+    position: null
+    rights: copyright
+    perspective: [bolshevik, peasant]
+    translation: "published translation in the Collected Works, vol. 26 (Progress Publishers); this page names no translator"
+    shows: "'(1) Landed proprietorship is abolished forthwith without any compensation'; article 4 adopts the Peasant Mandate 'compiled by the newspaper Izvestia Vserossiiskogo Soveta Krestyanskikh Deputatov from 242 local peasant mandates' (August 19, 1917); the Mandate's point 1, 'Private ownership of land shall be abolished forever'; and Lenin's answer to the charge that the Mandate was the Socialist-Revolutionaries': 'What of it? ... even if they give this party a majority in the Constituent Assembly, we shall still say — what of it?'"
+    does_not_show: "how much land peasants had already seized before October (the decree says nothing of it)"
+
+  - id: src-decree-land-ru
+    tier: A
+    kind: edict
+    author: II Всероссийский Съезд Советов (the Second All-Russia Congress of Soviets)
+    title: "№ 3. Декрет II Всероссийского Съезда Советов Рабочих, Солдатских и Крестьянских Депутатов. О земле."
+    container: "Собрание узаконений и распоряжений правительства за 1917-1918 гг., М. 1942, стр. 4-6, as istmat.org prints it"
+    publisher: "istmat.org (Проект «Исторические Материалы»)"
+    place: Moscow
+    year: 1917
+    edition: "the site's text of the 1942 Sobranie uzakonenii"
+    volume: null
+    document_number: "статья 3"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://istmat.org/node/27653"}
+    access:
+      free_copy: "https://istmat.org/node/27653"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "№ 3. Декрет II Всероссийского Съезда Советов Рабочих, Солдатских и Крестьянских Депутатов. О земле. | Проект «Исторические Материалы»"
+    language: ru
+    region_of_authorship: europe
+    producer: congress-of-soviets
+    position: null
+    rights: public
+    perspective: [peasant]
+    shows: "article 1 in Russian, «Помещичья собственность на землю отменяется немедленно без всякого выкупа»"
+    does_not_show: "used as the Russian behind src-decree-land-en"
+
+  # ----------------------------------------------------------- Tier A: the Constituent Assembly
+  - id: src-lenin-dissolution-1918
+    tier: A
+    kind: edict
+    author: V. I. Lenin, translated by Yuri Sdobnikov and George Hanna
+    title: "Draft Decree on the Dissolution of the Constituent Assembly"
+    container: "Lenin, Collected Works, vol. 26, Progress Publishers, Moscow, 1972, as the Marxists Internet Archive prints it"
+    publisher: Marxists Internet Archive
+    place: null
+    year: 1918
+    edition: "written 6 January 1918, first published 7 January, Izvestia No. 5, 'according to the manuscript' (the page's note)"
+    volume: "26"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.marxists.org/archive/lenin/works/1918/jan/06a.htm"}
+    access:
+      free_copy: "https://www.marxists.org/archive/lenin/works/1918/jan/06a.htm"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Draft Decree On The Dissolution Of The Constituent Assembly"
+    language: en
+    region_of_authorship: europe
+    producer: lenin
+    position: null
+    rights: copyright
+    perspective: [bolshevik, white, academic]
+    translation: "published translation, Yuri Sdobnikov and George Hanna, edited by George Hanna (Progress Publishers, 1972)"
+    shows: "the Right SRs 'obtained the majority in the Constituent Assembly which met on January 5'; 'the Central Executive Committee resolves that the Constituent Assembly is hereby dissolved'; the editors' note: the Central Executive Committee met on the night of January 6 (19) and adopted the decree 'by a majority against two, with five abstentions'; the decree was 'based on Lenin's draft'"
+    does_not_show: "the enacted decree's own text (this is the draft); how long the Assembly sat; the clearing of the hall"
+
+  - id: src-lenin-ca-elections-1919
+    tier: A
+    kind: primary-document
+    author: V. I. Lenin, translated by George Hanna
+    title: "The Constituent Assembly Elections and the Dictatorship of the Proletariat"
+    container: "Lenin, Collected Works, vol. 30, pp. 253 to 275, Progress Publishers, 1965, as the Marxists Internet Archive prints it"
+    publisher: Marxists Internet Archive
+    place: null
+    year: 1919
+    edition: "written 16 December 1919 (the page's note)"
+    volume: "30"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.marxists.org/archive/lenin/works/1919/dec/16.htm"}
+    access:
+      free_copy: "https://www.marxists.org/archive/lenin/works/1919/dec/16.htm"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "The Constituent Assembly Elections And the Dictatorship of the Proletariat"
+    language: en
+    region_of_authorship: europe
+    producer: lenin
+    position: null
+    rights: copyright
+    perspective: [bolshevik, academic]
+    translation: "published translation, George Hanna (Progress Publishers, 1965)"
+    shows: "Lenin's reading of Svyatitsky's returns for 54 constituencies out of 79: 36,262,560 votes in all (Svyatitsky's own total 36,257,960, Lenin notes); SRs 16.5 million, 20.9 million or 58 per cent with the SRs of other nations; Bolsheviks 9,023,963"
+    does_not_show: "seats; the 25 constituencies Svyatitsky's returns omit"
+
+  - id: src-svyatitsky-1918
+    tier: A
+    kind: chapter
+    author: Н. В. Святицкий (N. V. Svyatitsky)
+    title: "Итоги выборов во Всероссийское Учредительное Собрание (Предисловие)"
+    container: "Год русской революции (1917-1918 гг.): сборник статей"
+    publisher: Земля и воля
+    place: Moscow
+    year: 1918
+    edition: "the Socialist-Revolutionary symposium, read from the Internet Archive scan's text layer"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "godrusskojrevoljutsii19171918ggsbs30", hathitrust: null, url: "https://archive.org/details/godrusskojrevoljutsii19171918ggsbs30"}
+    access:
+      free_copy: "https://archive.org/download/godrusskojrevoljutsii19171918ggsbs30/godrusskojrevoljutsii19171918ggsbs30_djvu.txt"
+      verified_at: 2026-10-09
+      verified_by: archive-item-fetch
+      verified_title: "Год русской революции (1917-1918 гг.) :  Сб. ст. - М. : Земля и воля, 1918."
+    language: ru
+    region_of_authorship: europe
+    producer: svyatitsky
+    position: null
+    rights: public
+    perspective: [academic, white]
+    shows: "the SR statistician's own figures: SRs 20.893.734 of 36.257.960 votes, 58%; Bolsheviks 9.023.963, '25% или 1/.' (one quarter, the layer losing the denominator); of 338 SR deputies, 299 declared for the central party and 39 for the left"
+    does_not_show: "the whole country (54 of 79 constituencies, per Lenin's reading); seats for any party but the SRs in the passages held"
+
+  # ----------------------------------------------------------- Tier A: the Cheka and Kronstadt
+  - id: src-latsis-1921
+    tier: A
+    kind: report
+    author: М. И. Лацис (Судрабс) (M. I. Latsis), of the All-Russian Extraordinary Commission (Cheka)
+    title: "Чрезвычайные комиссии по борьбе с контрреволюцией"
+    container: null
+    publisher: Государственное издательство
+    place: Moscow
+    year: 1921
+    edition: "the Internet Archive scan; the passage is on printed page 9 (scan leaf n10)"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "chrezvychajnyekomissiipoborbeskontrrevo75", hathitrust: null, url: "https://archive.org/details/chrezvychajnyekomissiipoborbeskontrrevo75"}
+    access:
+      free_copy: "https://archive.org/download/chrezvychajnyekomissiipoborbeskontrrevo75/chrezvychajnyekomissiipoborbeskontrrevo75_djvu.txt"
+      verified_at: 2026-10-09
+      verified_by: archive-item-fetch
+      verified_title: "Чрезвычайные комиссии по борьбе с контрреволюцией"
+    language: ru
+    region_of_authorship: europe
+    producer: cheka
+    position: null
+    rights: public
+    perspective: [bolshevik, white, academic]
+    shows: "the Cheka's own count: 22 shot in the first half of 1918; 'свыше 6 тыс.' in the second half of 1918; over all three years 12,733 (the page image; the text layer reads '12. 183'), 'по всей России'; framed as the answer to 'белый террор' and as proof against the belief that the Cheka brought 'десятки и сотни тысяч смертей'"
+    does_not_show: "how the count was made, which bodies' shootings it includes, or deaths without sentence; it is the Cheka's figure for itself"
+
+  - id: src-berkman-1922
+    tier: A
+    kind: primary-document
+    author: Alexander Berkman, printing the resolution of the general meeting of the crews of the First and Second Squadrons of the Baltic Fleet
+    title: "The Kronstadt Rebellion"
+    container: null
+    publisher: Der Syndikalist
+    place: Berlin
+    year: 1922
+    edition: "Berkman's English pamphlet, read from the Internet Archive scan's text layer"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "TheKronstandtRebellion", hathitrust: null, url: "https://archive.org/details/TheKronstandtRebellion"}
+    access:
+      free_copy: "https://archive.org/download/TheKronstandtRebellion/kronstadt_rebellion_Berkman_djvu.txt"
+      verified_at: 2026-10-09
+      verified_by: archive-item-fetch
+      verified_title: "Kronstadt Rebellion"
+    language: en
+    region_of_authorship: europe
+    producer: kronstadt-sailors
+    position: null
+    rights: public
+    perspective: [peasant, academic]
+    translation: "Berkman's own English (the pamphlet names no other translator)"
+    shows: "the Petropavlovsk resolution of 1 March 1921: new elections by secret ballot because 'the present Soviets do not express the will of the workers and peasants'; freedom of assembly for labor unions and peasant organisations; liberation of 'all political prisoners of Socialist parties'; 'full freedom of action' for peasants on their land without hired labor; passed unanimously by the Brigade Meeting, two abstaining, and 'by an overwhelming majority of the Kronstadt garrison', the chairman Vassiliev voting against with Kalinin"
+    does_not_show: "the assault on Kronstadt, who led it, or the dead; the Russian of the resolution"
+
+  # ----------------------------------------------------------- Tier A: the treaty and the Allies
+  - id: src-brest-litovsk-1918
+    tier: A
+    kind: treaty
+    author: Germany, Austria-Hungary, Bulgaria, Turkey and Russia, in the FRUS translation
+    title: "Peace Treaty of Brest-Litovsk, as transmitted by the Consul General at Moscow (Summers) to the Secretary of State"
+    container: "Papers Relating to the Foreign Relations of the United States, 1918, Russia, vol. I, as the Avalon Project prints it"
+    publisher: Avalon Project, Yale Law School
+    place: Washington
+    year: 1918
+    edition: "the FRUS translation, which 'follows an unofficial Russian text' corrected against the German text in the Reichs-Gesetzblatt (its note 2); 'Done in quintuplicate, Brest Litovsk, March 3,1918'"
+    volume: "I"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://avalon.law.yale.edu/20th_century/bl34.asp"}
+    access:
+      free_copy: "https://avalon.law.yale.edu/20th_century/bl34.asp"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Avalon Project - Foreign Relations of the United States : 1918 The Conclusion of the Peace of Brest Litovsk - The Consul General at Moscow (Summers) to the Secretary of State"
+    language: en
+    region_of_authorship: americas
+    producer: brest-litovsk-signatories
+    position: null
+    rights: public
+    perspective: [western, bolshevik, white]
+    translation: "published translation, U.S. Department of State (FRUS), from an unofficial Russian text checked against the German"
+    shows: "article 1, the state of war ended; article 3, territories west of an agreed line 'will no longer be under her sovereignty', their future fate to be determined by Germany and Austria-Hungary 'with the consent of their inhabitants'; article 6, Russia to make peace with the Ukrainian people's republic and clear Ukraine (art6), Finland and the Aland Islands (art6b) of Russian troops; Estonia and Livonia are in article 6's second paragraph, read but not extracted"
+    does_not_show: "any area, population, share of farmland, coal or iron (the treaty carries no such figure); the map of Appendix I, which was not transmitted; Poland by name in the articles held"
+
+  - id: src-frus-francis-19180120
+    tier: A
+    kind: report
+    author: David R. Francis, Ambassador in Russia, to the Secretary of State
+    title: "Telegram 2259, Petrograd, January 20, 1918, 7 p.m. (File No. 861.00/995)"
+    container: "Papers Relating to the Foreign Relations of the United States, 1918, Russia, vol. I, document 342"
+    publisher: Office of the Historian, U.S. Department of State
+    place: Washington
+    year: 1918
+    edition: "FRUS as the Office of the Historian serves it"
+    volume: "I"
+    document_number: "861.00/995"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://history.state.gov/historicaldocuments/frus1918Russiav01/d342"}
+    access:
+      free_copy: "https://history.state.gov/historicaldocuments/frus1918Russiav01/d342"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Historical Documents - Office of the Historian"
+    language: en
+    region_of_authorship: americas
+    producer: us-state-department
+    position: null
+    rights: official
+    perspective: [western]
+    shows: "the Ambassador's report of the dissolution: the Assembly 'adjourned at 6 p.m. yesterday' and was 'excluded from Duma'; a decree dissolving it 'because counterrevolutionary bourgeois influenced and not acknowledging result of October revolution'; his advice to Allied chiefs 'to take no action concerning Assembly'; 'Social Revolutionists had decided majority in Assembly'"
+    does_not_show: "how long the Assembly sat or who cleared it; 'Duma' is the Ambassador's word for the building"
+
+  - id: src-frus-poole-19180915
+    tier: A
+    kind: report
+    author: DeWitt C. Poole, Consul at Moscow, to the Secretary of State
+    title: "Telegram 7, Petrograd, September 15, 1918 (File No. 861.00/2789)"
+    container: "Papers Relating to the Foreign Relations of the United States, 1918, Russia, vol. I, document 630"
+    publisher: Office of the Historian, U.S. Department of State
+    place: Washington
+    year: 1918
+    edition: "FRUS as the Office of the Historian serves it; received September 26"
+    volume: "I"
+    document_number: "861.00/2789"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://history.state.gov/historicaldocuments/frus1918Russiav01/d630"}
+    access:
+      free_copy: "https://history.state.gov/historicaldocuments/frus1918Russiav01/d630"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Historical Documents - Office of the Historian"
+    language: en
+    region_of_authorship: americas
+    producer: us-state-department
+    position: null
+    rights: official
+    perspective: [western, white]
+    shows: "a 'cold-blooded terror' in Petrograd; 'unknown numbers are shot daily at Kronstadt alone'; 'Unknown number, reported 1,700, mostly former officers, are held as hostages for lives of commissars'; 'Population utterly cowed'"
+    does_not_show: "any count of the executed (Poole says the numbers are unknown); the Consul's own sources"
+
+  - id: src-frus-aidememoire-19180717
+    tier: A
+    kind: primary-document
+    author: The Secretary of State to the Allied Ambassadors
+    title: "Aide-Mémoire, Washington, July 17, 1918 (File No. 861.00/3054b)"
+    container: "Papers Relating to the Foreign Relations of the United States, 1918, Russia, vol. II, document 345"
+    publisher: Office of the Historian, U.S. Department of State
+    place: Washington
+    year: 1918
+    edition: "FRUS as the Office of the Historian serves it"
+    volume: "II"
+    document_number: "861.00/3054b"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://history.state.gov/historicaldocuments/frus1918Russiav02/d345"}
+    access:
+      free_copy: "https://history.state.gov/historicaldocuments/frus1918Russiav02/d345"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Historical Documents - Office of the Historian"
+    language: en
+    region_of_authorship: americas
+    producer: us-state-department
+    position: null
+    rights: official
+    perspective: [western]
+    shows: "the United States' stated judgment that 'military intervention there would add to the present sad confusion in Russia rather than cure it', and would be 'merely a method of making use of Russia, not a method of serving her'; military action admissible 'only to help the Czecho-Slovaks', to steady Russian self-defense, and to 'guard military stores'"
+    does_not_show: "troop numbers, the landings themselves, or what American troops did once in Russia"
+
+  # ----------------------------------------------------------- Tier B: witnesses and historians
+  - id: src-reed-1919
+    tier: B
+    kind: monograph
+    author: John Reed
+    title: "Ten Days That Shook the World"
+    container: null
+    publisher: Boni and Liveright
+    place: New York
+    year: 1919
+    edition: "Project Gutenberg eBook #3076 (released February 1, 2002)"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.gutenberg.org/ebooks/3076"}
+    access:
+      free_copy: "https://www.gutenberg.org/cache/epub/3076/pg3076-images.html"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "The Project Gutenberg eBook of Ten Days That Shook the World, by John Reed"
+    language: en
+    region_of_authorship: americas
+    producer: press
+    position: null
+    rights: public
+    perspective: [bolshevik, western]
+    shows: "an American eyewitness's rendering, in his own English, of Lenin at the Congress: 'We shall now proceed to construct the Socialist order!'; and of Trotsky to the departing delegates: 'They are just so much refuse which will be swept into the garbage-heap of history!'"
+    does_not_show: "a transcript: Reed renders Russian speech into English as he heard or was told it; the words 'dustbin of history'"
+
+  - id: src-trotsky-eastman-1932
+    tier: B
+    kind: monograph
+    author: Leon Trotsky, translated by Max Eastman
+    title: "The History of the Russian Revolution, vol. I, ch. 7 'Five Days (February 23-27, 1917)'"
+    container: null
+    publisher: Marxists Internet Archive
+    place: null
+    year: 1930
+    edition: "Max Eastman's translation (1932), as the Marxists Internet Archive prints it"
+    volume: "I"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.marxists.org/archive/trotsky/1930/hrr/ch07.htm"}
+    access:
+      free_copy: "https://www.marxists.org/archive/trotsky/1930/hrr/ch07.htm"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Leon Trotsky: The History of the Russian Revolution (1.7 Five Days)"
+    language: en
+    region_of_authorship: europe
+    producer: trotsky
+    position: null
+    rights: copyright
+    perspective: [bolshevik, peasant]
+    translation: "published translation, Max Eastman, 1932 (the Archive's index)"
+    shows: "'The revolution does not choose its paths: it made its first steps toward victory under the belly of a Cossack's horse'; February 23 'begun from below ... by the most oppressed and downtrodden part of the proletariat – the women textile workers'; 'About 90,000 workers, men and women, were on strike that day'; women at the municipal duma 'demanding bread', banners showing 'the workers wanted bread, but neither autocracy nor war'"
+    does_not_show: "the 'one hundred thousand by afternoon' of the YAML; Trotsky's sources for the 90,000 in the passage held (he cites Kayurov's recollection and the secret police)"
+
+  - id: src-radkey-1950
+    tier: B
+    kind: monograph
+    author: Oliver Henry Radkey
+    title: "The Election to the Russian Constituent Assembly of 1917"
+    container: "Harvard Historical Monographs"
+    publisher: Harvard University Press
+    place: Cambridge, Massachusetts
+    year: 1950
+    edition: "the Digital Library of India copy, read from the Internet Archive scan's text layer"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "dli.ernet.504284", hathitrust: null, url: "https://archive.org/details/dli.ernet.504284"}
+    access:
+      free_copy: "https://archive.org/download/dli.ernet.504284/504284-The%20Election%20To%20The%20Russian%20Constituent%20Assembly%20Of%201917_djvu.txt"
+      verified_at: 2026-10-09
+      verified_by: archive-item-fetch
+      verified_title: "The Election To The Russian Constituent Assembly Of 1917"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+    perspective: [academic, white]
+    shows: "Radkey's table 'The Vote by Parties for the Whole Country' in three columns (Sviatitski, AOR, Present Study): SR 16,509,756 / 17,490,837 / 15,848,004; Bolshevik 9,023,963 / 9,562,358 / 9,844,637; Menshevik 668,064 / 1,248,958 / 1,364,826; totals 36,256,960 / not given / 41,686,876 (the layer glues a note mark: '41,686,8768'); 'a grand total of nearly 42,000,000'"
+    does_not_show: "seats in the passages held (his seat table is unreadable in the text layer); percentages for the whole country"
+
+# Each producer's figure, its method and its population, as the held extracts give them.
+# NOT averaged, NOT reconciled, and no Void estimate. Read with the extract named.
+election_returns:
+  - producer: Svyatitsky 1918 (src-svyatitsky-1918.secsr, secbolsheviks)
+    figure: "SRs 20.893.734 of 36.257.960 (58%); Bolsheviks 9.023.963 (25%, 'or 1/.' as the layer prints the fraction)"
+    counts: "votes, 54 of 79 constituencies (Lenin's reading of the same article, src-lenin-ca-elections-1919.secsource); the SR total includes the SRs of other nations and separate right and left SR groups"
+    method: "returns as published by constituency, compiled by an SR statistician in 1918"
+  - producer: Lenin 1919, reading Svyatitsky (src-lenin-ca-elections-1919.secreturns, secbolsheviks)
+    figure: "36,262,560 votes in all; Russian SRs 16.5 million, 20.9 million or 58 per cent with SRs of other nations; Bolsheviks 9,023,963"
+    counts: "the same 54 constituencies; Lenin re-adds Svyatitsky's party figures and gets 36,262,560 against Svyatitsky's 36,257,960"
+    method: "Lenin's arithmetic on Svyatitsky's tables"
+  - producer: Radkey 1950, 'Sviatitski' column (src-radkey-1950.p16, p17)
+    figure: "total 36,256,960; SR 16,509,756; Bolshevik 9,023,963"
+    counts: "Radkey's transcription of Svyatitsky; his total differs from both Svyatitsky's printed 36.257.960 and Lenin's 36,262,560"
+    method: "as Radkey prints it"
+  - producer: Radkey 1950, 'AOR' column (src-radkey-1950.p16)
+    figure: "SR 17,490,837; Bolshevik 9,562,358; total not given"
+    counts: "a Soviet compilation Radkey cites as AOR"
+    method: "at second hand in Radkey"
+  - producer: Radkey 1950, 'Present Study' (src-radkey-1950.p16, p17, p18)
+    figure: "SR 15,848,004; Bolshevik 9,844,637; Menshevik 1,364,826; total 41,686,876 ('a grand total of nearly 42,000,000')"
+    counts: "the whole country as far as returns survive, by Radkey's own reconstruction"
+    method: "'Much more complete returns are used in the present study' (Radkey, p. 16 note); the SR figure excludes the separate Ukrainian SR lists"
+  - producer: the event YAML and the live script (not a held source)
+    figure: "SRs 370 of 707 seats, Bolsheviks 168; Bolsheviks 24 per cent, SRs 40"
+    counts: "as written"
+    method: "no held source carries these seats or percentages. Svyatitsky gives 25% and 58% on his constituencies and SR definition; Radkey gives counts, not these shares"
+
+death_toll_ranges:
+  - producer: Latsis 1921, for the Cheka (src-latsis-1921.p9)
+    figure: "22 shot in the first half of 1918; over 6,000 in the second half; 12,733 in all three years (page image; the text layer reads '12. 183')"
+    counts: "people shot by the Extraordinary Commissions 'по всей России', 1918 to 1920"
+    method: "the Cheka's own statistics as its senior officer publishes them, to rebut the belief in 'tens and hundreds of thousands' of deaths; method not stated"
+  - producer: Poole, U.S. Consul at Moscow, 15 September 1918 (src-frus-poole-19180915.whole)
+    figure: "'unknown numbers are shot daily at Kronstadt alone'; 'reported 1,700, mostly former officers' held as hostages"
+    counts: "Petrograd and Kronstadt in September 1918"
+    method: "a diplomat's telegram; 'reported', 'unknown'"
+  - producer: the event YAML and the live script (not a held source)
+    figure: "civil war '7-9 million' / '~9 million' dead; 50,000 Jews killed in Denikin's pogroms; 1.5 to 2 million émigrés; 1.8 million soldiers killed, 2.5 million wounded"
+    counts: "as written"
+    method: "no held source carries any of these figures"
+
+positions: []
+contested: []
+exhibits: []
+analyses: []
+
+# ------------------------------------------------------------------ gaps
+# RULE B: a source the free record could not reach, or a claim it could not carry, is
+# published here by name, with what was tried.
+gaps:
+  - entry: src-khabalov-1917
+    what: "The Tsar's telegram as the event YAML (primary_source_excerpts, dated February 25, 1917, to General Khabalov) and the live script's DOCUMENT read give it: 'I order that the disorders in the capital shall be ended tomorrow.' The live script adds 'The telegram survives, in the Tsar's own words'"
+    tried: ["https://archive.org/download/padenietsarskogorezhimat1doprosyanh16/padenietsarskogorezhimat1doprosyanh16_djvu.txt", "https://archive.org/download/documentsofrussi027937mbp/documentsofrussi027937mbp_djvu.txt"]
+    status: "The only held text is Khabalov's RECITAL of the telegram under questioning in 1917: «Повелеваю завтра же прекратить в столице беспорядки, недопустимые в тяжелое время войны с Германией и Австрией. Николай». The YAML's English drops the clause 'impermissible in the grave time of war with Germany and Austria'. Khabalov, asked where the telegram is, says he passed it to the chief of staff and does not remember whether it came back. Golder's sourcebook was searched and carries no English of it. No English rendering is held, deliberately: any faithful English would sit within a few words of the YAML's truncated excerpt and fail tests/test_history_quote_ledger.py, and this task may append to the YAML but not alter it. The YAML excerpt is unpinned and withdrawn; 'survives, in the Tsar's own words' is not carried by any held source"
+  - entry: src-reed-1919
+    what: "Trotsky's words to the departing delegates as the event YAML (primary_source_excerpts, dated October 25, 1917) and the live script give them: 'Go where you belong — into the dustbin of history.'"
+    tried: ["https://www.gutenberg.org/cache/epub/3076/pg3076-images.html", "https://www.marxists.org/archive/trotsky/1930/hrr/ch47.htm"]
+    status: "Reed, an eyewitness, renders it 'They are just so much refuse which will be swept into the garbage-heap of history!' (held, src-reed-1919.sectrotsky). Trotsky's own History, in Eastman's translation (ch. 47, fetched and deliberately NOT held), quotes himself: 'Go where you belong from now on – into the rubbish-can of history!'. Neither is 'dustbin'. Eastman's wording is not held because it would sit within a few words of the YAML's divergent excerpt and fail tests/test_history_quote_ledger.py; Reed's is far enough from it to be held. The YAML excerpt is unpinned and withdrawn"
+  - entry: src-nicholas-diary-ru
+    what: "Nicholas's diary, 'All around me are betrayal, cowardice, and deceit.' (event YAML White notable quote; the live script's DOCUMENT read, dated March 2, 1917)"
+    tried: ["https://archive.org/download/documentsofrussi027937mbp/documentsofrussi027937mbp_djvu.txt", "https://archive.org/download/in.ernet.dli.2015.88417/2015.88417.Documents-Of-Russian-History-1914-1917_djvu.txt", "https://archive.org/download/documents-of-russian-history-1914-1917/Documents%20of%20Russian%20History%201914-1917_djvu.txt"]
+    status: "Golder prints an English of the entry (under March 15, New Style), but its last line is unreadable in all three Internet Archive copies' OCR layers (the clearest, the Digital Library of India copy, reads 'All around me^tbere' is treachery, cowardice, 'and d^ct^'); not held. The Russian is held from the Presidential Library's article, with a Void translation ('All around, treason and cowardice, and deceit'). The YAML's English is not carried by any held text; withdrawn as a quotation"
+  - what: "Lenin, 'History will not forgive us if we do not assume power now.' (event YAML Bolshevik notable quote, context 'Letter to the Bolshevik Central Committee, October 24, 1917'; read by the live script)"
+    tried: ["https://www.marxists.org/archive/lenin/works/1917/sep/14.htm", "https://www.marxists.org/archive/lenin/works/1917/oct/24.htm"]
+    status: "HELD verbatim, but from the letter of September 12-14, 1917 (src-lenin-19170914.secforgive), not October 24. The October 24 letter says 'History will not forgive revolutionaries for procrastinating when they could be victorious today' (src-lenin-19171024.secforgive). The YAML's date is wrong"
+  - what: "Lenin, 'There are decades where nothing happens; and there are weeks where decades happen.' (event YAML notable quote, 'Widely attributed, precise source disputed')"
+    tried: []
+    status: "not sought; no document held. Unverified and withdrawn"
+  - what: "Patriarch Tikhon's pastoral letter of 1919 on the sins of the White armies (event YAML White notable quote; read by the live script)"
+    tried: []
+    status: "not found in any source fetched; no document held. Unverified and withdrawn. Do not read"
+  - what: "Orlando Figes, A People's Tragedy (1996): 'The tragedy of the Russian Revolution was that the Bolsheviks were the only party willing to pick up power from the gutter, and they picked it up with dirty hands.' (event YAML academic notable quote, its context marked '(paraphrased from his argument)'; read by the live script in the document voice; H11_KNOWN in pipeline/history/script_format.py)"
+    tried: ["https://archive.org/advancedsearch.php?q=creator%3A%28figes%29"]
+    status: "A PARAPHRASE by the YAML's own account, so it may be narrated as a paraphrase and never read as his words. A People's Tragedy has no free copy found (the Internet Archive search lists no copy of it); no verbatim alternative is held. Gap"
+  - what: "Ronald Grigor Suny, The Soviet Experiment (1998), 'The soviets of 1917 were the most democratic institutions ...' (event YAML notable quote, '(paraphrased)'); Steve Smith, Red Petrograd (1983); Aaron Retish (2008); Lars Lih (1990); Figes, Peasant Russia, Civil War (1989); Richard Pipes (1990, 1993); George Kennan (1956, 1958)"
+    tried: []
+    status: "copyrighted; not sought in free copies. No figure or characterisation the YAML draws from them is held (the 250,000 metalworkers, 2.4 million, the stages of radicalisation, the six individuals Figes follows). Paraphrases only, attributed as the YAML's"
+  - what: "Churchill's 'We must strangle Bolshevism in its cradle' (YAML Western notable quote; the live script's DOCUMENT-voice read, introduced as what Churchill 'wrote afterward'); Wilson's private correspondence with House, 1918"
+    tried: []
+    status: "not sought; no document held. Unverified and withdrawn. The live script's 'wrote afterward' and the YAML's 'advocating Allied intervention, 1919' disagree with each other about what the words are"
+  - what: "'Give us bread! Our children are starving!' (YAML Peasant notable quote, read by the live script in a woman's voice) and the peasant saying 'The land belongs to no one ...'"
+    tried: ["https://www.marxists.org/archive/trotsky/1930/hrr/ch07.htm"]
+    status: "neither held. Trotsky, at second hand, has women at the municipal duma 'demanding bread' and banners showing 'the workers wanted bread, but neither autocracy nor war' (src-trotsky-eastman-1932.secbread); no slogan text. Withdrawn"
+  - what: "Russian originals at Russian state archive and university hosts: projects.rusarchives.ru (the abdication act and the Decree on Peace), romanovy.rusarchives.ru, raritety.rusarchives.ru, www.hist.msu.ru (the decrees and the manifesto), doc.histrf.ru"
+    tried: ["https://projects.rusarchives.ru/statehood/07-12-akt-otrechenie-nikolay-ii.shtml", "https://projects.rusarchives.ru/statehood/08-05-dekret-o-mire-1917.shtml", "https://romanovy.rusarchives.ru/nikolay-ii/akt-otrecheniya-imperatora-nikolaya-ii-ot-prestola", "https://www.hist.msu.ru/ER/Etext/DEKRET/o_mire.htm", "https://www.hist.msu.ru/ER/Etext/03_17.htm", "https://doc.histrf.ru/20/akt-otrecheniya-ot-prestola-imperatora-nikolaya-ii/"]
+    status: "every connection timed out from this container (the hosts did not answer on 443). The Russian is held instead from the Presidential Library (an excerpted quotation), istmat.org (the 1942 Sobranie uzakonenii), the Marxists Internet Archive and rusempire.ru (no printed source named); the enacted Russian decree dissolving the Constituent Assembly is not held, only Lenin's draft in English"
+  - what: "Constituent Assembly seats (YAML: SRs 370 of 707, Bolsheviks 168) and its single sitting ('12 hours', 'Red Guards cleared the hall'; the live script CLOSE)"
+    tried: ["https://archive.org/download/dli.ernet.504284/504284-The%20Election%20To%20The%20Russian%20Constituent%20Assembly%20Of%201917_djvu.txt"]
+    status: "Radkey's seat table is unreadable in the text layer and was not extracted. Svyatitsky gives only the SRs' 338 deputies (299 central, 39 left) in the passage held. Francis reports the Assembly 'adjourned at 6 p.m. yesterday' (January 19, New Style) and was 'excluded'; no held text gives its length or a clearing by Red Guards"
+  - what: "S. P. Melgunov, 'Red Terror' in Russia 1918-1923 (Berlin, 1924), in English"
+    tried: ["https://archive.org/download/RedTerrorInRussia1918-1923/S.P.Melgunov_Red_Terror_In_Russia_1918-1923_En_djvu.txt", "https://archive.org/download/melgunov-s-p-red-terror-in-russia-1918-1923-1924/Melgunov,_S_P_%E2%80%9CRed_Terror%E2%80%9D_in_Russia_1918%E2%80%931923_1924_djvu.txt"]
+    status: "both Internet Archive items are one modern English translation whose translator is unnamed and whose translator's preface includes sections headed 'Holocaust or Not?' and 'Was Nuremberg a Fair Trial?'. Not held: its provenance cannot be stated. The Russian original was not sought. White Terror figures: no source sought or held"
+  - what: "The live script's and the YAML's narrative figures: 100,000 strikers by afternoon of February 23 (Trotsky: about 90,000, src-trotsky-eastman-1932.secfrombelow), about 40 demonstrators killed on Nevsky, the Volynsky Regiment and 70,000 soldiers in 24 hours, the routine-correspondence pen, 24,000 Bolsheviks in February and 200,000 by August, the German General Staff's sealed train, Kamenev and Zinoviev's dissent, 40,000 rifles, the June offensive's 200,000 casualties, the Aurora at 9:40, the Malachite Room at 2:10, Kerensky's car from the American Embassy, 3.6 million industrial workers, the Putilov Works' 30,000, bread at 12 and 32 kopecks, 15 million mobilised, desertion figures, Brest-Litovsk's area, population, farmland, coal and iron and the 50 divisions, the intervention's 40,000 / 72,000 / 13,000 troops and 235 American dead, the fifth-largest economy, Stolypin, the Trans-Siberian, the Romanov bodies, acid and the 1991 discovery, Kronstadt crossed on the ice by Trotsky's forces, the staged 1920 film and 'fewer than twenty casualties'"
+    tried: []
+    status: "none is carried by any document held in this ledger; each is the YAML's statement only. The brief lists them as not to be said as fact until held"
+
+# No sound recording was sought for this ledger (optional; a Russian-language speech
+# recording would need its own transcript extract and ASR check). Nothing to admit.
+recordings: []

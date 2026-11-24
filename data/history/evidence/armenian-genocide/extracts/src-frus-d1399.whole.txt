@@ -1,0 +1,7 @@
+source: src-frus-d1399
+locator: whole
+url: https://history.state.gov/historicaldocuments/frus1915Supp/d1399
+read: 2026-09-25
+note: the document as the Office of the Historian's page prints it, page-break markers removed, footnote text kept at the end
+
+File No. 867.4016/70 The Ambassador in Turkey ( Morgentau ) to the Secretary of State [Telegram] Constantinople , June 18, 1915, 6 p. m. [ Received June 21, 8.30 a. m ] 778. Your 715 communicated on June 3 to the Grand Vizier who expressed regret at being held personally responsible and resentment at attempted interference by foreign governments with the sovereign rights of the Turkish Government over their Armenian subjects. Meanwhile persecution against Armenians increasing in severity. Three prominent deputies, Zjrabvart, Brandie, Cherajian, have been arrested and twenty Armenians have been hanged here on ostensible charge of separatist conspiracy. Further executions said to be impending. My unofficial efforts, though frequent and persistent, have resulted in occasionally mitigating the hardships but have failed to dissuade them [from] their course which they attempt to justify on the ground of military necessity. American Ambassador

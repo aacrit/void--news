@@ -1,0 +1,6 @@
+source: src-khakurel-2025
+locator: para6
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12205443/fullTextXML
+read: 2026-09-25
+
+During the 1918–1920 influenza pandemic, Alaska was a US territory. The territorial government of Alaska was forewarned about the risk for an influenza outbreak and implemented quarantine regulations to prevent the introduction of the disease (11). The territorial governor ordered all communities to establish quarantines and to create cordon sanitaire (protective buffer zones), by limiting travel at trailheads and along rivers (12–15). A previous report showed that communities and residents adopted different community-level NPIs to control the spread of influenza (8). Those interventions included travel restrictions, quarantine of travelers, isolation, prohibition of public gatherings and native festivals, fumigation of public places, and school closures. However, implementing NPIs did not prevent introduction of influenza into Alaska (8). The 1918–1920 influenza pandemic killed at least 50 million persons worldwide, including 675,000 persons in the United States (12). In Alaska, the average influenza mortality rate ranged from 1% to 38% at the regional level, and some local communities reported mortality rates of >90% (8,16).

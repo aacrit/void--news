@@ -1,0 +1,8 @@
+source: src-prc-embassy-2014
+locator: secmassacre
+url: https://us.china-embassy.gov.cn/eng/sgxw/201402/t20140228_4409430.htm
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+note: section II of the newsletter
+
+The Nanjing Massacre is a most infamous atrocity of mass murder committed by Japanese militarists in Nanjing. The horrific massacre began on December 13, 1937, the day that Japan invaded and occupied Nanjing, and lasted more than 40 days. Over 300,000 people were slaughtered, more than 120 times that suffered by the United States during Japan's attack on Pearl Harbor (2402 deaths) and more than 100 times that of the 9/11 terrorist attack (about 3000 deaths). The massacre was a flagrant violation of international laws, and those responsible for the atrocity were tried and convicted by the post-WWII International Military Tribunal for the Far East and the Nanjing War Crimes Tribunal.

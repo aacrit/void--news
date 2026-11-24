@@ -1,0 +1,7 @@
+source: src-us-dos-briefing-19940610
+locator: secobligations
+url: https://web.archive.org/web/20000126075448/http://dosfan.lib.uic.edu:80/ERC/briefing/daily_briefings/1994/9406/940610db.html
+read: 2026-10-07
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+
+Q Christine, I've noticed the wording from yesterday to today has changed somewhat. Yesterday it was "acts of genocide may have occurred," and now you're saying, "We believe they're likely to occur." Has there been a change from yesterday to today on our view of that situation? MS. SHELLY: I don't know if there has been a change in our view. This is after careful examination by a lot of those who are involved in very careful tracking of this, including also the lawyers, because there are obligations which arise in connection with the use of the term.

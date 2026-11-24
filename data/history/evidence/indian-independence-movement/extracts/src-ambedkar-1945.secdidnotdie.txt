@@ -1,0 +1,7 @@
+source: src-ambedkar-1945
+locator: secdidnotdie
+url: https://archive.org/download/in.ernet.dli.2015.278459/2015.278459.What-Congress_djvu.txt
+read: 2026-10-09
+note: the text is the scan's OCR layer (archive.org djvu.txt), whitespace collapsed; line-end hyphens and glyph errors kept as printed
+
+Suffice it to say that although Mr. Gandhi declared a fast unto death, he did not want to die. He wanted very much to live.

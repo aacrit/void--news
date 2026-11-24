@@ -1,0 +1,87 @@
+{
+ "collected_at": "2026-10-19T15:53:49Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 168,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.jpost.com/influencers-26/50jews-26/article-908123",
+      "title": "No. 2: Benjamin Netanyahu: Shaping Israel’s politics and global image for a generation",
+      "published": "Thu, 10 Sep 2026 18:30:37 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/israel-politics/2026-10-19/ty-article/.premium/confidant-of-israeli-president-who-threatened-him-over-netanyahu-pardon-dies/000001a1-50be-dcda-abbf-74ff29cf0000",
+      "title": "Confidant of Israel's President Herzog who threatened him over Netanyahu pardon dies at 76",
+      "published": "Mon, 19 Oct 2026 05:41:05 +0300"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/classified-turkish-intelligence-operation-in-moldova-comes-back-under-judicial-scrutiny/",
+      "title": "Classified Turkish intelligence operation in Moldova comes back under judicial scrutiny",
+      "published": "Tue, 06 Oct 2026 22:12:19 +0000"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/erdogan-calls-for-grand-consensus-amid-terror-free-turkiye-success",
+      "title": "Erdoğan calls for ‘grand consensus’ amid terror-free Türkiye success",
+      "published": "Thu, 01 Oct 2026 14:09:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/whatever-our-enemies-do-erdogans-son-rallies-diaspora-network-in-europe-as-german-intelligence-warns-of-ankaras-spying-on-dissidents/",
+      "title": "Erdogan’s son vows to stand against enemies at diaspora rally in Germany",
+      "published": "Mon, 12 Oct 2026 22:01:54 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 316,
+    "left": 10
+   }
+  }
+ }
+}

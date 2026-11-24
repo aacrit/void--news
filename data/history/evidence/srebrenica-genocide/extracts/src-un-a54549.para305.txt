@@ -1,0 +1,6 @@
+source: src-un-a54549
+locator: para305
+url: https://documents.un.org/doc/undoc/gen/n99/348/76/pdf/n9934876.pdf
+read: 2026-09-24
+
+305. Eighteen NATO aircraft had by now made their way to Srebrenica. Six of them were detailed to attack targets, with the remainder largely designated for the suppression of enemy air defence systems, if required. At approximately 1440 hours, two NATO aircraft dropped a total of two bombs on what were thought to be Serb vehicles advancing towards the town from the south. It was not clear at the time what damage had been done, if any. NATO aircraft also overflew the southern and north-western portions of the enclave, respectively, but were unable to locate targets.

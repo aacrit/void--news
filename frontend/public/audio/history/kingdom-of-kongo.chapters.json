@@ -1,0 +1,82 @@
+{
+ "version": "1.2.0",
+ "title": "The Kingdom of Kongo",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 45.095
+  },
+  {
+   "startTime": 45.095,
+   "title": "Mbanza Kongo, 1491",
+   "endTime": 109.21
+  },
+  {
+   "startTime": 109.21,
+   "title": "Mbanza Kongo, 1509",
+   "endTime": 155.149
+  },
+  {
+   "startTime": 155.149,
+   "title": "Mbanza Kongo, 1526",
+   "endTime": 241.027
+  },
+  {
+   "startTime": 241.027,
+   "title": "Sao Tome and the Kongolese provinces, 1530",
+   "endTime": 270.373
+  },
+  {
+   "startTime": 270.373,
+   "title": "The Ulanga River, October 29, 1665",
+   "endTime": 320.641
+  },
+  {
+   "startTime": 320.641,
+   "title": "Five accounts",
+   "endTime": 327.406
+  },
+  {
+   "startTime": 327.406,
+   "title": "Kongolese Royal / Manikongo",
+   "endTime": 398.948
+  },
+  {
+   "startTime": 398.948,
+   "title": "Portuguese Colonial / Commercial",
+   "endTime": 471.166
+  },
+  {
+   "startTime": 471.166,
+   "title": "Catholic Missionary / Theological",
+   "endTime": 561.83
+  },
+  {
+   "startTime": 561.83,
+   "title": "Pan-African / Diasporic",
+   "endTime": 630.515
+  },
+  {
+   "startTime": 630.515,
+   "title": "Revisionist / Thornton-Heywood School",
+   "endTime": 715.618
+  },
+  {
+   "startTime": 715.618,
+   "title": "What each one leaves out",
+   "endTime": 812.976
+  },
+  {
+   "startTime": 812.976,
+   "title": "Legacy",
+   "endTime": 847.919
+  },
+  {
+   "startTime": 847.919,
+   "endTime": 861.019,
+   "title": "Also from Void News"
+  }
+ ]
+}

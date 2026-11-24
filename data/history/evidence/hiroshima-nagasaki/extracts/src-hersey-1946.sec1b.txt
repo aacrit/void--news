@@ -1,0 +1,7 @@
+source: src-hersey-1946
+locator: sec1b
+url: https://www.newyorker.com/magazine/1946/08/31/hiroshima
+read: 2026-10-05
+note: the sentence also appears in the page's metadata; this is the one in the article body
+
+A hundred thousand people were killed by the atomic bomb, and these six were among the survivors. They still wonder why they lived when so many others died. Each of them counts many small items of chance or volition—a step taken in time, a decision to go indoors, catching one streetcar instead of the next—that spared him. And now each knows that in the act of survival he lived a dozen lives and saw more death than he ever thought he would see. At the time, none of them knew anything.

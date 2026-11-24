@@ -1,0 +1,5 @@
+rendering: void-translation
+of: src-loi-30-floreal-anx.art1
+names: Amiens=Amiens; Cap de Bonne-Espérance=Cape of Good Hope
+
+Art. I. In the colonies restored to France in execution of the treaty of Amiens of 6 germinal an X, slavery shall be maintained in conformity with the laws and regulations in force before 1789. II. The same shall apply in the other French colonies beyond the Cape of Good Hope.

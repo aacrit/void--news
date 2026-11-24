@@ -1,0 +1,8 @@
+source: src-cdm-chronicle-198912
+locator: sec1206
+url: https://www.chronik-der-mauer.de/en/chronicle/_year1989/_month12/?month=12&year=1989&moc=1
+read: 2026-10-09
+note: the entry for 6 December
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+6 December 1989 Egon Krenz resigns as Chairman of the State Council and the National Defence Council.

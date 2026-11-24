@@ -1,0 +1,8 @@
+source: src-cwihp-doc6-19891109
+locator: secrelease
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_12-13.pdf
+read: 2026-10-09
+note: p. 155, the first of the two places the Bulletin prints this sentence
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+3. The attached press release explaining the temporary transition regulation will be issued on 10 November.

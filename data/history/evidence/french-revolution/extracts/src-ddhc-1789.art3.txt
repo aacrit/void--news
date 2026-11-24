@@ -1,0 +1,7 @@
+source: src-ddhc-1789
+locator: art3
+url: https://www.conseil-constitutionnel.fr/le-bloc-de-constitutionnalite/declaration-des-droits-de-l-homme-et-du-citoyen-de-1789
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+
+Le principe de toute souveraineté réside essentiellement dans la nation. Nul corps, nul individu ne peut exercer d'autorité qui n'en émane expressément.

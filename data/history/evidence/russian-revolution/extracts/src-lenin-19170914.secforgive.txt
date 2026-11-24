@@ -1,0 +1,7 @@
+source: src-lenin-19170914
+locator: secforgive
+url: https://www.marxists.org/archive/lenin/works/1917/sep/14.htm
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+
+It would be naive to wait for a "formal" majority for the Bolsheviks. No revolution ever waits for that. Kerensky and Co. are not waiting either, and are preparing to surrender Petrograd. It is the wretched waverings of the Democratic Conference that are bound to exhaust the patience of the workers of Petrograd and Moscow! History will not forgive us if we do not assume power now.

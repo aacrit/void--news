@@ -1,0 +1,7 @@
+source: src-lenin-19171024
+locator: secforgive
+url: https://www.marxists.org/archive/lenin/works/1917/oct/24.htm
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+
+History will not forgive revolutionaries for procrastinating when they could be victorious today (and they certainly will be victorious today), while they risk losing much tomorrow, in fact, they risk losing everything.

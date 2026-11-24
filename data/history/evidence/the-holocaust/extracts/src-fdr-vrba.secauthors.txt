@@ -1,0 +1,6 @@
+source: src-fdr-vrba
+locator: secauthors
+url: https://www.fdrlibrary.org/vrba-wetzler-report
+read: 2026-10-07
+
+Two Slovakian Jewish prisoners of Auschwitz-Birkenau, Rudolf Vrba and Alfred Wetzler, escaped the camp in April 1944. They co-wrote a report (in Slovak) in late April 1944 describing the geography and functioning of the camps, the daily lives of prisoners, numbers, origin, categories of prisoners and who was selected for “work” or death. It was translated into German and typed by Oscar Krasniansky and Gisela Steiner of the Slovak Jewish Council. The report’s authors hoped to prevent further deportations of Hungarian Jews to Auschwitz.

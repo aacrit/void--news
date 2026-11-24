@@ -1,0 +1,8 @@
+source: src-gust-19150617-en
+locator: para5
+url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs-en/1915-06-17-DE-003
+read: 2026-09-25
+note: paragraphs counted from the first line after the dateline of the document as the page prints it, enclosure headings included
+note: the translation is the online edition's own (sponsored by the Zoryan Institute), held here as the edition prints it, at most 150 words
+
+A few days later the Armenian Patriarch explained to the same official that the measures of the Porte were intended not only to make the Armenian people temporarily harmless, but to expel them from Turkey or rather to eradicate them altogether. Deportation is just as bad as massacring and it would not be surprising if the Armenians finally retaliated, even if they had no chance of succeeding, “like a tormented animal that turns against its tormentors.”

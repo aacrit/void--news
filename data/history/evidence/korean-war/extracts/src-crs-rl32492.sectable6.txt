@@ -1,0 +1,8 @@
+source: src-crs-rl32492
+locator: sectable6
+url: https://www.congress.gov/crs_external_products/RL/PDF/RL32492/RL32492.25.pdf
+read: 2026-10-09
+note: CRS report RL32492, version 25; the table's cells are read row by row from the text layer, so labels and figures are separated; the first figure row under 'Total' is 33,739 total hostile deaths, the second 36,574 in-theater and 54,246 total deaths
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Table 6. Korean War: Casualty Summary (as of August 29, 2018) Casualty Type Total Army Marine Air Force Corps Navy Killed in Action Died of Wounds Missing in Action—Declared Dead Captured—Declared Dead Total Hostile Deaths Missing—Presumed Dead Other Deaths Total Nonhostile Deaths Total In-Theater Deathsa Total Non-Theater Deaths Total Deaths Killed in Action (No Remains) Died of Wounds (No Remains) Missing in Action—Declared Dead (No Remains) Captured—Declared Dead (No Remains) Nonhostile Missing—Presumed Dead (No Remains) Nonhostile Other Deaths (No Remains) Total—No Remains Wounded—Not Mortal Number Serving Worldwideb Number Serving In-Theaterb 23,613 2,460 4,817 2,849 33,739 8 2,827 2,835 36,574 17,672 54,246 1,521 22 4,549 1,891 8 84 8,075 103,284 5,720,000 1,789,000

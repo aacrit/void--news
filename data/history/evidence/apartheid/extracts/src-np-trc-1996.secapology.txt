@@ -1,0 +1,7 @@
+source: src-np-trc-1996
+locator: secapology
+url: https://www.justice.gov.za/trc/hrvtrans/submit/np_truth.htm
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+
+I, and many other leading figures, have already publicly apologised for the pain and suffering caused by former policies of the National Party. This was accepted and publicly acknowledged by the Chairperson of the Commission, Archbishop Tutu. I reiterate these apologies today.

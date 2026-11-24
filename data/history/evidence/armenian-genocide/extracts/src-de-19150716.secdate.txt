@@ -1,0 +1,7 @@
+source: src-de-19150716
+locator: secdate
+url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs/1915-07-16-DE-003
+read: 2026-09-25
+note: the dateline of the document as the page prints it
+
+Pera, den 16. Juli 1915

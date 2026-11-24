@@ -1,0 +1,8 @@
+source: src-undp-lao-2009
+locator: secstatement
+url: https://files.acquia.undp.org/public/migration/la/UNDP_LA_Hazardous-Ground.pdf
+read: 2026-10-09
+note: the UNDP Lao PDR PDF, its text layer, line breaks folded to spaces; the report carries no printed date, and its own text dates the ratification of the Convention on Cluster Munitions to March 2009
+note: a statement the report prints with its attribution to the Vice Minister of Foreign Affairs
+
+“Laos has attached enormous importance, great interest and strong hope to the banning of cluster munitions: Great interest because Laos is the most heavily bombed country on Earth with more than two million tons of bombs dropped on its land and we do not want other peoples to experience the same pain and suffering as the Lao people have and continue to endure. Strong hope because Laos has a commitment for a full ban on cluster munitions that makes cluster munitions an illegal weapon so civilians will be protected and safe in the future.” Statement by H.E. Mr. Bounkeut Sangsomsak Vice Minister of Foreign Affairs, Lao PDR speaking at the Conference on Cluster Munitions, Dublin, 19-30 May 2008

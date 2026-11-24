@@ -1,0 +1,124 @@
+id: ebola-drc-congo-synonym-merge-2026-05-15
+name: "Africa CDC Ebola DRC + Congo (synonym merge — DRC=Congo, must merge)"
+failure_date: "2026-05-15"
+failure_kind: synonym-fragmentation
+articles:
+  - id: ebola-cnn
+    title: "A new Ebola outbreak is confirmed in a remote Congo province, with 65 deaths recorded - CNN"
+    summary: "A new Ebola outbreak is confirmed in a remote Congo province, with 65 deaths recordedCNN"
+    full_text: >
+      A new Ebola outbreak has been confirmed in a remote province of the Democratic
+      Republic of Congo, with 65 deaths recorded so far. Africa CDC said the outbreak
+      is centered in Ituri province. The Africa Centres for Disease Control and
+      Prevention announced the outbreak on May 15. Sixty-five people have died and
+      around 246 suspected cases have been identified, mainly in the Mongwalu and
+      Rwampara health zones. Health Minister Roger Kamba pledged a coordinated
+      response. Vaccination of frontline health workers will begin once Ervebo
+      doses arrive from the WHO emergency stockpile in Geneva. The outbreak is the
+      country's fifteenth since the virus was first identified near the Ebola River
+      in 1976. Past outbreaks in eastern DRC have been complicated by armed
+      conflict involving M23 rebels.
+    source: { slug: cnn, country: US, tier: us_major }
+    published_at: "2026-05-15T13:15Z"
+  - id: ebola-nyt
+    title: "Large Ebola Outbreak Is Declared in Congo"
+    summary: "Dozens of deaths and hundreds of infections are suspected, an African agency said. Health experts were alarmed that the outbreak hadn't been announced sooner."
+    full_text: >
+      Dozens of deaths and hundreds of infections are suspected in a large Ebola
+      outbreak declared in Congo, an African agency said Friday. Health experts
+      were alarmed that the outbreak hadn't been announced sooner. The Africa
+      Centres for Disease Control and Prevention said the outbreak in Ituri
+      province has caused 65 deaths and 246 suspected cases. The Ebola strain
+      has been preliminarily identified as Zaire ebolavirus. Médecins Sans
+      Frontières dispatched two emergency teams from its hub in Brussels. The
+      WHO has shipped doses of the Ervebo vaccine. The Bunia regional hospital
+      is now the central treatment unit. Health Minister Kamba briefed reporters
+      in Kinshasa. The outbreak is the fifteenth since the virus was discovered
+      in 1976.
+    source: { slug: nyt, country: US, tier: us_major }
+    published_at: "2026-05-15T15:55Z"
+  - id: ebola-mongabay
+    title: "At least 65 dead in latest Ebola outbreak in eastern DR Congo"
+    summary: "A new Ebola outbreak has been declared in the eastern Democratic Republic of the Congo, according to an announcement made by The Africa Centres for Disease Control and Prevention (Africa CDC) on May 15. Sixty-five people have died and around 246 suspected cases have been identified so far, mainly in the Mongwalu and Rwampara health zones."
+    full_text: >
+      A new Ebola outbreak has been declared in the eastern Democratic Republic of
+      the Congo, according to an announcement made by The Africa Centres for
+      Disease Control and Prevention (Africa CDC) on May 15. Sixty-five people
+      have died and around 246 suspected cases have been identified so far,
+      mainly in the Mongwalu and Rwampara health zones. Many of the dead are
+      health workers and family contacts. The Africa CDC director called for
+      "an immediate, well-resourced regional response." The DRC's environment
+      and health ministries are coordinating on bushmeat surveillance. The
+      outbreak is the fifteenth in the country's history. Past Ituri-province
+      outbreaks since 2018 have been complicated by displacement from M23
+      conflict.
+    source: { slug: mongabay, country: US, tier: independent }
+    published_at: "2026-05-15T16:11Z"
+  - id: ebola-euronews
+    title: "What we know about Congo's new Ebola outbreak"
+    summary: "Congo's new Ebola outbreak has caused 65 deaths and 246 suspected cases so far."
+    full_text: >
+      Africa's top public health authorities have confirmed a new Ebola outbreak
+      in Congo. The new outbreak has caused 65 deaths and 246 suspected cases,
+      the Africa Centres for Disease Control and Prevention said in a statement
+      on Friday. The outbreak is centered in Ituri province in the country's
+      east. Vaccination of frontline health workers will be a priority. Health
+      Minister Roger Kamba briefed reporters from Kinshasa, calling for
+      coordinated international support. The Ervebo vaccine has been shipped
+      from Geneva. Médecins Sans Frontières set up emergency treatment units.
+      The European Commission pledged emergency assistance. The outbreak is
+      the fifteenth in the country's history.
+    source: { slug: euronews, country: FR, tier: international }
+    published_at: "2026-05-15T14:05Z"
+  - id: ebola-courthouse-news
+    title: "A new Ebola outbreak is confirmed in a remote Congo province, with 65 deaths recorded"
+    summary: "The latest outbreak comes around five months after Congo's last Ebola outbreak was declared over after 43 deaths."
+    full_text: >
+      KINSHASA, Congo (AP) — Africa's top public health body on Friday confirmed
+      a new Ebola outbreak in Congo's remote Ituri province, with 246 suspected
+      cases and 65 deaths recorded so far. Uganda later reported one death in
+      an Ebola case it said was imported from neighboring Congo. The deaths
+      include three health workers. The Africa Centres for Disease Control and
+      Prevention said samples have tested positive for the Zaire strain. Health
+      Minister Roger Kamba briefed reporters in Kinshasa. The latest outbreak
+      comes around five months after Congo's last Ebola outbreak was declared
+      over after 43 deaths.
+    source: { slug: courthouse-news, country: US, tier: independent }
+    published_at: "2026-05-15T18:31Z"
+  - id: ebola-border-report
+    title: "New Ebola outbreak confirmed in remote Congo province; 65 deaths recorded"
+    summary: "The latest outbreak comes around five months after Congo's last Ebola outbreak was declared over after 43 deaths."
+    full_text: >
+      The latest outbreak comes around five months after Congo's last Ebola
+      outbreak was declared over after 43 deaths. Africa CDC said 65 people
+      have died and 246 are suspected of infection in Ituri province in
+      eastern Democratic Republic of Congo. The Ervebo vaccine has been
+      shipped from the WHO stockpile in Geneva. Health workers in Mongwalu
+      and Rwampara health zones are the primary vaccination targets. MSF
+      teams arrived from Brussels. The strain is Zaire ebolavirus. Health
+      Minister Roger Kamba pledged transparency to international partners.
+    source: { slug: border-report, country: US, tier: independent }
+    published_at: "2026-05-15T16:06Z"
+expectation:
+  type: should_merge
+  expected_member_ids: [ebola-cnn, ebola-nyt, ebola-mongabay, ebola-euronews, ebola-courthouse-news, ebola-border-report]
+  min_clusters: 1
+  max_clusters: 1
+  min_source_count: 5
+rationale: |
+  Production failure 2026-05-15: real Ebola outbreak in DR Congo's Ituri
+  province (65 deaths) was clustered into TWO separate clusters because
+  some sources used "Congo" and others used "DR Congo" / "Democratic
+  Republic of Congo" / "DRC" — the entity-overlap merge couldn't bridge
+  the gap because Phase 1 TF-IDF saw different vocabularies. Path A's
+  Phase 2.55 synonym-pair pass enumerates ("drc", "congo") and
+  ("drc", "democratic republic of congo") with a stemmed-title Jaccard
+  floor of 0.20 — must collapse all six articles into one cluster.
+
+  Real production article IDs (Supabase 2026-05-15):
+    - 9d92a7fc-3e3f-43ad-9450-ff3450ffe2f3 (CNN)
+    - d4bfb415-8c3d-41f9-9baa-39f4964dfa7f (NYT)
+    - a4a7d241-c963-410b-977a-97f2760dd05e (Mongabay)
+    - c77b4b22-207b-43af-b91c-8c0d0e530bad (Euronews)
+    - e0bd7bac-5374-4082-a44d-fb5d321a13d6 (Courthouse News — AP wire)
+    - ca88f02c-3d57-437a-b9e3-d34a6fb398bb (Border Report — AP wire)

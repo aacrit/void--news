@@ -1,0 +1,5 @@
+rendering: void-translation
+of: src-ferry-1885.secalger
+names: Jules Ferry=Jules Ferry; Afrique du Nord=North Africa; France=France; Alger=Algiers; Inde=India
+
+M. Jules Ferry. Can you deny, can anyone deny that there is more justice, more material and moral order, more equity, more social virtues in North Africa since France made its conquest? When we went to Algiers to destroy piracy and to secure the freedom of trade in the Mediterranean, were we doing the work of pirates, of conquerors, of devastators? Is it possible to deny that in India, and despite the painful episodes met with in the history of that conquest, there is today infinitely more justice, more light, more order, more public and private virtue since the English conquest than before?

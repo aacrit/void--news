@@ -1,0 +1,83 @@
+{
+ "collected_at": "2026-11-15T15:53:52Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 25,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16294031/Israel-kills-Hamas-commander.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Israel kills Hamas commander who helped mastermind October 7 attacks in targeted strike on Gaza camp",
+      "published": "Sun, 15 Nov 2026 14:35:47 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/world-news/samir-mahmoud-abu-younis-killed-37879324",
+      "title": "Top Hamas commander who oversaw October 7 massacre killed in Israeli air strike",
+      "published": "Sun, 15 Nov 2026 15:28:45 +0000"
+     }
+    },
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16293165/How-Hannah-Traitor-spied-young-daughters-hospital-bed-treated-cervical-cancer-Covid-lockdown.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "How Hannah the Traitor 'spied' on her young daughters... from her hospital bed while being treated for cervical cancer during the Covid lockdown",
+      "published": "Sun, 15 Nov 2026 00:36:40 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/3am/celebrity-news/celebrity-traitors-hannah-fry-hysterectomy-37879167",
+      "title": "Celebrity Traitors' Hannah Fry underwent hysterectomy after cervical cancer diagnosis",
+      "published": "Sun, 15 Nov 2026 14:39:19 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 156,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 23,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/crime-in-israel/article-914950",
+      "title": "Petah Tikva Mayor Rami Greenberg faces possible bribery charges over 2018 election funding",
+      "published": "Sun, 15 Nov 2026 14:39:03 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/israel-crime/2026-11-15/ty-article/.premium/israeli-mayor-to-face-bribery-charges-pending-hearing-prosecution-says/000001a1-de68-d59b-a1f3-defc14e00000",
+      "title": "Israeli mayor to face bribery charges pending hearing, prosecution says",
+      "published": "Sun, 15 Nov 2026 12:57:29 +0200"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [],
+   "error": "HTTPError: 429 Client Error: Too Many Requests for url: https://nordicmonitor.com/feed/"
+  }
+ }
+}

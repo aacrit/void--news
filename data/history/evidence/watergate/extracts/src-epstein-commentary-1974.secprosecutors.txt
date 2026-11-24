@@ -1,0 +1,7 @@
+source: src-epstein-commentary-1974
+locator: secprosecutors
+url: https://www.commentary.org/articles/edward-epstein-3/did-the-press-uncover-watergate/
+read: 2026-10-09
+note: Commentary's web text of the essay
+
+The prosecutors and the grand jury thus developed an airtight case against Liddy, Hunt, and the five burglars well in advance of, and without any assistance from, Woodward, Bernstein, or any other reporters. The case was presented to the grand jury and would certainly have been made public in the trial. At best, reporters, including Woodward and Bernstein, only leaked elements of the prosecutors' case to the public in advance of the trial.

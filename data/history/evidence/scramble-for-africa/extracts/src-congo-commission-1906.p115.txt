@@ -1,0 +1,27 @@
+source: src-congo-commission-1906
+locator: p115
+url: https://archive.org/download/congoreportofcom00cong/congoreportofcom00cong_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+note: the opening of the chapter on depopulation
+
+DEPOPULATION
+
+SEVERAL missionaries heard by the Commission reported the depopulation which they had
+verified in certain regions with which they were
+particularly familiar. It is evident that the Commission was not able itself to form a definite opinion regarding this statement. However, if the word
+of Stanley is accepted, it is certain that a large part
+of the population has disappeared, for going from
+Stanley Pool to New Antwerp and even further up,
+the banks of the river are almost deserted. It is
+easily realised that it was the river population which,
+being first reached by the requirements of the whites,
+had sought to avoid these prestations and fled to the
+French bank or to those parts of the territory where
+they thought the impost could not reach them.
+Sometimes the population was drained by the frequent enrollment of soldiers or of workmen ; such
+has been the fate of the villages immediately below
+New Antwerp. Their inhabitants have been scattered rather than destroyed. It is known how the
+Bangalas, who at the time of occupation formed a
+large part of the native portion of the constabulary
+and made up the entire crew of the marine, were

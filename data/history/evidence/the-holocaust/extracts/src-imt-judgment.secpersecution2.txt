@@ -1,0 +1,6 @@
+source: src-imt-judgment
+locator: secpersecution2
+url: https://avalon.law.yale.edu/imt/judwarcr.asp
+read: 2026-10-07
+
+With regard to Auschwitz, the Tribunal heard the evidence of Hoess, the Commandant of the camp from 1st May, 1940, to 1st December, 1943. He estimated that in the camp of Auschwitz alone in that time 2,500,000 persons were exterminated, and that a further 500,000 died from disease and starvation.

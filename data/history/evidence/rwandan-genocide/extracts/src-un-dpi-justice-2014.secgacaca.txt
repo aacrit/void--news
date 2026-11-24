@@ -1,0 +1,8 @@
+source: src-un-dpi-justice-2014
+locator: secgacaca
+url: https://www.un.org/en/preventgenocide/rwanda/assets/pdf/Backgrounder%20Justice%202014.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+note: the second and third paragraphs under 'The Gacaca court system'
+
+In the Gacaca system, communities at the local level elected judges to hear the trials of genocide suspects accused of all crimes except planning of genocide. The courts gave lower sentences if the person was repentant and sought reconciliation with the community. Often, confessing prisoners returned home without further penalty or received community service orders. More than 12,000 community-based courts tried more than 1.2 million cases throughout the country. The Gacaca trials also served to promote reconciliation by providing a means for victims to learn the truth about the death of their family members and relatives. They also gave perpetrators the opportunity to confess their crimes, show remorse and ask for forgiveness in front of their community. The Gacaca courts officially closed on 4 May 2012.

@@ -1,0 +1,7 @@
+source: src-gilmartin-2024
+locator: p85-86
+url: https://www.cambridge.org/core/services/aop-cambridge-core/content/view/7D95557A7DDB36ACC283C672F341B275/S2753271225100059a.pdf/div-class-title-nation-and-region-in-the-post-partition-remaking-of-the-indus-river-basin-div.pdf
+read: 2026-09-25
+note: pages 85 to 86; the footnote cue 9 is the text layer's
+
+This is not to say that Sir Cyril Radcliffe, who drew the line, paid no attention to water issues—far from it. Indeed, he saw water as the most important among the “other factors” (beyond religious majorities) that he was allowed to take into account in drawing the partition boundary.9

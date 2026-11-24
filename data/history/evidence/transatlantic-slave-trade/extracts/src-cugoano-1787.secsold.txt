@@ -1,0 +1,7 @@
+source: src-cugoano-1787
+locator: secsold
+url: https://docsouth.unc.edu/neh/cugoano/cugoano.html
+read: 2026-10-09
+note: the narrative's account of who sold him; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+But I must own, to the shame of my own countrymen, that I was first kidnapped and betrayed by some of my own complexion, who were the first cause of my exile, and slavery; but if there were no buyers there would be no sellers.

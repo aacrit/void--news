@@ -1,0 +1,7 @@
+source: src-dicke-2015
+locator: abstract
+url: https://pmc.ncbi.nlm.nih.gov/articles/PMC7313928/
+read: 2026-09-25
+note: the opening of the abstract, within the extract cap
+
+This study looks at public awareness and understanding of the Spanish flu in the United States between June 1918, when the flu became “Spanish,” and the end of September when the deadly second wave reached the majority of the country. Based on an extensive reading of local newspapers, it finds a near universal lack of preparation or panic or other signs of personal concern among those in the unaffected areas, despite extensive and potentially worrying coverage of the flu's progress. The normal reaction to news of the inexorable approach of a pandemic of uncertain virulence is anxiety and action. The Spanish flu produced neither in the uninfected areas for a month.

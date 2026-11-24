@@ -1,0 +1,8 @@
+source: src-sonthonax-17930829
+locator: art1
+url: https://archive.org/download/proclamationauno00sont/proclamationauno00sont_djvu.txt
+read: 2026-10-09
+note: the free copy is the scan's OCR text layer, held as the layer prints it (long s read as f and other misreadings included); line breaks collapsed to spaces, nothing else changed
+note: the article runs on to the next line of the scan, which the layer reads as '■pcfîes' (for 'postes'), and the layer then breaks off; the extract stops there
+
+La déclaration des droits de l'homme & du citoyen fera imprimée, pu- bliée & affi:hée par-tout où befoin fera , à la diligence des municipalités , dans les villes & bourgs, 6l des commandans militaires dans les camps & ■pcfîes

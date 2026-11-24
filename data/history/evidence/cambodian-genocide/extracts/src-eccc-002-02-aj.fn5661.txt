@@ -1,0 +1,6 @@
+source: src-eccc-002-02-aj
+locator: fn5661
+url: https://www.eccc.gov.kh/sites/default/files/documents/courtdoc/%5Bdate-in-tz%5D/F76_EN.pdf
+read: 2026-09-25
+
+5661 See Trial Judgment (E465), para. 297: By 2008, the Documentation Center of Cambodia (‘DC-Cam’) had identified an estimated 1.3 million human remains in 390 mass grave sites spread throughout Cambodia. Numerous estimates of the casualties that occurred as a result of the CPK’s policies and actions have been made. They range from 600,000 to three million. Experts accept estimates falling between 1.5 and two million excess deaths as the most probable. The Chamber recalls, however, its finding that the absence of relevant and reliable statistical data for the purposes of assessing a precise number of deaths attributable to the CPK leads to inherent uncertainty

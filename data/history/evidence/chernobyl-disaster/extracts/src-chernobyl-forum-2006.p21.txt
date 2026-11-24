@@ -1,0 +1,8 @@
+source: src-chernobyl-forum-2006
+locator: p21
+url: https://www.iaea.org/sites/default/files/chernobyl.pdf
+read: 2026-10-07
+note: printed page 21 (PDF page 19), on the psychological consequences, from the paragraph's third sentence. Five words ('benefits earmarked for evacuees and resi-') sit in a run of the text layer that is a shifted-glyph cipher; they are written here as the rendered page prints them (checked at 250 dpi). The paragraph's first two sentences are not held because they carry more of that run
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+This label, along with the extensive government benefits earmarked for evacuees and residents of the contaminated territories, had the effect of encouraging individuals to think of themselves fatalistically as invalids. It is known that people’s perceptions — even if false — can affect the way they feel and act. Thus, rather than perceiving themselves as “survivors,” many of those people have come to think of themselves as helpless, weak and lacking control over their future.

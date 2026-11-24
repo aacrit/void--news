@@ -1,0 +1,8 @@
+source: src-bt-wd-treuhand-2019
+locator: secseibel
+url: https://www.bundestag.de/resource/blob/654324/13300c4bd78c543053232e6d566fd9c0/WD-1-013-19-pdf-data.pdf
+read: 2026-10-09
+note: the paper's quotation of Wolfgang Seibel (2005); held at second hand
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+„Die enorme wirtschaftliche und soziale Umwälzung in Ostdeutschland nach der Währungsunion vom 1. Juli 1990 mit dem Verlust von einem Drittel der Arbeitsplätze barg ein soziales und politisches Konfliktpotenzial, das sich durchaus gewaltsam hätte entladen können. Die Ermordung des zweiten Präsidenten der Treuhandanstalt, Detlev Rohwedder, war im Frühjahr 1991 das entsprechende Menetekel.“

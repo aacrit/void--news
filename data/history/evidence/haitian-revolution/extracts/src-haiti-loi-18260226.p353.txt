@@ -1,0 +1,9 @@
+source: src-haiti-loi-18260226
+locator: p353
+url: https://archive.org/download/recueilgnral04hait/recueilgnral04hait_djvu.txt
+read: 2026-09-25
+note: No. 1003, page 353: the heading and the first recital; the layer prints 1003 as \ 003 and 150,000,000 as \ 50,000,000 in the heading and 150,000j000 in the recital
+note: the free copy is the scan's OCR text layer, held as the layer prints it, long s read as f and other misreadings included
+note: line-break hyphenation in the scan's text layer rejoined; nothing else changed
+
+N° \ 003. — Loiqui declare del te nationale, Vindemnité de \ 50,000,000 de francs accordée á la Franco, pour la reconnaissance de Vindépendance d'Ha'iti (1 ) , Port-au-Priiice, le 26 février 1826. La Chambre des Représentants des communes, Considérant qu'il a été consentí, en faveur de la France, une indemnité de 150,000j000 de francs pour la reconnaissance, par ce gouvernement, de rindépendance pleine et entiére de la République d'Haíti, el qu'il est de Thonneur national d'assurer Texécution d'un engagement qui, sans porter alteinte á la dignilé du peuple haitien, consacre á jamáis son existence politiquea

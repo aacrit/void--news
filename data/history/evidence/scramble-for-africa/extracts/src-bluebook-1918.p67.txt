@@ -1,0 +1,9 @@
+source: src-bluebook-1918
+locator: p67
+url: https://archive.org/download/b32172266/b32172266_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+
+Out of between 80,000 and 90,000 souls only about 15,000 starving and fugitive
+Hereros were alive at the end of 1905, when von Trotha relinquished his task. What
+happened to the survivors will be told in the concluding parts of this report.

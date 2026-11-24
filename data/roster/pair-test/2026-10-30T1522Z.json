@@ -1,0 +1,101 @@
+{
+ "collected_at": "2026-10-30T15:22:05Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailymail.com/sport/darts/article-16250441/beat-luke-littler-mitchell-lawrie-fallon-sherrock-netflix-gary-lineker-darts.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "The 15-year-old 'next Luke Littler' playing against the real thing on Netflix... for £501,000! Teenager puts darts down as work experience - and says 'It's mental... I can be one of the world's most famous players tonight'",
+      "published": "Fri, 30 Oct 2026 10:40:12 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/other-sports/darts/beat-luke-littler-netflix-contestants-37826751",
+      "title": "The teenagers hoping to beat Luke Littler and win £501k as harsh Netflix reality emerges",
+      "published": "Fri, 30 Oct 2026 14:37:53 +0000"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16252099/James-Acaster-nervously-sweats-gym-Celebrity-Traitors-stars-rush-defend-bombshell-round-table-reveal-praise-remarkable-soul.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "James Acaster nervously sweats it out at the gym as his Celebrity Traitors co-stars rush to defend his bombshell round table reveal and praise him as 'a remarkable soul'",
+      "published": "Fri, 30 Oct 2026 13:58:21 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/tv/tv-news/celebrity-traitors-2026-final-live-37821589",
+      "title": "Celebrity Traitors LIVE: James Acaster's worried co-stars rush to defend him amid social media pile-on",
+      "published": "Fri, 30 Oct 2026 14:36:29 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 163,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.jpost.com/israel-election-2026/article-913237",
+      "title": "Israel election results: Netanyahu's Likud biggest party in Israel after all votes counted",
+      "published": "Thu, 29 Oct 2026 19:25:31 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/elections/2026-10-29/ty-article/.premium/shin-bet-election-interference-probe-does-not-implicate-whole-group-of-voters/000001a1-8858-d125-a3b1-edde70160000",
+      "title": "Shin Bet: Election interference probe does not implicate whole group of voters",
+      "published": "Thu, 29 Oct 2026 19:45:06 +0200"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 132,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/erdogans-family-business-ties-complicate-azerbaijan-dispute/",
+      "title": "Erdogan’s family business ties complicate Azerbaijan dispute",
+      "published": "Mon, 26 Oct 2026 23:01:29 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 303,
+    "left": 10
+   }
+  }
+ }
+}

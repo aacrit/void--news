@@ -1,0 +1,19 @@
+source: src-gewald-2004
+locator: p68-69
+url: https://scholarlypublications.universiteitleiden.nl/access/item:2888838/view
+read: 2026-09-25
+note: sliced from the PDF's text layer; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed
+note: Michael Scott's 1949 history of the Herero as Gewald quotes it
+
+Namibian history:
+Then came the German colonists, hungry for land; and fmally von Trotha, a
+genera! whom Hitler would have delighted to honour.... In 1904 hè issued the
+'Extermination Order.' All Hereros whether man, woman or child were to be
+killed. An orgy of looting, torture, and massacre followed. To read the records
+is exactly like reading the accounts of the obliteration of Poland, except that the
+Germans had not gas chambers then, but killed babies with their own hands,
+or burned sick old women in their huts. The tribe broke and
+fled
+The
+majority, all but fifteen thousand out of ninety thousand, were hacked to pieces
+by the Germans or died of thirst.25

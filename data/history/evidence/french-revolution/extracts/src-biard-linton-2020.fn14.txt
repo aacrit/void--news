@@ -1,0 +1,7 @@
+source: src-biard-linton-2020
+locator: fn14
+url: https://shs.cairn.info/terreur--9782200623517-page-161?lang=fr
+read: 2026-10-09
+note: note 14 of the chapter as Cairn serves the notes to a reader without a subscription; the chapter's body is not open; the extract stops before the note's remarks on hospitals; whitespace collapsed, nothing else changed
+
+Jacques Hussenet (dir.), « Détruisez la Vendée ! » (…) , op. cit . (notamment la contribution majeure de cet auteur, « Quel bilan ? », p. 107-148). Un autre nombre est proposé pour les pertes républicaines, estimées cette fois jusqu’à un maximum de 50 000 hommes ( ibid ., p. 317 et 420).

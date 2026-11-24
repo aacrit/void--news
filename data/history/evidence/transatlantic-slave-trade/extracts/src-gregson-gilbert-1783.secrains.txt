@@ -1,0 +1,7 @@
+source: src-gregson-gilbert-1783
+locator: secrains
+url: https://archive.org/details/reportscasesarg04glengoog
+read: 2026-10-09
+note: counsel for the underwriters (Davenport, Pigott and Heywood), arguing; not a finding of the court; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+Soon afterwards the rains came on, which furnished water for eleven days, notwithstanding which more of the negroes were thrown overboard.

@@ -1,0 +1,8 @@
+source: src-truman-19510411
+locator: secopen
+url: https://www.trumanlibrary.gov/library/public-papers/78/radio-report-american-people-korea-and-us-policy-far-east
+read: 2026-10-09
+note: the opening of the same broadcast
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+In the simplest terms, what we are doing in Korea is this: We are trying to prevent a third world war.

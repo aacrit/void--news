@@ -1,0 +1,223 @@
+# Cinematic variant, 2026-10-07, written to the first-listener orientation standard of
+# docs/proposals/HISTORY-FIRST-LISTENER.md (O-1..O-8) from the research brief
+# out/briefs/hiroshima-nagasaki.brief.md. Sources are the event YAML and the evidence
+# ledger (data/history/evidence/hiroshima-nagasaki/), nothing else. Same cast as the
+# other cinematic variants (narrator "tara"; leo reads the men's documents and the
+# institutions' records as M:, zoe reads Setsuko Thurlow as F:), same Ken Burns register:
+# short declarative sentences, documents read plainly, the silence placed by the writer.
+# Every line the document voice reads is byte-for-byte a stored extract AND a YAML
+# primary_source_excerpt, and the extract id follows the DOCUMENT marker in a comment.
+# Seven excerpts were appended to the YAML for this script, each a verbatim span of a
+# held extract: the Franck Report, the Strategic Bombing Survey's conclusion, the City of
+# Hiroshima's count, the City of Nagasaki's count, the Peace Memorial Museum's guide to the
+# Korean monument, and Truman's statement of 6 August twice (the YAML's older entry reads
+# "our terms, they may" with a comma the Library's text does not carry, and calls it a
+# radio address; the Library's note says it was a written release). So every one of the
+# five accounts has a read. No clip is slotted: the one candidate recording (Truman's
+# radio report of 9 August) is unsigned. No English line of the rescript is held, so none
+# is read; the narration says so aloud. What the live script says and the record does not
+# hold is cut (the brief's do-not-say list): "sixteen hours after Hiroshima he went on the
+# radio", the Hachiya diary line, Oppenheimer's "Death" and "blood on my hands", the
+# Franck sentence on Los Alamos, Szilard's seventy and the Einstein letter, the four
+# conditions as listed, mokusatsu as "silent contempt", the invasion dates and casualty
+# projections, the Korean figures (20,000 to 40,000; 2.4 million), the Dome argument, the
+# wristwatch "still stopped" (Kengo Nikawa's pocket watch has been in storage since 2015),
+# "six days" between the Soviet note and the broadcast (seven), "accepted on the
+# fifteenth" (transmitted on the fourteenth, broadcast on the fifteenth). Casualty figures
+# are given per producer and never averaged; the producers whose figures the YAML does not
+# carry (the Manhattan Engineer District, the Radiation Effects Research Foundation's
+# ranges, Frank's range) are named without their numbers, because H-18 reads the YAML
+# alone for an event with no published thesis. Lines beginning with "#" are inert: the
+# parser skips them (pipeline/history/script_format.py::parse_script). SAY entries carry
+# the "orpheus:" prefix because history_producer.py applies only those under Orpheus.
+# This file is not the live script: nothing globs this directory.
+
+## OPEN
+# MOOD: dread
+N: Hiroshima, a morning in August. The radar operator counts the planes coming in, not more than three, and the alert is lifted.
+N: Three days later, in another city, the all clear follows the alert. Two bombers are sighted. No further alarm is given.
+N: The all clear had been given, twice.
+
+## TITLE
+# MOOD: dread
+N: Hiroshima and Nagasaki. August, nineteen forty five.
+
+## SCENE 1 | The list
+# MOOD: procedure
+N: The summer of nineteen forty five, the last summer of the Second World War. Germany surrendered in May. Japan fights on, against the United States, Britain and China.
+N: Hiroshima and Nagasaki are two cities of Japan: about three hundred and fifty thousand people by the City of Hiroshima's count, about two hundred and forty thousand by Nagasaki's.
+N: In the United States a secret programme, the Manhattan Project, has built the first atomic bomb, tested once in the New Mexico desert on the sixteenth of July. Before the summer is out, one bomb each will destroy these two cities.
+N: On the twenty fifth of July the War Department orders the bomber group formed for the weapon to deliver its first special bomb, after about the third of August, on one of a list: Hiroshima, Kokura, Niigata, Nagasaki.
+N: The same day Harry Truman, the President, writes in his diary that the target will be a purely military one.
+N: The next day, from Potsdam, the United States, China and Britain publish their terms: unconditional surrender of Japan's armed forces, or prompt and utter destruction.
+
+## SCENE 2 | The morning
+# MOOD: rupture
+N: The sixth of August, Hiroshima, a quarter past eight in the morning. The Enola Gay, flown by Colonel Paul Tibbets, commander of the bomber group, releases a uranium bomb called Little Boy.
+
+## DOCUMENT | Setsuko Thurlow | Nobel Lecture for the International Campaign to Abolish Nuclear Weapons, Oslo | December 10, 2017
+# extract: src-nobel-ican-2017.secthurlow2
+# MOOD: testimony
+N: Setsuko Thurlow was thirteen, in Hiroshima. In Oslo in two thousand and seventeen she accepted the Nobel Peace Prize for the International Campaign to Abolish Nuclear Weapons.
+F: I was just 13 years old when the United States dropped the first atomic bomb, on my city Hiroshima. I still vividly remember that morning.
+
+## REST
+# MOOD: testimony
+
+## DOCUMENT | Harry S. Truman | Statement by the President announcing the use of the bomb at Hiroshima, a written release issued in Washington | August 6, 1945
+# extract: src-truman-19450806.para10
+# MOOD: procedure
+N: The same day, Washington. A statement in the President's name is released in writing; Truman himself is at sea, returning from Potsdam.
+M: If they do not now accept our terms they may expect a rain of ruin from the air, the like of which has never been seen on this earth.
+
+## SCENE 3 | The second city
+# MOOD: dread
+N: The ninth of August, late morning, over Kokura, a Japanese city with an army arsenal. Bock's Car, a bomber flown by Major Charles Sweeney, carries the second bomb, Fat Man, a plutonium bomb.
+N: The target is obscured by smoke and haze. Three runs fail, under anti-aircraft fire, with fighters coming up; they turn for the secondary target, Nagasaki.
+N: Since that morning, by a note handed to Japan's ambassador in Moscow the evening before, the Soviet Union is at war with Japan.
+N: Nagasaki, two minutes past eleven. The all clear had followed the morning's alert; when two bombers were sighted, no further alarm was given. Through cloud, the bombardier glimpsed the stadium and released.
+N: The yield was later estimated at twenty one kilotons. The all clear had been given.
+
+## REST
+# MOOD: dread
+
+## SCENE 4 | The count
+# MOOD: grief
+N: Hiroshima and Nagasaki, the end of December, nineteen forty five. Each city keeps its own count, and no two producers agree.
+
+## DOCUMENT | City of Hiroshima | the City's own account of the dead, on its official website | 2026
+# extract: src-hiroshima-city-deaths.para2
+# MOOD: grief
+N: The City of Hiroshima, in its own words.
+M: The exact number of deaths from the atomic bombing is still unknown. Estimates place the number of dead by the end of December 1945, when the acute effects of radiation poisoning had largely subsided, at roughly 140,000.
+
+## DOCUMENT | City of Nagasaki | the City's own account of the damage, on its official website | 2021
+# extract: src-nagasaki-city-damage.para1
+# MOOD: grief
+N: The City of Nagasaki, in its own words.
+M: When the atomic bomb was dropped, Nagasaki had a population of about 240,000. However, by the end of December 1945, 73,884 of its people had been killed, and 74,909 had been injured by the A-bomb.
+N: The American project's own report gives lower figures for both cities. The Radiation Effects Research Foundation, which studies the survivors, says the total is not known precisely: military records were destroyed, and forced labourers were never counted.
+
+## REST
+# MOOD: grief
+
+## SCENE 5 | The condition
+# MOOD: reckoning
+N: The night of the ninth into the tenth, Tokyo, a conference before Emperor Hirohito. Kantaro Suzuki, the Prime Minister, presides; each minister speaks to the emperor directly.
+N: A naval official's account, as the National Security Archive summarises it, has the Army Minister tacitly threatening civil war, and the emperor accepting the majority view: one condition, not the four his ministers urged.
+N: Shigenori Togo, the Foreign Minister, had sought Soviet mediation for weeks; the condition accepted was not the one he brought.
+
+## DOCUMENT | The Japanese Government | Note transmitted by the Swiss Charge to the Secretary of State, in the English the State Department received | August 10, 1945
+# extract: src-frus-19450810.whole
+# MOOD: reckoning
+N: On the tenth, through the Swiss, Japan answers.
+M: The Japanese Government are ready to accept the terms enumerated in the joint declaration which was issued at Potsdam on July 26th, 1945,
+M: with the understanding that the said declaration does not comprise any demand which prejudices the prerogatives of His Majesty as a Sovereign Ruler.
+N: The four Allied governments reply on the eleventh: from the moment of surrender the emperor's authority shall be subject to the Allied supreme commander, and Japan's form of government shall be set by its people's freely expressed will.
+N: On the fourteenth Japan's acceptance is transmitted. At noon on the fifteenth, Japan time, the emperor's rescript, his message ending the war, is broadcast.
+N: It names a new and most cruel bomb among its reasons, beside a war situation that had not turned in Japan's favour. Its English wording is disputed; this programme reads none of it.
+N: The surrender was signed aboard the USS Missouri on the second of September.
+
+## TURN | Five accounts
+# MOOD: reckoning
+N: What the bombs did is counted. What they were for is where the accounts part.
+N: Five accounts, argued from what this programme could read: the orders and statements of that summer, the notes passed through the Swiss, two cities' counts, two survivors' testimony, and the historians' articles; the books and memoirs could not be read.
+
+## PERSPECTIVE | American | victor
+# MOOD: procedure
+N: The first account is American, and it begins at Pearl Harbor, the Japanese attack that brought the United States into the war.
+
+## DOCUMENT | Harry S. Truman | the same statement of August 6, 1945, its second paragraph | August 6, 1945
+# extract: src-truman-19450806.para2
+# MOOD: procedure
+N: The second paragraph of the statement released in Truman's name.
+M: The Japanese began the war from the air at Pearl Harbor. They have been repaid many fold.
+N: Richard Frank, a historian who defends the decision, writes that the Japanese sought not surrender but a negotiated end that kept the old order, and that the invasion was abandoned not as unnecessary but as unthinkable.
+
+## PERSPECTIVE | Japanese Civilian | vanquished
+# MOOD: testimony
+N: The second account belongs to the survivors, hibakusha: in Thurlow's words, those who by some miraculous chance survived the atomic bombings.
+
+## DOCUMENT | Sumiteru Taniguchi | Statement for Nihon Hidankyo to the Non-Proliferation Treaty Review Conference, United Nations, in the UN's published English | May 7, 2010
+# extract: src-hidankyo-20100507.p3
+# MOOD: testimony
+N: Sumiteru Taniguchi was sixteen, riding his bicycle in Nagasaki, one point eight kilometres north of the burst; the heat burned his entire back. In two thousand and ten he spoke for Nihon Hidankyo, the survivors' confederation, at the United Nations.
+M: I am not a guinea pig nor am I an exhibit. But those of you who are here today, please don't turn your eyes away from me. Please look at me again.
+
+## PERSPECTIVE | International / Scientific | bystander
+# MOOD: reckoning
+N: The third account is the scientists', who built the bomb and argued against using it on a city.
+
+## DOCUMENT | James Franck and the Committee on Political and Social Problems, Metallurgical Laboratory, University of Chicago | the Franck Report, the Internet Archive's text of the scan | June 11, 1945
+# extract: src-franck-19450611.secdemo
+# MOOD: reckoning
+N: On the eleventh of June a committee at the University of Chicago, led by the physicist James Franck, reported on what the weapon meant.
+M: From this point of view a demonstration of the new weapon may best be made before the eyes of representatives of all United Nations, on the desert or a barren island
+N: Its summary warned that if the United States were first to release this means of indiscriminate destruction it would sacrifice public support throughout the world and precipitate the race of armaments.
+
+## PERSPECTIVE | Modern Revisionist | revisionist
+# MOOD: reckoning
+N: The fourth account is the revisionists', historians who hold that the bombs were not what ended the war; its foundation is a report the American government wrote.
+
+## DOCUMENT | United States Strategic Bombing Survey | Summary Report (Pacific War), the section on Japan's struggle to end the war | July 1, 1946
+# extract: src-ussbs-summary-1946.p26
+# MOOD: reckoning
+N: The Survey, in nineteen forty six, having questioned the surviving Japanese leaders.
+M: it is the Survey's opinion that certainly prior to 31 December 1945, and in all probability prior to 1 November 1945, Japan would have surrendered even if the atomic bombs had not been dropped, even if Russia had not entered the war, and even if no invasion had been planned or contemplated.
+N: Tsuyoshi Hasegawa, a historian of the Soviet entry, argues that the invasion had the more important effect, that the Nagasaki bomb had little, and that Hiroshima did not move Togo or the emperor off Moscow's mediation.
+
+## PERSPECTIVE | Korean Forced Laborers | vanquished
+# MOOD: grief
+N: The fifth account is Korean. Korea was a colony of Japan, annexed in nineteen ten, and the City of Hiroshima counts people from its colonies, some of them conscripted labourers, inside its three hundred and fifty thousand.
+
+## DOCUMENT | Hiroshima Peace Memorial Museum | the Peace Memorial Park guide to the Monument in Memory of the Korean Victims of the A-bomb | 2026
+# extract: src-korean-monument.sec1
+# MOOD: grief
+N: The museum's own guide to the Korean monument says this.
+M: At the end of the war, about three million Koreans were living in Japan, and it is said that tens of thousands of them suffered the atomic bombing in Hiroshima.
+N: The Foundation says forced labourers in both cities were never counted. Tens of thousands, it is said, and no one holds the number.
+
+## TURN | The shape of the disagreement
+# MOOD: reckoning
+N: Each of the five is true, and each leaves something out.
+N: The American account leaves out the Survey its own government wrote, and the Soviet note of the eighth.
+N: The survivors' account leaves out the conference of the ninth, where the war was still being argued after Hiroshima.
+N: The scientists' account leaves out that a warning was given at Potsdam, in a form, and refused.
+N: The revisionists disagree among themselves: Hasegawa writes that the Survey's conclusion is not supported by its own evidence, and the National Security Archive calls both questions live issues.
+N: The Korean account leaves out that the City counts its colonial dead inside the three hundred and fifty thousand, and that the Foundation says they could not be counted.
+
+## REST
+# MOOD: reckoning
+
+## CLOSE
+# MOOD: grief
+N: Two cities, the sixth and the ninth of August, nineteen forty five. Japan's acceptance was transmitted on the fourteenth and broadcast on the fifteenth; the surrender was signed on the second of September.
+N: The City of Hiroshima counts roughly a hundred and forty thousand dead by that December, the City of Nagasaki seventy three thousand eight hundred and eighty four; the Foundation says the true number is not known.
+N: The all clear had been given, twice.
+
+## SAY
+orpheus:Hiroshima = hee roh SHEE mah
+orpheus:Nagasaki = nah gah SAH kee
+orpheus:Kokura = KOH koo rah
+orpheus:Niigata = nee GAH tah
+orpheus:Hirohito = hee roh HEE toh
+orpheus:Togo = TOH goh
+orpheus:Shigenori = shee geh NOH ree
+orpheus:Suzuki = soo ZOO kee
+orpheus:Kantaro = kahn TAH roh
+orpheus:hibakusha = hee BAHK shah
+orpheus:Sunao = soo NAH oh
+orpheus:Tsuboi = tsoo BOY
+orpheus:Sumiteru = soo mee TEH roo
+orpheus:Taniguchi = tah nee GOO chee
+orpheus:Setsuko = SET soo koh
+orpheus:Thurlow = THUR loh
+orpheus:Hidankyo = hee DAHN kyoh
+orpheus:Genbaku = GEN bah koo
+orpheus:Honkawa = hohn KAH wah
+orpheus:Szilard = SIL ard
+orpheus:Hasegawa = hah seh GAH wah
+orpheus:Tsuyoshi = tsoo YOH shee
+orpheus:Alperovitz = al PAIR oh vits
+orpheus:Sweeney = SWEE nee
+orpheus:Tibbets = TIB its

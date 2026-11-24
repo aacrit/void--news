@@ -1,0 +1,8 @@
+source: src-diet-20070425-mofa
+locator: secq8
+url: https://www.shugiin.go.jp/internet/itdb_kaigirokua.nsf/html/kaigirokua/000516620070425008.htm
+read: 2026-10-09
+note: the text is the page's own text in Japanese, whitespace collapsed; a Void translation is beside it (.en.txt)
+note: the Ministry of Foreign Affairs' 'Historical Issues Q&A', question 8, as the member Watanabe Shu read it into the record; the Ministry's own page was not readable from here (see gaps), so these are its words at second hand
+
+「一 日本政府としては、日本軍の南京入城（一九三七年）後、多くの非戦闘員の殺害や略奪行為等があったことは否定できないと考えています。」「二 しかしながら、被害者の具体的な人数については諸説あり、政府としてどれが正しい数かを認定することは困難であると考えています。」

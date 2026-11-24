@@ -1,0 +1,8 @@
+source: src-rw-muse-2021
+locator: p205
+url: https://www.gov.rw/fileadmin/user_upload/gov_user_upload/2021.04.19_MUSE_REPORT.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+note: from the box headed 'Bernard Kayumba' (born 4 September 1969, Kibuye Prefecture), one of the boxes the report's Preface says carry the voices of survivors it interviewed; the box runs from page 204 to 205 and the extract is from page 205
+
+For the three days that followed the French soldiers’ departure from Bisesero, the attacks became more vicious and sustained, and survivors were massacred. We had all been hiding in the bushes but when we came out to speak with the French soldiers by the side of the road, our hiding places were exposed to our attackers. On 30 June 1994, the French soldiers came back and took us to a camp in Bisesero.

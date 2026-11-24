@@ -1,0 +1,8 @@
+source: src-chernyaev-19891110
+locator: secyalta
+url: https://nsarchive2.gwu.edu/NSAEBB/NSAEBB490/docs/1989-11-10%20Chernyaev%20diary.pdf
+read: 2026-10-09
+note: the same entry
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+But the main thing is the GDR, the Berlin Wall. For it has to do not only with "socialism," but with the shift in the world balance of forces. This is the end of Yalta ... the Stalinist legacy and "the defeat of Hitlerite Germany." That is what Gorbachev has done. And he has indeed turned out to be a great leader. He has sensed the pace of history and helped history to find a natural channel.

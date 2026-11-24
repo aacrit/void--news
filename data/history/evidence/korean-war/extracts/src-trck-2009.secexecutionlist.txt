@@ -1,0 +1,8 @@
+source: src-trck-2009
+locator: secexecutionlist
+url: https://truthcommissions.humanities.mcmaster.ca/wp-content/uploads/2021/02/South-Korea_TRC_Report-of-Activities.pdf
+read: 2026-10-09
+note: the same report, its summary of verified cases
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+The Commission also investigated the Ulsan Bodo League massacre case and the Cheongwon Ochang Warehouse Bodo League massacre case. In particular, in the Ulsan Bodo League massacre case, the Commission found a list of members from the Ulsan Bodo League that was used as an important piece of evidence in verifying the truth. It documents that the police systematically managed Bodo League members before and during the start of the Korean War. It also functioned as an “execution list” during massacres.

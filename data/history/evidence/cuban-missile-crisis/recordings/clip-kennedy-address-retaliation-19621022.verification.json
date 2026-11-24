@@ -1,0 +1,51 @@
+{
+ "clip_id": "clip-kennedy-address-retaliation-19621022",
+ "slug": "cuban-missile-crisis",
+ "tool": "faster-whisper",
+ "tool_version": "1.2.1",
+ "model": "base.en",
+ "compute_type": "int8",
+ "beam_size": 5,
+ "source": {
+  "file": "https://static.jfklibrary.org/e713e0r7h1435052m4p47115h1cl7hw5.mp3",
+  "md5": "4f8d46b8861bf9e06c9739f152eaf58d",
+  "md5_expected": "4f8d46b8861bf9e06c9739f152eaf58d",
+  "rate": 44100
+ },
+ "window": {
+  "in": 631.2,
+  "out": 650.0,
+  "seconds": 18.8
+ },
+ "excerpt_sha256": "350a34413d1e30365cebc003bcbbc0af8effca630572ac7e6a5540fb05b6549a",
+ "excerpt_pcm": "s16le mono at the source rate, ffmpeg atrim, -bitexact",
+ "reference": "Third: It shall be the policy of this Nation to regard any nuclear missile launched from Cuba against any nation in the Western Hemisphere as an attack by the Soviet Union on the United States, requiring a full retaliatory response upon the Soviet Union.",
+ "hypothesis": "Third, it shall be the policy of this nation to regard any nuclear missile launched from Cuba against any nation in the Western Hemisphere as an attack by the Soviet Union on the United States requiring a full retaliatory response upon the Soviet",
+ "wer": 0.0227,
+ "coverage": 0.9773,
+ "counts": {
+  "ref_words": 44,
+  "hyp_words": 43,
+  "substitutions": 0,
+  "deletions": 1,
+  "insertions": 0,
+  "first_matched_ref": 0,
+  "last_matched_ref": 42,
+  "lead_insertions": 0,
+  "trail_insertions": 0
+ },
+ "diff": [
+  "third it shall be the policy of this nation to regard any nuclear missile launched from cuba against any nation in the western hemisphere as an attack by the soviet union on the united states requiring a full retaliatory response upon the soviet",
+  "[-union]"
+ ],
+ "thresholds": {
+  "coverage_min": 0.7,
+  "edge_slack_words": 1,
+  "edge_insert_max": 2
+ },
+ "pass": true,
+ "why": [],
+ "verified_at": "2026-10-05T04:14:07Z",
+ "signed": false,
+ "note": "a pass verifies the words in this window against the stored transcript. It does not verify the occasion, the date or the rights, and it signs nothing."
+}

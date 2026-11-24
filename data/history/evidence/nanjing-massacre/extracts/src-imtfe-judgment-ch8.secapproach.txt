@@ -1,0 +1,8 @@
+source: src-imtfe-judgment-ch8
+locator: secapproach
+url: https://www.ibiblio.org/hyperwar/PTO/IMTFE/IMTFE-8.html
+read: 2026-10-09
+note: the text is the HyperWar Foundation's HTML transcription of the Judgment (transcribed by Patrick Clancey), whitespace collapsed; its typing errors are kept as it prints them (e.g. 'tow' for 'two'); the transcription's page markers ('--1014--', the printed page of the Judgment) are removed by the builder and the page is given here instead
+note: Judgment, chapter VIII, 'The Rape of Nanking', printed pages 1010 to 1011
+
+As the Central China Expeditionary Force under command of MATSUI approached the city of Nanking in early December 1937,, over one-half of its one million inhabitants and all but a few neutrals who remained behind to organize an International Safety Zone, fled from the city. the Chinese Army retreated, leaving approximately 50,000 troops behind to defend the city. As the Japanese forces stormed the South Gate on the night of 12 December 1937, most of the remaining 50,000 troops escaped through the North and West Gates of the city. Nearly all the Chinese soldiers had evacuated the city or had abandoned their arms and uniforms and sought refuge in the International Safety Zone, and all resistance had ceased as the Japanese Army entered the city on the morning of 13 December 1937.

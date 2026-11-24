@@ -1,0 +1,7 @@
+source: src-lei-3353-1888
+locator: secdate
+url: https://www.planalto.gov.br/ccivil_03/leis/lim/lim3353.htm
+read: 2026-10-09
+note: the dating clause; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+Dada no Palacio do Rio de Janeiro em 13 de maio de 1888

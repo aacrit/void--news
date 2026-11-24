@@ -1,0 +1,7 @@
+source: src-unsc-181-1963
+locator: op3
+url: https://documents.un.org/doc/resolution/gen/nr0/200/54/pdf/nr020054.pdf
+read: 2026-10-09
+note: the text is the scan's OCR layer, whitespace collapsed; its glyph errors are kept as printed (e.g. 'ail' for 'all')
+
+3. Solemnly calls upon all States to cease forthwith the sale and shipment of arms, ammunition of ail types and military vehicles to South Africa;

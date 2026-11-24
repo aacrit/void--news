@@ -1,0 +1,8 @@
+source: src-nicholas-manifesto-golder
+locator: secabdicate
+url: https://archive.org/download/documentsofrussi027937mbp/documentsofrussi027937mbp_djvu.txt
+read: 2026-10-09
+note: the free copy is the scan's OCR text layer, held as the layer prints it (misreadings included); line breaks collapsed to spaces, nothing else changed
+note: Golder prints the manifesto under the date March 15, 1917 (New Style; 2 March Old Style) from 'Izvestiia', Extra Supplement to No. 4, March 16, 1917; a printed line-break hyphen ('abdi- cate') is held as the layer prints it
+
+In these decisive days in the life of Russia, we deem it our duty to do what we can to help our people to draw together and unite all their forces for the speedier attainment of victory. For this reason we, in agreement with the State Duma, think it best to abdi- cate the throne of the Russian State and to lay down the Supreme Power.

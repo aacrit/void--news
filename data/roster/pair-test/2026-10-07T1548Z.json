@@ -1,0 +1,114 @@
+{
+ "collected_at": "2026-10-07T15:48:25Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 23,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16190249/Katie-Price-teenage-girl-accused-ex-husband-Keiran-Hayler-rape.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Katie Price told teenage girl who accused her ex-husband Kieran Hayler of rape 'I'll make you a little star', court hears",
+      "published": "Wed, 07 Oct 2026 16:41:09 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/3am/celebrity-news/katie-price-ex-husband-kieran-37742768",
+      "title": "Katie Price quizzed Kieran Hayler's alleged teen rape victim and said 'I'll make you a little star', court told",
+      "published": "Wed, 7 Oct 2026 14:38:12 +0000"
+     }
+    },
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16189109/Putin-marks-74th-birthday-massive-air-strike-Kyiv-city-state-fear.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Putin marks his 74th birthday with 'massive' air strike on Kyiv: 'The whole city is in a state of fear'",
+      "published": "Wed, 07 Oct 2026 10:57:18 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/world-news/ukraine-russia-drone-putin-birthday-37746510",
+      "title": "Four kids among 24 civilians killed in Putin birthday blitz on war-torn Ukraine",
+      "published": "Wed, 7 Oct 2026 15:38:29 +0000"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16156629/southampton-tonda-eckert-fa-suspended-ban.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Southampton's spying manager Tonda Eckert is handed FA let-off with a six-week suspended ban over Spygate scandal which saw them thrown out of the play-offs for the Premier League",
+      "published": "Wed, 07 Oct 2026 16:46:24 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/tonda-eckert-fa-punishment-announced-37691352",
+      "title": "Southampton boss Tonda Eckert discovers his fate as FA hand out Spygate punishment",
+      "published": "Wed, 7 Oct 2026 15:10:02 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 160,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 22,
+     "right": {
+      "url": "https://www.jpost.com/international/article-910939",
+      "title": "Mamdani: Suffering did not begin, end on October 7, continued throughout Israel's 'Gaza genocide'",
+      "published": "Wed, 07 Oct 2026 17:04:26 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/us-news/2026-10-07/ty-article/.premium/mamdani-to-go-to-october-7-vigil-as-pro-palestine-activists-protest-his-policies/000001a1-16d2-d4ab-a7f1-befb2e190000",
+      "title": "Mamdani to attend October 7 vigil as pro-Palestinian activists rally against him",
+      "published": "Wed, 07 Oct 2026 18:08:45 +0300"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 132,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/classified-turkish-intelligence-operation-in-moldova-comes-back-under-judicial-scrutiny/",
+      "title": "Classified Turkish intelligence operation in Moldova comes back under judicial scrutiny",
+      "published": "Tue, 06 Oct 2026 22:12:19 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 311,
+    "left": 10
+   }
+  }
+ }
+}

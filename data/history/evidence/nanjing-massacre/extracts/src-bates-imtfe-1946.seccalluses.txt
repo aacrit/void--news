@@ -1,0 +1,8 @@
+source: src-bates-imtfe-1946
+locator: seccalluses
+url: https://www.legal-tools.org/doc/a5a0b0/pdf/
+read: 2026-10-09
+note: the text is the scan's own OCR layer as the Legal Tools Database serves it, whitespace collapsed; the transcript's printed line numbers (1 to 25) and the OCR's glyph errors sit inside the text and are kept as the layer gives them
+note: transcript page 2,631
+
+It was their eommon .practice to require all able-bodied 'men in a certain section of the zone, or in a certain ret)lgee camp"to line up for inspec- tion and then to be seized if they'had callouses upon their hands or the marks of wearing a hat showing on , the skin of the forehead.

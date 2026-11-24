@@ -1,0 +1,8 @@
+source: src-lii-us-v-nixon-1974
+locator: para33
+url: https://www.law.cornell.edu/supremecourt/text/418/683
+read: 2026-10-09
+note: the Legal Information Institute's web text of the opinion; the locator is LII's own paragraph number, printed at the head of each paragraph, not a U.S. Reports page
+note: the Court's statement of the President's case; the paragraph continues with footnote 15 and is cut at that sentence
+
+In support of his claim of absolute privilege, the President's counsel urges two grounds, one of which is common to all governments and one of which is peculiar to our system of separation of powers. The first ground is the valid need for protection of communications between high Government officials and those who advise and assist them in the performance of their manifold duties; the importance of this confidentiality is too plain to require further discussion. Human experience teaches that those who expect public dissemination of their remarks may well temper candor with a concern for appearances and for their own interests to the detriment of the decisionmaking process.

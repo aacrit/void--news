@@ -1,0 +1,8 @@
+source: src-shakhnazarov-castro-19871105
+locator: p88
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHPBulletin5_p2.pdf
+read: 2026-10-07
+note: the PDF's text layer, line breaks folded to spaces; where the layer breaks a word at a line end its hyphen is kept as it prints it ('docu- ment'); nothing is corrected
+note: printed page 88: Shakhnazarov's notes of 5 November 1987, Castro on the U-2; the bracketed [October 27] and [Pliyev] are the Bulletin's
+
+[October 27] a spying plane, U-2, appeared in the air above the island. We don’t know any details, but it happened so that the plane was shot down by a Soviet anti-aircraft missile over the eastern part of the country. I don’t know in what manner they reported that to Khrushchev and to the General Staff of the Soviet armed forces, however, I doubt that the order to shoot down the plane was given by the Commander-in-Chief of the Soviet troops in Cuba [Pliyev]; that decision was most probably made by the commander of the anti-aircraft missiles, or even by a commander of one of the batteries. Khrushchev, however, accused us of shooting down that plane in his letter. To be sincere, it was possible that we were to blame since we opened fire at the American planes first, because we were so decisively against the American overflights.

@@ -1,0 +1,839 @@
+{
+ "scored_at": "2026-10-28T23:09:37Z",
+ "min_score": 18,
+ "thresholds": {
+  "proceed": 0.75,
+  "stop": 0.65
+ },
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matched": 97,
+   "scored": 95,
+   "skipped": {
+    "robots": 0,
+    "short": 2,
+    "error": 0,
+    "no_score": 0
+   },
+   "auc": 0.458,
+   "ci95": [
+    0.405,
+    0.511
+   ],
+   "both_at_50": 67,
+   "verdict": "stop",
+   "rows": [
+    {
+     "score": 45,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/sport/football/article-16168727/czech-republic-england-player-ratings.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/sport/football/news/england-czechia-alexander-arnold-tuchel-37716554"
+    },
+    {
+     "score": 40,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/news/article-16184615/British-Airways-flight-Chicago-declares-emergency-dropping-28-000ft-minutes-flying-Ireland.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/uk-news/ba295-emergency-british-airways-flight-37736678"
+    },
+    {
+     "score": 39,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/news/article-16178483/Family-girl-killed-boys-car-plunged-River-Wear-tribute.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/uk-news/river-wear-teen-deaths-car-37728680"
+    },
+    {
+     "score": 33,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/news/article-16235035/Storm-Boelo-strikes-UK-one-day-Storm-Austen.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/uk-news/power-cut-storm-boelo-37806541"
+    },
+    {
+     "score": 32,
+     "right": 50.7,
+     "left": 43.6,
+     "right_url": "https://www.dailymail.com/news/article-16207807/final-hours-tiger-attack-victim-Yorkshire-zoo.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/uk-news/tiger-attack-victim-yorkshire-live-37766938"
+    },
+    {
+     "score": 30,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/sport/olympics/article-16203063/matthew-richardson-cycling-championships-misconduct-china.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/sport/other-sports/cycling/team-gb-matt-richardson-statement-37764468"
+    },
+    {
+     "score": 28,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/news/royals/article-16186953/A-royal-wind-Prince-William-teases-Celebrity-Traitors-star-Ross-Kemp-screen-paranoia-pretends-murder-plain-sight-charity-event-Somerset.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/royals/ross-kemp-traitors-prince-william-37741162"
+    },
+    {
+     "score": 28,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/tvshowbiz/article-16175573/Brooklyn-Beckham-27-reveals-salt-pepper-flecks-hair-Nicola-Peltz-arrive-Balenciaga-one-day-estranged-mum-Victorias-Paris-Fashion-Week-event.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/3am/celebrity-news/brooklyn-beckham-grey-hair-nicola-37724408"
+    },
+    {
+     "score": 27,
+     "right": 49.1,
+     "left": 51.0,
+     "right_url": "https://www.dailymail.com/news/article-16226635/Andy-Burnham-admits-concerns-cutting-Ukraines-access-crucial-Starlink-services-amid-claims-Elon-Musk-ordered-slowdown-talks-Donald-Trump.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/politics/pmqs-burnham-kemi-jackdaw-pension-37794341"
+    },
+    {
+     "score": 26,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/news/article-16195837/Andrew-Mountbatten-Windsor-handed-300-000-surrendering-lease-crumbling-Royal-Lodge.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/royals/andrew-mountbatten-windsor-king-charles-37753634"
+    },
+    {
+     "score": 26,
+     "right": 47.3,
+     "left": 50.8,
+     "right_url": "https://www.dailymail.com/news/article-16229021/Billionaire-Republican-donor-Peter-Thiel-Trump-war-Iran-mistake.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/politics/trump-peter-thiel-iran-war-37799295"
+    },
+    {
+     "score": 26,
+     "right": 50.0,
+     "left": 51.2,
+     "right_url": "https://www.dailymail.com/news/royals/article-16211567/Clinging-like-survivors-Body-language-expert-claims-Harrys-protective-clutch-Meghans-shoulder-revealed-inner-tension.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/royals/prince-harry-meghan-nottingham-live-37771520"
+    },
+    {
+     "score": 26,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/tvshowbiz/article-16203051/Natasha-Kaplinsky-SPLITS-husband.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/3am/celebrity-news/strictly-winner-natasha-kaplinksy-splits-37764480"
+    },
+    {
+     "score": 25,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/news/article-16162909/E-bike-rider-dies-crash-moped-murder-probe.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/uk-news/kensington-ebike-moped-murder-crash-37706036"
+    },
+    {
+     "score": 25,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/news/article-16196661/Man-charged-murdering-Ann-Widdecombe-targeting-Nigel-Farage-motivated-extreme-left-wing-mindset-hostility-Reform-court-hears.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/uk-news/joshua-kerry-nigel-farage-widdecombe-37755492"
+    },
+    {
+     "score": 25,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/sport/football/article-16170279/man-city-appeal-premier-league.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/sport/football/news/roy-keane-man-city-charges-37716503"
+    },
+    {
+     "score": 25,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/tvshowbiz/article-16180249/Celebrity-Traitors-star-Amol-Rajan-admits-played-wrong-game-breaks-silence-Maya-Jama-Richard-E-Grants-murder-victim.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/tv/tv-news/bbc-celebrity-traitors-live-updates-37724646"
+    },
+    {
+     "score": 24,
+     "right": 50.6,
+     "left": 44.4,
+     "right_url": "https://www.dailymail.com/news/article-16163873/Orange-Order-parade-today-northern-ireland.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/uk-news/garvaghy-road-liveorange-order-given-37706507"
+    },
+    {
+     "score": 24,
+     "right": 52.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/news/article-16166935/water-schools-forced-close-Thames-Water.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/uk-news/thames-water-outage-london-surrey-37708932"
+    },
+    {
+     "score": 24,
+     "right": 44.5,
+     "left": 46.0,
+     "right_url": "https://www.dailymail.com/news/article-16179297/Pictured-Boy-6-killed-Ford-Transit-tipper-bike.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/uk-news/boy-6-full-personality-dead-37730977"
+    },
+    {
+     "score": 24,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/sport/football/article-16195521/Liverpool-vs-Manchester-City-Premier-League-LIVE-Follow-build-action-reaction-Anfield-visitors-play-match-guilty-verdict.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/sport/football/news/roy-keane-man-city-charges-37760104"
+    },
+    {
+     "score": 24,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/tvshowbiz/article-16161491/Have-Got-News-You-complaints-Victoria-Beckham-slur-upheld-BBC-bosses-Katherine-Ryan-apologises-stupid-joke.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/3am/katherine-ryan-victoria-beckham-bbc-37705320"
+    },
+    {
+     "score": 24,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/tvshowbiz/article-16178471/Alison-Hammond-seen-clutching-chest-rushed-Morning-studio-live-air-suddenly-falling-ill.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/3am/celebrity-news/breaking-alison-hammond-update-hospital-37730122"
+    },
+    {
+     "score": 23,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/news/article-16167881/Huge-fire-industrial-estate.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/uk-news/thatcham-fire-colthrop-business-park-37712358"
+    },
+    {
+     "score": 23,
+     "right": 54.0,
+     "left": 54.1,
+     "right_url": "https://www.dailymail.com/news/article-16175891/Flydubai-hijacker-suicidal-undergone-Islamist-radical-indoctrination-Benjamin-Netanyahu-says.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/world-news/flydubai-pilot-stabbed-fz1073-israel-37716939"
+    },
+    {
+     "score": 23,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/news/article-16183475/Katie-Price-ex-husband-Kieran-Hayler-arrives-court-trial.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/3am/celebrity-news/kieran-hayler-rape-trial-updates-37735999"
+    },
+    {
+     "score": 23,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/news/article-16190249/Katie-Price-teenage-girl-accused-ex-husband-Keiran-Hayler-rape.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/3am/celebrity-news/katie-price-ex-husband-kieran-37742768"
+    },
+    {
+     "score": 23,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/news/article-16226831/Marine-engineer-visited-prostitute-aroused-raping-murdering-partner-court-hears.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/uk-news/coercive-man-visited-two-sex-37794080"
+    },
+    {
+     "score": 23,
+     "right": 50.0,
+     "left": 51.2,
+     "right_url": "https://www.dailymail.com/news/article-16240171/Tommy-Robinson-guilty-harassing-Daily-Mail-journalists-jurors-heard-used-bully-boy-tactics-intimidate-reporters-exposed-UK-riots-shame.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/uk-news/tommy-robinson-found-guilty-harassment-37819340"
+    },
+    {
+     "score": 23,
+     "right": 50.0,
+     "left": 46.0,
+     "right_url": "https://www.dailymail.com/sport/football/article-16162499/manchester-city-khaldoon-al-mubarak-financial-doping-verdict.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/sport/football/news/man-city-charges-verdict-live-37703247"
+    },
+    {
+     "score": 23,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/sport/football/article-16169139/Czech-Republic-vs-England-Nations-League-LIVE.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/sport/football/match-reports/england-czechia-tuchel-goals-highlights-37716161"
+    },
+    {
+     "score": 23,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/sport/football/article-16200431/Man-City-Liverpool-fans-slip-Enzo-Marescas-dodge-baying-home-fans-en-route-Anfield-Premier-League-leaders-braced-hostile-reception-guilty-verdict.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/sport/football/news/liverpool-man-city-live-score-37759400"
+    },
+    {
+     "score": 23,
+     "right": 44.5,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/sport/rugbyunion/article-16214619/Rugby-star-South-African-Lions-dies-heart-attack-day-game-France.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/sport/rugby-union/lions-player-dies-la-rochelle-37780322"
+    },
+    {
+     "score": 23,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/tvshowbiz/article-16133213/Behind-scenes-Celebrity-Traitors-Joe-Marler-locked-binging-Line-Duty.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/tv/tv-news/traitors-richard-ross-jerry-maya-37707471"
+    },
+    {
+     "score": 22,
+     "right": 50.7,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/news/article-16210705/Tiger-attack-victim-mauled-death-Yorkshire-zoo-suffered-multiple-traumatic-injuries-inquest-hears.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/uk-news/william-chapman-tiger-attack-victims-37774044"
+    },
+    {
+     "score": 22,
+     "right": 50.0,
+     "left": 45.1,
+     "right_url": "https://www.dailymail.com/news/article-16245369/Prince-Harry-upstage-William-Charles-Meghan-event-Christmas.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/royals/prince-harry-charles-caribbean-tour-37819201"
+    },
+    {
+     "score": 22,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/tvshowbiz/article-16192593/Josie-Gibson-gives-update-arm-scars-having-8-000-arm-lift-amid-lipoedema-battle-reveals-plans-three-surgeries-legs.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/3am/celebrity-news/josie-gibson-arm-lift-lipedema-37748965"
+    },
+    {
+     "score": 22,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/tvshowbiz/article-16205883/lucian-piane-dead-rupauls-drag-race.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/3am/celebrity-news/rupauls-drag-race-lucian-piane-37768375"
+    },
+    {
+     "score": 22,
+     "right": 46.0,
+     "left": 46.0,
+     "right_url": "https://www.dailymail.com/tvshowbiz/article-16213953/Sir-Rod-Stewart-health-surgery-Penny-Lancaster.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/3am/celebrity-news/sir-rod-stewart-81-sweary-37780006"
+    },
+    {
+     "score": 22,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/tvshowbiz/article-16235969/Nadia-Sawalha-sues-ITV-axed-Loose-Women-Palestine-views.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/tv/tv-news/nadia-sawalha-taking-itv-court-37808248"
+    },
+    {
+     "score": 21,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/news/article-16171887/Manosphere-influencer-Louis-Theroux-documentary-court.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/3am/celebrity-news/ed-matthews-fined-sainsburys-worker-37719867"
+    },
+    {
+     "score": 21,
+     "right": 49.5,
+     "left": 50.6,
+     "right_url": "https://www.dailymail.com/news/article-16175007/Nigel-Farage-deport-Meghan-Markle-Prince-Harry.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/royals/harry-meghan-paparazzi-school-complaint-37724815"
+    },
+    {
+     "score": 21,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/news/article-16232151/police-raped-David-Carrick-Sir-Mark-Rowley-resign.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/uk-news/police-officer-raped-met-cop-37802785"
+    },
+    {
+     "score": 21,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/sport/boxing/article-16162097/Tyson-Fury-vs-Anthony-Joshua-claims-Gypsy-King-150m-Cardiff-mega-fight-thrown-chaos-just-24-hours-bout-confirmed.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/sport/boxing/tyson-fury-anthony-joshua-fight-37706394"
+    },
+    {
+     "score": 21,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/sport/football/article-16172391/Manchester-City-guilty-police-investigation-Premier-League.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/sport/football/news/man-city-guilty-etihad-statement-37721082"
+    },
+    {
+     "score": 21,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/sport/football/article-16181917/Cristiano-Ronaldo-wife-Georgina-Rodriguez-Jesus-Ferguson.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/sport/football/news/man-utd-ronaldo-fernandes-portugal-37733233"
+    },
+    {
+     "score": 21,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/tvshowbiz/article-16164333/Celebrity-Traitors-paused-James-Acaster-anxious.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/tv/tv-news/celebrity-traitors-james-acaster-panic-37708140"
+    },
+    {
+     "score": 21,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/tvshowbiz/article-16203355/Strictlys-Delta-Goodrem-forced-pull-weekends-live-following-rib-injury-just-days-topped-leaderboard.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/tv/tv-news/delta-goodrem-bbc-strictly-injury-37764542"
+    },
+    {
+     "score": 20,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/lifestyle/article-16183525/As-Match-Day-hosts-Mark-Chapman-Kelly-Cates-start-dating-rules-office-romance-survive-break-job-intact.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/sport/football/news/mark-chapman-wife-charity-cates-37737121"
+    },
+    {
+     "score": 20,
+     "right": 58.9,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/news/article-16162295/Prince-Harry-does-skydive-honour-promise-102-year-old-WW2-veteran-rings-worried-Meghan-tell-landed-safely.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/royals/prince-harry-skydive-toronto-war-37706223"
+    },
+    {
+     "score": 20,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/news/article-16167297/Police-officer-died-hit-train-gross-misconduct.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/uk-news/dorset-police-officer-alex-ayre-37712416"
+    },
+    {
+     "score": 20,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/news/article-16175805/Bomb-squad-police-explosives-guns-drugs-house-search.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/uk-news/worle-police-raid-guns-drugs-37720749"
+    },
+    {
+     "score": 20,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/news/article-16175839/Newborn-baby-girl-washing-machine-named-mother-murder-trial.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/uk-news/tragic-baby-stabbed-15-times-37725653"
+    },
+    {
+     "score": 20,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/news/article-16186065/police-officers-Tasered-pepper-sprayed-disabled-pensioner.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/uk-news/donald-burgess-police-officers-sacked-37741568"
+    },
+    {
+     "score": 20,
+     "right": 46.0,
+     "left": 49.0,
+     "right_url": "https://www.dailymail.com/news/article-16239695/Autumn-Budget-2026-live-updates-John-Healey.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/uk-news/uk-autumn-budget-today-live-37815319"
+    },
+    {
+     "score": 20,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/sport/football/article-16162163/Football-finance-expert-punishment-Man-City.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/sport/football/news/man-city-charges-relegation-appeal-37705353"
+    },
+    {
+     "score": 20,
+     "right": 45.0,
+     "left": 46.0,
+     "right_url": "https://www.dailymail.com/sport/football/article-16162559/Furious-Premier-League-clubs-set-trigger-800MILLION-lawsuits-against-Man-City-seismic-115-charges-verdict-lawyers-prepare-case-drag-TWO-YEARS.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/sport/football/news/man-city-charges-keane-wright-37706094"
+    },
+    {
+     "score": 20,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/sport/football/article-16173303/andy-burnham-man-city-guilty-verdict-concern-sale.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/sport/football/news/manchester-city-charges-verdict-live-37706564"
+    },
+    {
+     "score": 20,
+     "right": 48.9,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/sport/football/article-16229511/Manchester-United-vs-Bournemouth-Liverpool-vs-Brighton-Premier-League-LIVE-fire-Michael-Carrick-searches-response-Reds-battle-form-Seagulls.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/sport/football/news/man-utd-fernandes-dropped-carrick-37808422"
+    },
+    {
+     "score": 20,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/tvshowbiz/article-16163211/Emma-Willis-Strictly-hosts-shaky-start.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/tv/tv-news/strictly-come-dancing-hosts-presenters-37705966"
+    },
+    {
+     "score": 20,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/tvshowbiz/article-16164759/Venezuela-Fury-birthday-Noah-Price-Cheshire.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/3am/celebrity-news/venezuela-fury-noah-price-birthday-37708230"
+    },
+    {
+     "score": 20,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/tvshowbiz/article-16166067/Lacey-Turner-Strictly-injuries-rehearsals-battered-bandaged-feet-leaderboard.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/3am/celebrity-news/lacey-turner-strictly-come-dancing-37711454"
+    },
+    {
+     "score": 20,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/tvshowbiz/article-16175923/Richard-E-Grant-makes-HUGE-mistake-Traitor.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/tv/tv-news/celebrity-traitors-richard-ross-maya-37724164"
+    },
+    {
+     "score": 20,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/tvshowbiz/article-16238741/Jamie-Olivers-wife-Jools-diagnosed-autism-ADHD.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/3am/celebrity-news/jamie-oliver-wife-jools-diagnosis-37811303"
+    },
+    {
+     "score": 19,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/lifestyle/article-16245189/Fleetwood-Town-Arsenal-Carabao-Cup-WAGs.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/sport/football/conor-haughey-fleetwood-arsenal-cup-37818936"
+    },
+    {
+     "score": 19,
+     "right": 52.6,
+     "left": 48.6,
+     "right_url": "https://www.dailymail.com/news/article-16180085/pilot-stabbed-FlyDubai-plane-Israel-Omani-national-British-university.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/world-news/flydubai-flight-hamam-al-hammami-37730503"
+    },
+    {
+     "score": 19,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/news/article-16186345/Kemi-Badenoch-US-Fairford-UK-missile-drone-defences-Britannia-Shield.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/uk-news/kemi-badenoch-has-no-real-37740593"
+    },
+    {
+     "score": 19,
+     "right": 50.0,
+     "left": 55.5,
+     "right_url": "https://www.dailymail.com/news/article-16189109/Putin-marks-74th-birthday-massive-air-strike-Kyiv-city-state-fear.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/world-news/ukraine-russia-drone-putin-birthday-37746510"
+    },
+    {
+     "score": 19,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/news/article-16226059/storm-austen-rain-wind-storms-weather-england.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/uk-news/met-office-weather-forecast-snow-37793570"
+    },
+    {
+     "score": 19,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/sport/football/article-16151151/England-vs-Spain-UEFA-Nations-League-LIVE-Three-Lions-world-champions-match-World-Cup.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/sport/football/match-reports/england-spain-nations-league-highlights-37706073"
+    },
+    {
+     "score": 19,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/sport/football/article-16176895/Irelands-Austria-HALTED-Israel.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/sport/football/news/ireland-vs-austria-israel-protest-37725582"
+    },
+    {
+     "score": 19,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/sport/football/article-16242375/Michael-Carrick-STAYING-Man-United-decide-against-sacking-fire-boss-day-crisis-talks.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/sport/football/news/man-united-manager-latest-live-37813167"
+    },
+    {
+     "score": 19,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/tvshowbiz/article-16178595/Saturday-Kitchen-star-James-Martins-flagship-restaurant-Manchester.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/3am/celebrity-news/james-martin-restaurant-closes-after-37728294"
+    },
+    {
+     "score": 19,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/tvshowbiz/article-16195529/Celebrity-Traitors-viewers-bemused-Jerry-Halls-bonkers-gameplay-baffled-Miranda-Hart-insists-shes-living-Jerry-world.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/tv/tv-news/celebrity-traitors-live-hannah-fry-37750819"
+    },
+    {
+     "score": 19,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/tvshowbiz/article-16217231/Strictly-Come-Dancing-hosts-Delta-Goodrem-forced-miss-rib-injury.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/tv/tv-news/strictly-come-dancing-tonight-live-37783123"
+    },
+    {
+     "score": 18,
+     "right": 47.2,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/crime-desk/article-16172407/christa-pike-execution-tennessee-death-row-colleen-slemmer-murder.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/us-news/christa-pike-execution-halted-just-37716147"
+    },
+    {
+     "score": 18,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/crime-desk/article-16189165/Russell-Brand-trial-liveblog-latest-updates.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/3am/russell-brand-rape-trial-charges-37771231"
+    },
+    {
+     "score": 18,
+     "right": 50.1,
+     "left": 50.8,
+     "right_url": "https://www.dailymail.com/news/article-16161821/trump-rejects-iran-ceasefire-proposal.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/world-news/donald-trump-rejects-ceasefire-deal-37704745"
+    },
+    {
+     "score": 18,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/news/article-16169977/coastguard-police-car-barrier-River-Wear.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/uk-news/sunderland-river-wear-car-deaths-37715389"
+    },
+    {
+     "score": 18,
+     "right": 50.8,
+     "left": 50.8,
+     "right_url": "https://www.dailymail.com/news/article-16171693/Burnham-Labour-rejoin-EU-election-manifesto-Brussels.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/politics/labour-andy-burnham-brexit-eu-37712568"
+    },
+    {
+     "score": 18,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/news/article-16204837/Tiger-attack-witness-picture-victim-pleads-trolls.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/uk-news/tiger-attack-video-enclosure-yorkshire-37768038"
+    },
+    {
+     "score": 18,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/news/article-16218011/Multiple-dead-explosion-Canadian-military-base.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/world-news/cfb-wainwright-fire-canada-alberta-37783854"
+    },
+    {
+     "score": 18,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/news/article-16218355/NHS-staff-accessed-medical-records-man-mauled-tiger.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/politics/yvette-cooper-finley-roberts-nhs-37784266"
+    },
+    {
+     "score": 18,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/news/article-16232159/Storm-Austen-hits-Britain-Met-Office-amber-alert.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/uk-news/weather-storm-austen-uk-forecast-37801808"
+    },
+    {
+     "score": 18,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/news/article-16236957/meghan-thomas-markle-letter-abused-girls.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/royals/meghan-dad-thomas-markle-letter-37808026"
+    },
+    {
+     "score": 18,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/news/article-16242339/Manhunt-father-teenager-killed-A66-Middlesbrough-crash-fails-appear-court-assaulting-celebrant-sons-funeral.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/uk-news/gye-worthy-a66-funeral-assault-37814739"
+    },
+    {
+     "score": 18,
+     "right": 47.2,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/news/royals/article-16174883/Meghan-launches-advent-calendar-ever.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/news/royals/meghan-markle-luxury-advent-calendar-37724269"
+    },
+    {
+     "score": 18,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/sport/football/article-16156629/southampton-tonda-eckert-fa-suspended-ban.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/sport/football/news/tonda-eckert-fa-punishment-announced-37691352"
+    },
+    {
+     "score": 18,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/sport/football/article-16162235/ireland-israel-nations-league-genocide.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/sport/football/news/gavin-bazunu-ireland-israel-statement-37706178"
+    },
+    {
+     "score": 18,
+     "right": 50.0,
+     "left": 44.5,
+     "right_url": "https://www.dailymail.com/sport/football/article-16164465/Former-Man-City-chairman-David-Bernstein-expects-club-LOSE-Premier-League-status-guilty-vast-majority-115-charges.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/sport/football/news/liam-gallagher-man-city-charges-37708137"
+    },
+    {
+     "score": 18,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/sport/football/article-16167299/Rio-Ferdinand-Joleon-Lescott-Premier-League-medal.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/sport/football/news/man-city-115-charges-live-37706564"
+    },
+    {
+     "score": 18,
+     "right": 50.0,
+     "left": 50.1,
+     "right_url": "https://www.dailymail.com/sport/football/article-16186195/man-city-jamie-carragher-premier-league.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/sport/football/news/man-city-charges-live-updates-37738426"
+    },
+    {
+     "score": 18,
+     "right": 44.5,
+     "left": 46.0,
+     "right_url": "https://www.dailymail.com/sport/football/article-16208531/man-city-punishment-premier-league-andy-burnham.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/sport/football/news/man-city-premier-league-live-37769880"
+    },
+    {
+     "score": 18,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/sport/football/article-16233117/Michael-Carricks-five-minute-monologue-Manchester-United.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/sport/football/news/michael-carrick-future-man-utd-37803988"
+    },
+    {
+     "score": 18,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailymail.com/tvshowbiz/article-16177781/Brooklyn-Beckham-wife-Nicola-Peltz-party-Paris-mile-estranged-brother-Romeo.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+     "left_url": "https://www.mirror.co.uk/3am/celebrity-news/brooklyn-beckham-risks-tense-showdown-37727780"
+    }
+   ]
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matched": 33,
+   "scored": 0,
+   "skipped": {
+    "robots": 33,
+    "short": 0,
+    "error": 0,
+    "no_score": 0
+   },
+   "auc": null,
+   "ci95": null,
+   "both_at_50": 0,
+   "verdict": "insufficient pairs",
+   "rows": []
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matched": 10,
+   "scored": 8,
+   "skipped": {
+    "robots": 0,
+    "short": 2,
+    "error": 0,
+    "no_score": 0
+   },
+   "auc": 0.375,
+   "ci95": [
+    0.188,
+    0.5
+   ],
+   "both_at_50": 6,
+   "verdict": "insufficient pairs",
+   "rows": [
+    {
+     "score": 27,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.indiatoday.in/education-today/news/story/tamil-nadu-sslc-hse-board-exam-timetable-2027-out-direct-link-to-check-class-10-12-exam-dates-3017112-2026-10-14?utm_source=rss",
+     "left_url": "https://www.thehindu.com/news/national/tamil-nadu/tamil-nadu-board-examinations-2027-class-12-exams-to-begin-on-march-3-class-10-exams-on-march-17/article71583088.ece"
+    },
+    {
+     "score": 26,
+     "right": 42.6,
+     "left": 44.5,
+     "right_url": "https://www.indiatoday.in/india/story/anti-cec-protest-live-updates-delhi-sir-row-cjp-election-commissioner-gyanesh-kumar-rahul-gandhi-abhijeet-dipke-saurav-das-ashutosh-ranka-jantar-mantar-3016799-2026-10-14?utm_source=rss",
+     "left_url": "https://www.thehindu.com/news/national/anti-cec-protests-cjp-arrest-rahul-gandhi-india-bloc-gyanesh-kumar-resignation-saurav-das-ashutosh-ranka-live-updates/article71582057.ece"
+    },
+    {
+     "score": 23,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.indiatoday.in/science/story/ashoke-sen-2026-oskar-klein-medal-first-indian-physicist-3024131-2026-10-24?utm_source=rss",
+     "left_url": "https://www.thehindu.com/news/national/ashoke-sen-becomes-first-indian-physicist-to-receive-oskar-klein-medal/article71619342.ece"
+    },
+    {
+     "score": 22,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.indiatoday.in/india/story/netanyahu-invites-pm-modi-to-light-torch-with-indian-pilot-smit-machchhar-on-israels-independence-day-3022918-2026-10-22?utm_source=rss",
+     "left_url": "https://www.thehindu.com/news/national/pm-modi-emphasises-dialogue-diplomacy-in-call-with-netanyahu-over-west-asia-situation/article71611957.ece"
+    },
+    {
+     "score": 21,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.indiatoday.in/india/law-news/story/supreme-court-collegium-recommends-sunita-agarwal-devendra-upadhyaya-aparesh-singh-3005175-2026-09-28?utm_source=rss",
+     "left_url": "https://www.thehindu.com/news/national/supreme-court-collegium-proposes-second-woman-as-apex-court-judge-in-2026/article71520601.ece"
+    },
+    {
+     "score": 19,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.indiatoday.in/india/story/yusuf-patha-vadodara-plot-gujarat-bjp-government-clears-disputed-land-possession-after-his-tmc-exit-3021148-2026-10-20?utm_source=rss",
+     "left_url": "https://www.thehindu.com/news/national/gujarat/gujarat-govt-gifts-part-of-disputed-vadodara-plot-to-yusuf-pathan/article71604103.ece"
+    },
+    {
+     "score": 18,
+     "right": 46.0,
+     "left": 46.4,
+     "right_url": "https://www.indiatoday.in/india/story/cjp-protest-live-updates-tiranga-march-delhi-connaught-place-central-park-cockroach-janta-party-abhijeet-dipke-3018651-2026-10-16?utm_source=rss",
+     "left_url": "https://www.thehindu.com/news/national/cjp-delhi-tiranga-march-oct-16-2026-live-updates/article71590925.ece"
+    },
+    {
+     "score": 18,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.indiatoday.in/india/story/delhi-chennai-indigo-flight-makes-emergency-landing-in-hyderabad-after-power-bank-catches-fire-onboard-3014878-2026-10-11?utm_source=rss",
+     "left_url": "https://www.thehindu.com/news/cities/Hyderabad/smoke-detected-from-electronic-device-delhi-chennai-indigo-flight-diverted-to-hyderabad/article71571354.ece"
+    }
+   ]
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matched": 4,
+   "scored": 3,
+   "skipped": {
+    "robots": 0,
+    "short": 1,
+    "error": 0,
+    "no_score": 0
+   },
+   "auc": 0.167,
+   "ci95": null,
+   "both_at_50": 1,
+   "verdict": "insufficient pairs",
+   "rows": [
+    {
+     "score": 21,
+     "right": 48.8,
+     "left": 50.0,
+     "right_url": "https://www.dailysabah.com/politics/new-party-walkout-during-erdogan-speech-draws-criticism-in-turkiye/news",
+     "left_url": "https://nordicmonitor.com/2026/09/turkey-shelters-emirati-brotherhood-figures-accused-of-plotting-to-oust-uae-rulers/"
+    },
+    {
+     "score": 20,
+     "right": 50.0,
+     "left": 50.2,
+     "right_url": "https://www.dailysabah.com/politics/legislation/erdogan-calls-for-grand-consensus-amid-terror-free-turkiye-success",
+     "left_url": "https://nordicmonitor.com/2026/10/whatever-our-enemies-do-erdogans-son-rallies-diaspora-network-in-europe-as-german-intelligence-warns-of-ankaras-spying-on-dissidents/"
+    },
+    {
+     "score": 20,
+     "right": 50.0,
+     "left": 50.0,
+     "right_url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+     "left_url": "https://nordicmonitor.com/2026/10/classified-turkish-intelligence-operation-in-moldova-comes-back-under-judicial-scrutiny/"
+    }
+   ]
+  }
+ },
+ "pooled": {
+  "scored": 106,
+  "auc": 0.443,
+  "ci95": [
+   0.396,
+   0.495
+  ],
+  "verdict": "stop"
+ },
+ "note": "First scoring, run from a Claude Code cloud container on 2026-10-28 after the one-to-one matching fix. Israel: every fetch was refused at robots.txt from this network, so it is unmeasured here, not a zero. Scores and URLs only, no text."
+}

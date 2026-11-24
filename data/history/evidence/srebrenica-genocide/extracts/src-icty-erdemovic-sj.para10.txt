@@ -1,0 +1,7 @@
+source: src-icty-erdemovic-sj
+locator: para10
+url: https://www.icty.org/x/cases/erdemovic/tjug/en/erd-tsj961129e.pdf
+read: 2026-09-24
+note: the PDF text layer prints an opening quotation mark as z
+
+10. As stated above, Drazen Erdemovic pleaded guilty, pursuant to the provisions of Article 20(3) of the Statute and Rule 62 of the Rules, to the count of a crime against humanity and stated his consent to the version of the events as set forth briefly by the Prosecutor. He added the following, however: “Your Honour, I had to do this. If I had refused, I would have been killed together with the victims. When I refused, they told me: zIf you’re sorry for them, stand up, line up with them and we will kill you too.’ I am not sorry for myself but for my family, my wife and son who then had nine months, and I could not refuse because then they would have killed me”1.

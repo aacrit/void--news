@@ -1,0 +1,6 @@
+source: src-echr-mothers-2013
+locator: para162
+url: https://hudoc.echr.coe.int/app/conversion/pdf/?library=ECHR&id=001-122255&filename=001-122255.pdf
+read: 2026-09-24
+
+162. The only international instrument on which individuals could base a right to a remedy against the United Nations in relation to the acts and omissions of UNPROFOR is the Agreement on the status of the United Nations Protection Force in Bosnia and Herzegovina of 15 May 1993, 1722 United Nations Treaty Series (UNTS) 77, Article 48 of which requires that a claims commission be set up for that purpose. However, it would appear that this has not been done.

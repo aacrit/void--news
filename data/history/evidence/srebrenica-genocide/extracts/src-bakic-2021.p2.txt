@@ -1,0 +1,7 @@
+source: src-bakic-2021
+locator: p2
+url: https://ibs.preporod.ba/bosnian-studies/index.php/journal/article/download/54/47/
+read: 2026-09-24
+note: soft hyphens in the PDF text layer (Srebren­ ica) removed
+
+The author will emphasize the importance of both the existence and the further development of the Srebrenica - Potočari Memorial Center, in the context of the continued need to understand the genocide that took place in and around Srebrenica, from the aspect of building a culture of remembrance throughout Bosnia and Herzegovina (B&H). This is necessary in order to continue fighting the ongoing genocide denial.

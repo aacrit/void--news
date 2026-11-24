@@ -1,0 +1,8 @@
+source: src-cwihp-shtykov-19500119
+locator: secdiscipline
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_5.pdf
+read: 2026-10-09
+note: the same telegram
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Further Kim said that he himself cannot begin an attack, because he is a communist, a disciplined person and for him the order of Comrade Stalin is law.

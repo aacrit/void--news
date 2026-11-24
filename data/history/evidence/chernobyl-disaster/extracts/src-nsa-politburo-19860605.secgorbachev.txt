@@ -1,0 +1,8 @@
+source: src-nsa-politburo-19860605
+locator: secgorbachev
+url: https://nsarchive.gwu.edu/sites/default/files/documents/6279557/National-Security-Archive-Doc-13-Minutes-of-CC.pdf
+read: 2026-10-07
+note: Anatoly S. Chernyaev's notes of Gorbachev's remarks
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+It is quite obvious—lack of responsibility, dissoluteness. Nobody should count on mercy. A repetition of anything like this should be absolutely excluded. One or two accidents like this and we would get it worse than from a total nuclear war.

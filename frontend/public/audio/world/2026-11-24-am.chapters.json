@@ -1,0 +1,50 @@
+{
+ "version": "1.2.0",
+ "title": "On Air \u00b7 Tuesday 24 November 2026",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Today",
+   "kind": "headlines",
+   "endTime": 39.989
+  },
+  {
+   "startTime": 39.989,
+   "title": "Don Toliver Concert Postponed After Evacuation",
+   "kind": "story",
+   "rank": 1,
+   "cluster_id": "d90b219f-92c8-4efb-b34a-7a04c0624785",
+   "endTime": 143.746
+  },
+  {
+   "startTime": 143.746,
+   "title": "Trump Targets Newsom Death Row Commutations",
+   "kind": "story",
+   "rank": 2,
+   "cluster_id": "a7688588-d83f-4995-83fc-d39218a0a90d",
+   "endTime": 209.936
+  },
+  {
+   "startTime": 209.936,
+   "title": "The desk",
+   "kind": "briefs",
+   "endTime": 393.585
+  },
+  {
+   "startTime": 393.585,
+   "title": "Void Opinion",
+   "kind": "opinion",
+   "subtitle": "Don Toliver Reschedules London Concert Following Manchester Arena Evacuation",
+   "endTime": 535.714
+  },
+  {
+   "startTime": 535.714,
+   "endTime": 549.915,
+   "title": "Also from Void",
+   "kind": "promo",
+   "subtitle": "Void News",
+   "promo": "site-03-both"
+  }
+ ]
+}

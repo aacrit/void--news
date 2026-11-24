@@ -1,0 +1,15 @@
+source: src-radcliffe-bengal
+locator: item3
+url: https://archive.org/download/dli.csl.1040/1040_djvu.txt
+read: 2026-09-25
+note: item n is paragraph n of Annexure A, the schedule of the Bengal award; the thanas named are Dinajpur's
+
+3. The line shall run along the boundary between the following Thanas:
+
+Haripur and Raiganj; Haripur and Hemtabad; Ranisankail and Hemtabad; Pirganj and Hemtabad; Pirganj and Kaliganj; Bochaganj and Kaliganj; Biral and Kaliganj; Biral and Kushmundi; Biral and Gangarampur; Dinajpur and Gangarampur; Dinajpur and Kumarganj; Chirirbandar and Kumarganj; Phulbari and Kumarganj; Phulbari and Balurghat. It shall terminate at the point where the boundary between Phulbari and Balurghat meets the north-south line of the Bengal-Assam Railway in the eastern corner of the Thana
+
+4
+
+5
+
+of Balurghat. The line shall turn down the western edge of the railway lands belonging to that railway and follow that edge until it meets the boundary between the Thanas of Balurghat and Panchbibi.

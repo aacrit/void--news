@@ -1,0 +1,8 @@
+source: src-alexievich-gessen-2005
+locator: secfather1
+url: https://www.nobelprize.org/prizes/literature/2015/alexievich/prose/
+read: 2026-10-07
+note: same chorus, a child of a liquidator
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+They came for my father at night. I didn’t hear how he got packed, I was asleep. In the morning I saw my mother was crying. She said, “Papa’s in Chernobyl now.” We waited for him like he was at the war. He came back and started going to the factory again. He didn’t tell us anything. At school I bragged to everyone that my father just came back from Chernobyl, that he was a liquidator, and the liquidators were the ones who helped clean up after the accident. They were heroes.

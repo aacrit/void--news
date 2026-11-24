@@ -1,0 +1,7 @@
+source: src-order1-golder
+locator: art4
+url: https://archive.org/download/documentsofrussi027937mbp/documentsofrussi027937mbp_djvu.txt
+read: 2026-10-09
+note: the free copy is the scan's OCR text layer, held as the layer prints it (misreadings included); line breaks collapsed to spaces, nothing else changed
+
+4. The orders of the military commission of the State Duma shall be executed only in such cases as do not conflict with the orders and resolutions of the Soviet of Workers' and Soldiers' Deputies.

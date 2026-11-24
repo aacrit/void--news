@@ -1,0 +1,8 @@
+source: src-cwihp-kimpak-19500929
+locator: secassist
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_6-7.pdf
+read: 2026-10-09
+note: the same letter
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Therefore, dear Iosif Vissarionovich, we cannot help asking You to provide us with special assistance. In other words, at the moment when the enemy troops cross over the 38th parallel we will badly need direct military assistance from the Soviet Union.

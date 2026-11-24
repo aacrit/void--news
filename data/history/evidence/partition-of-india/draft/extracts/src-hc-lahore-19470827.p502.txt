@@ -1,0 +1,8 @@
+source: src-hc-lahore-19470827
+locator: p502
+url: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+read: 2026-09-25
+note: p is the page of Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947 (2nd ed., 2005), read from the Internet Archive text layer; line breaks are joined and the layer's soft hyphens rejoined
+note: Document 160, the telegram's date line and its first sentences, from File D/268, Broadland Archives, held under the cap; 'woundary' and 'conditions.in' are the layer's
+
+Dated 27th (Recd 28th) August 1947 TOO 1155 TOR 0700 MOST IMMEDIATE Personal for Pandit Jawaharlal Nehru. Attitude of Provincial Government and woundary Commission Force most unhelpful. They are not prepared to do anything. They _ only say that everything possible is being done and repeat that conditions.in East are much worse and have their inevitable reactions here which they cannot prevent” REES expects wholesale slaughter of Sikhs if conditions do not improve in East Punjab immediately. This morning important Conference held at Government House where Lady Mountbatten, AMRIT KAUR, Provincial Ministers, GAZANFAR ALI, Governor MUDIE and myself were present.

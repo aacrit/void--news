@@ -1,0 +1,6 @@
+source: src-ussbs-effects-1946
+locator: sec2a
+url: https://www.atomicarchive.com/resources/documents/bombing-survey/section_II.html
+read: 2026-10-05
+
+The surprise, the collapse of many buildings, and the conflagration contributed to an unprecedented casualty rate. Seventy to eighty thousand people were killed, or missing and presumed dead, and an equal number were injured. The magnitude of casualties is set in relief by a comparison with the Tokyo fire raid of 9-10 March 1945, in which, though nearly 16 square miles were destroyed, the number killed was no larger, and fewer people were injured.

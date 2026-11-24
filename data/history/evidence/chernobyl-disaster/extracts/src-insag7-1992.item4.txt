@@ -1,0 +1,10 @@
+source: src-insag7-1992
+locator: item4
+url: https://www-pub.iaea.org/MTCD/publications/PDF/Pub913e_web.pdf
+read: 2026-10-07
+note: section 6, conclusion (4), printed page 23 (PDF page 33)
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+note: a hyphen breaking a lower-case word across a line end in the text layer is closed up
+note: the PDF is a scan with an OCR text layer; the extract was compared line by line with the rendered page (130 dpi) and agrees with it
+
+(4) It is not known for certain what started the power excursion that destroyed the Chernobyl reactor. Some positive reactivity is likely to have been generated from the growth in voids as the coolant flow rate fell. Addition of further positive reactivity by insertion of the control and safety rods that had been fully withdrawn during the test was probably a decisive contributory factor. This latter effect was a result of faulty design of the rods, the nature of which had been discovered at the Ignalina nuclear power plant in 1983. However, no correction was made following this discovery at Ignalina, no compensatory measures were taken and any dissemination of information to operating organizations was not followed up.

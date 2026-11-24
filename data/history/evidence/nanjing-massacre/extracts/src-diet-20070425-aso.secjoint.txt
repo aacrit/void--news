@@ -1,0 +1,8 @@
+source: src-diet-20070425-aso
+locator: secjoint
+url: https://www.shugiin.go.jp/internet/itdb_kaigirokua.nsf/html/kaigirokua/000516620070425008.htm
+read: 2026-10-09
+note: the text is the page's own text in Japanese, whitespace collapsed; a Void translation is beside it (.en.txt)
+note: Foreign Minister Aso Taro's answer, continued
+
+今回の日中歴史共同研究のグループの中でも、この問題等々を含めて、双方の意見の違いというのをただしていかないかぬところだと思いますので、歴史認識が一致するというのはなかなか難しいんだと思いますが、少なくとも、乖離している部分の間を狭めるという努力は、私どもとして今後していかねばならぬと思っております。

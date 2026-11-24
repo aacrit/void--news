@@ -1,0 +1,304 @@
+/* ==========================================================================
+   void --ship v3 — "Mission Control"
+
+   Desktop (>=1024px): the page owns the viewport (100dvh minus the chrome above
+   it) and does NOT scroll. A 3-row grid (top bar / main / strip) holds a 3-column
+   main area (Submit / Board / Observations); only the inner panels scroll.
+   Mobile (<768px) + tablet (768-1023): the same content stacks in normal flow.
+
+   Graph-paper background, organic-ink accents, Press & Precision type retained.
+   All ShipCard / form / log / keyframe styles preserved from v2.
+   ========================================================================== */
+
+/* ---- Graph Paper Tokens ---- */
+:root,
+:root[data-mode="light"] {
+  --ship-grid-color: rgba(148, 107, 21, 0.06);
+
+  /* Ship-scoped RAG + info palette. Deliberately NOT the --bias-* tokens (those
+     stay reserved for political-lean data); these carry status / severity /
+     category meaning on the ship dashboard. All chosen for WCAG AA (>=4.5:1) as
+     text on the warm paper card backgrounds.
+     GREEN = working as intended, AMBER = in progress, ORANGE = queued,
+     RED = open limitation / bug, BLUE = feature / info, GREY = neutral. */
+  --ship-green:   #2E7D4F;
+  --ship-amber:   #8A6410;
+  --ship-orange:  #A65518;
+  --ship-red:     #BE3626;
+  --ship-blue:    #2B6AA8;
+  --ship-neutral: #6B6F78;
+}
+
+:root[data-mode="dark"] {
+  --ship-grid-color: rgba(77, 175, 160, 0.06);
+
+  /* Lighter tints for AA on the dark ground (#1C1A17 / #2A2725). */
+  --ship-green:   #6FC495;
+  --ship-amber:   #D9A64E;
+  --ship-orange:  #E39A5C;
+  --ship-red:     #E58873;
+  --ship-blue:    #7DB0E8;
+  --ship-neutral: #9AA0AA;
+}
+
+/* ==========================================================================
+   PAGE SHELL — mobile-first normal flow, desktop single-viewport grid
+   ========================================================================== */
+
+
+/* ==========================================================================
+   TOP BAR — brand lockup + live metrics + sparkline + tools
+   ========================================================================== */
+
+
+/* ---- Live metrics ---- */
+
+
+/* ---- Pulse Graph sparkline ---- */
+
+
+/* ==========================================================================
+   MAIN GRID — Submit / Board / Observations
+   ========================================================================== */
+
+
+/* Left column wrapper: Submit stacked over the Board. */
+
+
+/* ---- Column / panel ---- */
+
+
+/* ==========================================================================
+   SUBMIT FORM (canvas)
+   ========================================================================== */
+
+
+/* ---- Category Pill Toggle ---- */
+
+
+/* Category color: BUG = red, FEATURE = blue. The active pill reads its color. */
+
+
+/* The sliding indicator tints to match the active category. */
+
+/* ---- Title Input (underline style) ---- */
+
+
+/* ---- Description Textarea ---- */
+
+
+/* ---- Char Count ---- */
+
+
+/* ---- Submit Button ---- */
+
+
+/* ---- Rate Limit ---- */
+
+/* ---- Error ---- */
+
+/* ---- Honeypot ---- */
+
+/* ---- Success State ---- */
+
+
+/* ==========================================================================
+   QUICK SUBMIT — "Suggest a fix" (inline) + "Got an idea?" (block)
+   ========================================================================== */
+
+
+/* ==========================================================================
+   THE BOARD — Kanban
+   ========================================================================== */
+
+
+/* Status-colored header rule per column so the board reads with color:
+   Submitted = neutral, Triaged = blue, Building = amber, Shipped = green,
+   Resolved = muted. Kept as a 2px bottom rule + a whisper of header tint so it
+   stays editorial and graph-paper friendly in both themes. */
+
+
+/* ==========================================================================
+   REQUEST CARD
+   ========================================================================== */
+
+
+/* ---- Ship Clock (Feature #1) ---- */
+
+
+/* ---- Meta row ---- */
+
+
+/* ---- Vote button ---- */
+
+
+/* ---- Vote ink splash micro-dots ---- */
+
+
+/* ---- Shipped Card ---- */
+
+
+/* ---- Ship Diff (Feature #4) ---- */
+
+
+/* ---- Building Card ---- */
+
+
+/* ---- Closed / terminal cards ---- */
+
+
+/* ---- Thread Replies (Feature #5) ---- */
+
+
+/* ---- New Card Animation ---- */
+
+/* ---- Empty State ---- */
+
+/* ---- Loading Skeleton ---- */
+
+
+/* ==========================================================================
+   KNOWN OBSERVATIONS RAIL — expandable accordion list, fills the column
+   ========================================================================== */
+
+
+/* ---- Chip: RAG severity (red / amber / green) ---- */
+
+
+/* RAG mapping: By design = green (working as intended), Actively tuning = amber
+   (in progress), On the roadmap = orange-amber (queued), Known = red (open
+   limitation). Tokens theme-swap, so light + dark are both covered. */
+
+/* ---- Observations list: expandable accordion, fills the column ---- */
+
+
+/* Height animation via grid rows (0fr -> 1fr); the inner body is inert while
+   collapsed so its focusable controls leave the tab order. */
+
+
+/* The animated grid child must collapse to a TRUE zero when closed. Any
+   padding here keeps the min-content contribution above 0, so the 0fr track
+   never fully closes and a clipped first line of the note leaks under the
+   claim. Keep this element padding-free (just the overflow clip); all spacing
+   lives on the inner wrapper, which the overflow:hidden crops to nothing while
+   collapsed. */
+
+
+/* ==========================================================================
+   OVERLAY — Expand all + Ship Log
+   ========================================================================== */
+
+
+/* ==========================================================================
+   SHIP LOG (rendered inside the overlay)
+   ========================================================================== */
+
+
+/* ==========================================================================
+   BOTTOM STRIP — slim utility bar (session stat + full-log access)
+   ========================================================================== */
+
+
+/* ---- Observations column footer + Discord placeholder ---- */
+
+/* Disabled "coming soon" chip. No invite URL yet. Unrendered since the
+   board reverted to the feedback form. */
+
+
+/* ==========================================================================
+   KEYFRAMES
+   ========================================================================== */
+
+@keyframes shipCardEnter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shipVoteArrowPop {
+  from { transform: scale(1.35); }
+  to { transform: scale(1); }
+}
+
+@keyframes shipMetricLand {
+  from { transform: scale(1.04); }
+  to { transform: scale(1); }
+}
+
+@keyframes shipGoldenFlash {
+  0% { box-shadow: var(--shadow-e1); }
+  40% { box-shadow: 0 0 0 1px color-mix(in srgb, var(--cin-amber, #946B15) 40%, transparent), 0 0 24px color-mix(in srgb, var(--cin-amber, #946B15) 15%, transparent), var(--shadow-e2); }
+  100% { box-shadow: var(--shadow-e1); }
+}
+
+@keyframes shipBuildingHeartbeat {
+  0% { transform: scale(1); opacity: 0.5; box-shadow: 0 0 0 0 transparent; }
+  25% { transform: scale(1.4); opacity: 1; box-shadow: 0 0 0 3px color-mix(in srgb, var(--voice-accent, #4DAFA0) 30%, transparent); }
+  40% { transform: scale(1.3); opacity: 0.9; }
+  70% { transform: scale(1); opacity: 0.4; box-shadow: 0 0 0 0 transparent; }
+  100% { transform: scale(1); opacity: 0.5; }
+}
+
+@keyframes shipBuildingTextPulse {
+  0%, 100% { opacity: 0.8; }
+  25% { opacity: 1; }
+  70% { opacity: 0.6; }
+}
+
+@keyframes shipSkeletonPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes shipFormBtnPulse {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+@keyframes shipPulseGraphDraw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes shipThreadExpand {
+  from { opacity: 0; max-height: 0; }
+  to { opacity: 1; max-height: 500px; }
+}
+
+@keyframes shipSplashUp {
+  0% { transform: translateY(0) scale(0); opacity: 0; } 30% { transform: translateY(-8px) scale(1); opacity: 0.8; } 100% { transform: translateY(-14px) scale(0.3); opacity: 0; }
+}
+@keyframes shipSplashDown {
+  0% { transform: translateY(0) scale(0); opacity: 0; } 30% { transform: translateY(8px) scale(1); opacity: 0.8; } 100% { transform: translateY(14px) scale(0.3); opacity: 0; }
+}
+@keyframes shipSplashLeft {
+  0% { transform: translateX(0) scale(0); opacity: 0; } 30% { transform: translateX(-8px) scale(1); opacity: 0.8; } 100% { transform: translateX(-14px) scale(0.3); opacity: 0; }
+}
+@keyframes shipSplashRight {
+  0% { transform: translateX(0) scale(0); opacity: 0; } 30% { transform: translateX(8px) scale(1); opacity: 0.8; } 100% { transform: translateX(14px) scale(0.3); opacity: 0; }
+}
+
+/* Overlay */
+@keyframes shipOverlayFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes shipOverlayRise {
+  from { opacity: 0; transform: translateY(18px) scale(0.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+/* Tablet: board falls to fewer columns when stacked (normal flow). */
+
+
+/* Coarse pointers: give the rail controls a full tap target. */
+
+
+/* ==========================================================================
+   REDUCED MOTION
+   ========================================================================== */
+

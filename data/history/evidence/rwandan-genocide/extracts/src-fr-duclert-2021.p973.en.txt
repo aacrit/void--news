@@ -1,0 +1,6 @@
+rendering: official-parallel
+of: src-fr-duclert-2021.p973
+url: https://www.vie-publique.fr/files/rapport/pdf/279186.pdf
+read: 2026-10-07
+
+The research therefore establishes a set of responsibilities, both serious and overwhelming.

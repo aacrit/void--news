@@ -1,0 +1,6 @@
+source: src-wannsee-avalon
+locator: seci
+url: https://avalon.law.yale.edu/imt/wannsee.asp
+read: 2026-10-07
+
+I. The following persons took part in the discussion about the final solution of the Jewish question which took place in Berlin, am Grossen Wannsee No. 56/58 on 20 January 1942.

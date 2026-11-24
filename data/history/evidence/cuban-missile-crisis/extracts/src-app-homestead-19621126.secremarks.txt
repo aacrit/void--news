@@ -1,0 +1,7 @@
+source: src-app-homestead-19621126
+locator: secremarks
+url: https://www.presidency.ucsb.edu/documents/remarks-homestead-air-force-base-florida-upon-presenting-unit-awards
+read: 2026-10-07
+note: the closing paragraph of the President's remarks at Homestead Air Force Base, 26 November 1962, as The American Presidency Project prints them
+
+So I think that you gentlemen can take every satisfaction in what you are doing, what you have done, and in what you will do. We are very much indebted to you. And we are particularly indebted to Major Anderson, who was a member of one of these wings, who was the only casualty of the last few weeks, but who is symbolic, I think, of the willingness of a good many Americans to take great hazards on behalf of their country. We are very much indebted to you all.

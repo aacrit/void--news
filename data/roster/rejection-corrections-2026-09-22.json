@@ -1,0 +1,78 @@
+{
+  "why": "Re-measured the 8 rows the 2026-09-22 feed pass put in failed_domain_check. Three were real (Botswana Guardian is a genuine hijack, The Santiago Times' feed stops in 2023, The Texan's returns 0 items). The rest were two rebrands, two faults in our own heuristics, and one 429.",
+  "applied": [
+    {
+      "name": "MSNBC",
+      "before": {
+        "url": "https://www.msnbc.com",
+        "rss_url": "https://news.google.com/rss/search?q=site:msnbc.com+when:24h&ceid=US:en&hl=en-US&gl=US"
+      },
+      "after": {
+        "url": "https://www.ms.now",
+        "rss_url": "https://www.ms.now/feed"
+      },
+      "evidence": {
+        "items": 10,
+        "on_expected": 10,
+        "articles": 10,
+        "title": "MS NOW",
+        "sample": "https://www.ms.now/news/judge-dismisses-defamation-suit-cassidy-hutchinsons-lawyer-brought-against-ms-now-analyst"
+      }
+    },
+    {
+      "name": "The War Zone",
+      "before": {
+        "url": "https://www.thedrive.com/the-war-zone",
+        "rss_url": "https://www.thedrive.com/feeds/rss/war-zone"
+      },
+      "after": {
+        "url": "https://www.twz.com",
+        "rss_url": "https://www.twz.com/feed"
+      },
+      "evidence": {
+        "items": 40,
+        "on_expected": 40,
+        "articles": 40,
+        "title": "TWZ",
+        "sample": "https://www.twz.com/sea/chinese-next-generation-submarine-developments-spotted-in-new-satellite-imagery"
+      }
+    },
+    {
+      "name": "Novinite",
+      "before": {
+        "url": "https://www.novinite.com",
+        "rss_url": "https://news.google.com/rss/search?q=site:novinite.com+when:24h&ceid=US:en&hl=en-US&gl=US"
+      },
+      "after": {
+        "url": "https://www.novinite.com",
+        "rss_url": "https://www.novinite.com/services/news_rdf.php"
+      },
+      "evidence": {
+        "items": 24,
+        "on_expected": 24,
+        "articles": 24,
+        "title": "Novinite.com (Sofia News Agency)",
+        "sample": "https://www.novinite.com/view_news.php?id=240715"
+      }
+    }
+  ],
+  "held": [
+    {
+      "name": "St. Louis Post-Dispatch",
+      "why": "HTTP 429"
+    },
+    {
+      "name": "Rapid City Journal",
+      "why": "HTTP 429"
+    }
+  ],
+  "held_detail": {
+    "St. Louis Post-Dispatch": "HTTP 429 on two attempts. Lee Enterprises rate-limits this runner's IP. NOT unmeasured: one earlier fetch in the same session, with the corrected tooling, returned 50 items, 50 on stltoday.com and 50 article-shaped, title 'www.stltoday.com - RSS Results of type article with keyword(s) of #topstory'. That is one observation, not two, so the row is held rather than applied. Re-run from an unthrottled IP.",
+    "Rapid City Journal": "HTTP 429 on two attempts, same host and same rate limit. Never successfully measured. Re-run from an unthrottled IP."
+  },
+  "stays_rejected": {
+    "Botswana Guardian": "A genuine hijack and the reason the expected-domain check exists. Its feed resolves to bettingbotswana.com, titles itself 'Betting Botswana', and its sample link is a football betting page.",
+    "The Santiago Times": "Not hijacked, abandoned. The feed is on santiagotimes.com where the roster has .cl, and its newest item is dated 2023.",
+    "The Texan": "The feed returns 0 items."
+  }
+}

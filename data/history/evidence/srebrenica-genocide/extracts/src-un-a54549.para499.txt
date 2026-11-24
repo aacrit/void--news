@@ -1,0 +1,6 @@
+source: src-un-a54549
+locator: para499
+url: https://documents.un.org/doc/undoc/gen/n99/348/76/pdf/n9934876.pdf
+read: 2026-09-24
+
+499. Protected zones and safe areas can have a role in protecting civilians in armed conflict, but it is clear that either they must be demilitarized and established by the agreement of the belligerents, as in the case of the “protected zones” and “safe havens” recognized by international humanitarian law, or they must be truly safe areas, fully defended by a credible military deterrent. The two concepts are absolutely distinct and must not be confused. It is tempting for critics to blame the UNPROFOR units in Srebrenica for its fall, or to blame the United Nations hierarchy above those units. Certainly, errors of judgement were made — errors rooted in a philosophy of impartiality and non-violence wholly unsuited to the conflict in Bosnia — but this must not divert us from the more fundamental mistakes. The safe areas were established by the Security Council without the consent of the parties and without the provision of any credible military deterrent. They were neither protected areas nor safe havens in the sense of international humanitarian law, nor safe areas in any militarily meaningful sense.

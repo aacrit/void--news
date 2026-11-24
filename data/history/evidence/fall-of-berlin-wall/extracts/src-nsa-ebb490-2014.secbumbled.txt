@@ -1,0 +1,8 @@
+source: src-nsa-ebb490-2014
+locator: secbumbled
+url: https://nsarchive2.gwu.edu/NSAEBB/NSAEBB490/
+read: 2026-10-09
+note: the editors' introduction
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Crowds of East Berliners, already conditioned by months of refugee flights to the West and weeks of peaceful mass protests in cities like Leipzig, seized on media reports of immediate changes in travel restrictions — based on a bumbled briefing by a Politburo member, Günter Schabowski — and inundated the Wall's checkpoints demanding passage. Television coverage of the first crossing that yielded to the self-fulfilling media prophecy then created a multiplier effect and more crowds came, ultimately to dance on the Wall.

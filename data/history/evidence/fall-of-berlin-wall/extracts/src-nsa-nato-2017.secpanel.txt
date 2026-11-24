@@ -1,0 +1,8 @@
+source: src-nsa-nato-2017
+locator: secpanel
+url: https://nsarchive.gwu.edu/briefing-book/russia-programs/2017-12-12/nato-expansion-what-gorbachev-heard-western-leaders-early
+read: 2026-10-09
+note: the panel list; [4] and [5] are the page's note numbers
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Mark Kramer from the Davis Center at Harvard, editor of the Journal of Cold War Studies , whose 2009 Washington Quarterly article argued that the “no-NATO-enlargement pledge” was a “myth”; [4] * Joshua R. Itkowitz Shifrinson from the Bush School at Texas A&M, whose 2016 International Security article argued the U.S. was playing a double game in 1990, leading Gorbachev to believe NATO would be subsumed in a new European security structure, while working to ensure hegemony in Europe and the maintenance of NATO;

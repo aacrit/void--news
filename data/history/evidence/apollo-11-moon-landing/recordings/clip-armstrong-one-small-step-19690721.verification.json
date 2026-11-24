@@ -1,0 +1,51 @@
+{
+ "clip_id": "clip-armstrong-one-small-step-19690721",
+ "slug": "apollo-11-moon-landing",
+ "tool": "faster-whisper",
+ "tool_version": "1.2.1",
+ "model": "base.en",
+ "compute_type": "int8",
+ "beam_size": 5,
+ "source": {
+  "file": "https://archive.org/download/NasaAudioHighlightReels/Sound-Bite_Apollo-11_One-Small-Step_Quote.wav",
+  "md5": "28e0d58d4b886f8112120e1dd4ae18ff",
+  "md5_expected": "28e0d58d4b886f8112120e1dd4ae18ff",
+  "rate": 48000
+ },
+ "window": {
+  "in": 0.0,
+  "out": 8.224,
+  "seconds": 8.224
+ },
+ "excerpt_sha256": "9b17aa7be259f84b11fb9fdfbf7c37b5eca0b47ed1e6511af2e4f80e5eed25e8",
+ "excerpt_pcm": "s16le mono at the source rate, ffmpeg atrim, -bitexact",
+ "reference": "That's one small step for man; one giant leap for mankind",
+ "hypothesis": "It's one small step for man, one giant leap for mankind.",
+ "wer": 0.0833,
+ "coverage": 0.9167,
+ "counts": {
+  "ref_words": 12,
+  "hyp_words": 12,
+  "substitutions": 1,
+  "deletions": 0,
+  "insertions": 0,
+  "first_matched_ref": 1,
+  "last_matched_ref": 11,
+  "lead_insertions": 0,
+  "trail_insertions": 0
+ },
+ "diff": [
+  "[that -> it]",
+  "s one small step for man one giant leap for mankind"
+ ],
+ "thresholds": {
+  "coverage_min": 0.7,
+  "edge_slack_words": 1,
+  "edge_insert_max": 2
+ },
+ "pass": true,
+ "why": [],
+ "verified_at": "2026-10-04T04:55:53Z",
+ "signed": false,
+ "note": "a pass verifies the words in this window against the stored transcript. It does not verify the occasion, the date or the rights, and it signs nothing."
+}

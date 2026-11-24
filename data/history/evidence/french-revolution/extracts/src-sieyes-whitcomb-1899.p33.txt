@@ -1,0 +1,7 @@
+source: src-sieyes-whitcomb-1899
+locator: p33
+url: https://archive.org/download/frenchphilosoph00whitgoog/frenchphilosoph00whitgoog_djvu.txt
+read: 2026-10-09
+note: the free copy is the scan's OCR text layer, held as the layer prints it (long s read as f and other misreadings included); line breaks collapsed to spaces, nothing else changed
+
+Such are the efforts which sustain society. Who puts them forth ? The Third Estate.

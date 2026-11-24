@@ -1,0 +1,8 @@
+source: src-gorbachev-ps-2006
+locator: para1
+url: https://www.project-syndicate.org/commentary/turning-point-at-chernobyl
+read: 2026-10-07
+note: the second sentence of the article's first paragraph, the only paragraph served without a subscription. The first sentence was read and is NOT held (see gaps: it diverges from the quotation the event record carries)
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+Indeed, the Chernobyl catastrophe was a historic turning point: there was the era before the disaster, and there is the very different era that has followed.

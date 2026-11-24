@@ -1,0 +1,52 @@
+source: src-top-xi
+locator: item45
+url: https://archive.org/download/constitutionalre06nich/constitutionalre06nich_djvu.txt
+read: 2026-09-25
+note: item n is the document number in the volume: No. 45, the Appendix to the Statement of 3 June 1947, page 94; the OCR layer splits the words 'according to the 1941 Census' around the two columns and is kept as printed
+
+APPENDIX
+Muslim Majority Districts of Bengal and the Punjab
+according
+i. Bengal
+Chittagong Division
+Chittagong.
+Noakhali.
+Tippera.
+Dacca Division
+Bakarganj.
+Dacca.
+Faridpur.
+Mymensingh.
+Presidency Division
+Jessore.
+Murshidabad.
+Nadia.
+o the 1941 Census
+2. The Punjab
+Lahore Division
+Gujranwala.
+Gurdaspur.
+Lahore.
+Sheikhupura.
+Sialkot.
+Rawalpindi Division
+Attock.
+Gujrat.
+Jhelum.
+Mianwali.
+Rawalpindi.
+Shahpur.
+Rajshahi Division
+Bogra.
+Dinajpur.
+Malda.
+Pabna.
+Rajshahi.
+Rangpur.
+Multan Division
+Dera Ghazi Khan.
+Jhang.
+Lyallpur.
+Montgomery.
+Multan.
+Muzaffargarh.

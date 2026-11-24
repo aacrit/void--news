@@ -1,0 +1,8 @@
+source: src-rhee-19530709
+locator: secabeyance
+url: https://history.state.gov/historicaldocuments/frus1952-54v15p2/d681
+read: 2026-10-09
+note: the same letter
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+In particular, we have agreed to hold in abeyance our original demand for the withdrawal of Chinese Communist troops and for reunification of Korea prior to signing of an armistice.

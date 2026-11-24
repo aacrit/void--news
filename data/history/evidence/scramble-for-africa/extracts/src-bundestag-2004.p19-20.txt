@@ -1,0 +1,19 @@
+source: src-bundestag-2004
+locator: p19-20
+url: https://www.bundestag.de/resource/blob/594462/19e7006b4e99355d020d3b7fb4df4145/WD-1-080-04-pdf-data.pdf
+read: 2026-09-25
+note: sliced from the PDF's text layer; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed
+note: the paper's paragraph on the counts, which runs from page 19 to page 20; the footnote lines and the page header between are dropped
+
+In der Geschichtswissenschaft ist bis heute umstritten, wie hoch die Kriegsverluste der
+Herero tatsächlich ausfielen. Dies hängt vor allem damit zusammen, dass weder für die
+Zeit vor dem Krieg noch für die Zeit danach genaue Zahlen über die Größe des Hererovolkes überliefert sind. Aus diesem Grunde sind alle Versuche zur quantitativen Bestimmung der Kriegsopfer mit großer Vorsicht zu genießen. So beruhen die Schätzungen für die Vorkriegszeit auf nicht überprüften und in ihrer Zuverlässigkeit sehr zweifelhaften Angaben von Missionaren; den Nachkriegsangaben werden zumeist Gefangenenzählungen durch die deutsche Militäradministration zugrunde gelegt. Angesichts der
+mangelhaften Überlieferung der entsprechenden Daten wundert es wenig, dass die
+Spannweite für die jeweils präsentierten Daten sehr groß ist. So schwanken die Angaben für die gesamte Hererobevölkerung in der Vorkriegszeit zwischen 35.000 und
+100.000 Personen, die Nachkriegsbevölkerung wird auf 14.000 bis 25.000 Personen
+beziffert, was – bei Berücksichtigung der jeweiligen Extremwerte – auf Verlustquoten
+zwischen 29 und 86 Prozent hinausläuft. Weitere Verunsicherungen über die quantitativen Verhältnisse ergeben sich daraus, dass seit Ende des 19. Jahrhunderts mehrere
+größere Epidemien unter den Herero mit vielen Opfern gewütet haben, ohne dass mit
+Sicherheit feststellbar wäre, ob dieser Sachverhalt bei den Angaben zur Gesamtpopulation jeweils Berücksichtigung gefunden hat. Auffallend ist zudem, dass offensichtlich in
+keine der Berechnungen die natürliche Bevölkerungsentwicklung (Geburts-, Sterbe-,
+Zu- und Abwanderungsrate) einbezogen worden ist. Es liegt auf der Hand, dass bei

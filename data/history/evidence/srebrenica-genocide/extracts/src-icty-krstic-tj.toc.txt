@@ -1,0 +1,7 @@
+source: src-icty-krstic-tj
+locator: toc
+url: https://www.icty.org/x/cases/krstic/tjug/en/krs-tj010802e.pdf
+read: 2026-09-24
+note: the ICTY PDF text layer renders some diacritics with substitute glyphs (Poto~ari for Potocari, Erdemovi} for Erdemovic, @ivanovi} for Zivanovic, ^an~ari for Cancari); the passage is stored as the text layer prints it
+
+(a) The Morning of 13 July 1995: Jadar River Executions ... 69 (b) The Afternoon of 13 July 1995: Cerska Valley Executions ... 71 (c) Late Afternoon of 13 July 1995: Kravica Warehouse ... 72 (d) 13-14 July 1995: Tišca ... 76 (e) 14 July 1995: Grbavci School Detention Site and Orahovac Execution site ... 77 (f) 14 - 15 July 1995: Petkovci School Detention Site and Petkovci Dam Execution Site ... 81 (g) 14 - 16 July 1995: Pilica School Detention Site and Branjevo Military Farm Execution Site ... 83 (h) 16 July 1995: Pilica Cultural Dom ... 87 (i) Kozluk ... 89 (j) Smaller Scale Executions following the Mass Executions ... 91 (k) The Reburials ... 

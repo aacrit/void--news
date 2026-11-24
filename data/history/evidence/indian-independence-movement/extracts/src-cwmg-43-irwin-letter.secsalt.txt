@@ -1,0 +1,8 @@
+source: src-cwmg-43-irwin-letter
+locator: secsalt
+url: https://archive.org/download/HindSwaraj-CWMG-043/CWMG-v043-XLIII-MC-BETA_djvu.txt
+read: 2026-10-09
+note: the text is the archive.org full-text (djvu.txt) layer of the electronic edition of the Collected Works (Publications Division), whitespace collapsed; line-end hyphens and glyph errors kept as the layer gives them
+note: the asterisk is the editors' note marker; their note reads 'The march, however, started on March 12.'
+
+on the 11th day of this month,* I shall proceed with such co-workers of the Ashram as I can take, to disregard the provisions of the salt laws. I regard this tax to be the most iniquitous of all from the poor man’s standpoint. As the independence movement is essentially for the poorest in the land the beginning will be made with this evil. The wonder is that we have submitted to the cruel monopoly for so long. It is, I know, open to you to frustrate my design by arresting me. I hope that there will be tens of thousands ready, in a disciplined manner, to take up the work after me, and, in the act of disobeying the Salt Act to lay them- selves open to the penalties of a law that should never have dis- figured the Statute-book.

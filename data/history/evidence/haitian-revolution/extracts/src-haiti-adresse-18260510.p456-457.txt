@@ -1,0 +1,8 @@
+source: src-haiti-adresse-18260510
+locator: p456-457
+url: https://archive.org/download/recueilgnral04hait/recueilgnral04hait_djvu.txt
+read: 2026-09-25
+note: No. 1034, pages 456 to 457: the heading, and the paragraph on the indemnity and the extraordinary contribution; the paragraphs between are not held and the page marker is removed
+note: the free copy is the scan's OCR text layer, held as the layer prints it, long s read as f and other misreadings included
+
+N° 1034. — Adresse de la Chambre des Représentanls des communes, aux Baitiens, á la clóture de ses travaux. Port-au-Prince, le 10 mai 1826. La législature, aprés avoir rendu une loi qui reconnait dette nationale l'indemnié de 150,000,000 de francs consentie envers la France, devait pourvoir aux moyens d'éteindre cet engagement sacre. Une contribution extraordinaire, répartie de la maniere la plus équitable et la plus réguliére sur la généralité des citoyens, a paru le mode le plus convenable a employer. Une loi qui établit une contribution extraoidinaire de 30 millions de gourdes payable en dix anuées a done été rendue par la Chambre.

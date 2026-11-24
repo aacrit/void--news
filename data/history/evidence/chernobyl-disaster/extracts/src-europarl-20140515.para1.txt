@@ -1,0 +1,8 @@
+source: src-europarl-20140515
+locator: para1
+url: https://web.archive.org/web/20170329202404/http://www.europarl.europa.eu/news/en/news-room/20140514STO47018/html/Forsmark-how-Sweden-alerted-the-world-about-the-danger-of-Chernobyl-disaster/
+read: 2026-10-07
+note: the story's first paragraph, from the Internet Archive capture of 29 March 2017 of the Parliament's URL (the live URL now answers 410 Gone)
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+The alarm sounded at Forsmark, Sweden's second largest nuclear power plant, when one of the employees passed one of the radiation monitors on his way back from the restroom. When it showed high levels of radiation coming from his shoes, staff at first worried an accident had taken place at the power plant. However, a thorough scan discovered that the real source of the radiation was some 1,100 kilometres away in the Ukrainian town of Chernobyl.

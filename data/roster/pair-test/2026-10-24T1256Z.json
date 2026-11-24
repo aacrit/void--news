@@ -1,0 +1,115 @@
+{
+ "collected_at": "2026-10-24T12:56:40Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 33,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16235035/Storm-Boelo-strikes-UK-one-day-Storm-Austen.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Storm Boelo strikes UK one day after Storm Austen: 80mph winds hit ferries and trains with more homes facing power cuts as Met Office issues rare amber alert",
+      "published": "Sat, 24 Oct 2026 12:02:31 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/power-cut-storm-boelo-37806541",
+      "title": "Met Office issues 24-hour power cut warning for 37 UK areas ahead of Storm Boelo - full list",
+      "published": "Sat, 24 Oct 2026 11:34:44 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 136,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/article-912697",
+      "title": "Netanyahu switches Israel's position to favor Argentina in dispute over Falklands - report",
+      "published": "Sat, 24 Oct 2026 14:35:15 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/israel-politics/2026-10-22/ty-article/.premium/herzog-rejects-pardon-for-rabins-assassin-at-annual-memorial-service/000001a1-63e8-d995-a9f7-63edcea30000",
+      "title": "Herzog rejects pardon for Rabin's assassin at annual memorial service",
+      "published": "Thu, 22 Oct 2026 18:27:20 +0300"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/defense-news/article-912675",
+      "title": "IDF, Shin Bet launch multi-day West Bank counterterrorism operations after deadly Hamas attack",
+      "published": "Sat, 24 Oct 2026 00:41:23 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/west-bank/2026-10-24/ty-article/.premium/israeli-forces-launch-raid-on-hebron-after-west-bank-shooting-attack/000001a1-6aa9-d46d-a1fd-eaa972130000",
+      "title": "Israeli forces launch raid on Hebron after West Bank shooting attack",
+      "published": "Sat, 24 Oct 2026 00:32:41 +0300"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [
+    {
+     "score": 23,
+     "right": {
+      "url": "https://www.indiatoday.in/science/story/ashoke-sen-2026-oskar-klein-medal-first-indian-physicist-3024131-2026-10-24?utm_source=rss",
+      "title": "Ashoke Sen becomes first Indian physicist to win Oskar Klein Medal",
+      "published": "Sat, 24 Oct 2026 17:49:29 +0530"
+     },
+     "left": {
+      "url": "https://www.thehindu.com/news/national/ashoke-sen-becomes-first-indian-physicist-to-receive-oskar-klein-medal/article71619342.ece",
+      "title": "Ashoke Sen becomes first Indian physicist to receive Oskar Klein Medal",
+      "published": "Sat, 24 Oct 2026 13:48:49 +0530"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/whatever-our-enemies-do-erdogans-son-rallies-diaspora-network-in-europe-as-german-intelligence-warns-of-ankaras-spying-on-dissidents/",
+      "title": "Erdogan’s son vows to stand against enemies at diaspora rally in Germany",
+      "published": "Mon, 12 Oct 2026 22:01:54 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 313,
+    "left": 10
+   }
+  }
+ }
+}

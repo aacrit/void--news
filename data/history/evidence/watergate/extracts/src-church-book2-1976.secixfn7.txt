@@ -1,0 +1,8 @@
+source: src-church-book2-1976
+locator: secixfn7
+url: https://www.intelligence.senate.gov/sites/default/files/94755_II.pdf
+read: 2026-10-09
+note: the PDF's text layer, line breaks folded to spaces; line-end hyphens are kept as printed
+note: printed page IX, the footnote (7) to 'a huge factual record'; the footnote mark prints as an apostrophe in the text layer
+
+'Some 800 witnesses were examined, approximately 250 under oath in executive sessions, 50 in public sessions, and the balance in interviews. The aggregate number of transcript pages is almost 30,000. Approximately 110,000 document pages were obtained from the various intelligence agencies (still more were preliminarily reviewed at the agencies), as well as from the White House, presidential libraries, and other sources.

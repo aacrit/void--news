@@ -1,0 +1,122 @@
+{
+ "collected_at": "2026-10-01T15:40:54Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 28,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16175573/Brooklyn-Beckham-27-reveals-salt-pepper-flecks-hair-Nicola-Peltz-arrive-Balenciaga-one-day-estranged-mum-Victorias-Paris-Fashion-Week-event.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Brooklyn Beckham, 27, reveals salt and pepper flecks in his hair as he and Nicola Peltz arrive at the Balenciaga show - one day before estranged mum Victoria's Paris Fashion Week event",
+      "published": "Thu, 01 Oct 2026 16:17:59 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/3am/celebrity-news/brooklyn-beckham-grey-hair-nicola-37724408",
+      "title": "Brooklyn Beckham, 27, reveals grey hair as he risks another run-in with parents",
+      "published": "Thu, 1 Oct 2026 15:19:49 +0000"
+     }
+    },
+    {
+     "score": 23,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16175891/Flydubai-hijacker-suicidal-undergone-Islamist-radical-indoctrination-Benjamin-Netanyahu-says.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Flydubai hijacker 'was suicidal' and 'had undergone Islamist radical indoctrination', Benjamin Netanyahu says",
+      "published": "Thu, 01 Oct 2026 16:29:43 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/world-news/flydubai-pilot-stabbed-fz1073-israel-37716939",
+      "title": "FlyDubai FZ1073 latest: Netanyahu says hijack pilot 'used axe' in cockpit attack",
+      "published": "Thu, 1 Oct 2026 14:55:41 +0000"
+     }
+    },
+    {
+     "score": 21,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16175007/Nigel-Farage-deport-Meghan-Markle-Prince-Harry.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Nigel Farage jokes he might deport Meghan Markle if he becomes PM as he accuses Duchess of 'using her wiles' on 'weak' Harry and hits out at their 'disgraceful behaviour'",
+      "published": "Thu, 01 Oct 2026 14:42:42 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/royals/harry-meghan-paparazzi-school-complaint-37724815",
+      "title": "Former royal protection officer slams Harry and Meghan’s 'shameless' paparazzi complaint",
+      "published": "Thu, 1 Oct 2026 15:35:43 +0000"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16175805/Bomb-squad-police-explosives-guns-drugs-house-search.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Bomb squad are called in as police find explosives, guns and drugs in house search after 150 homes are evacuated and 70-year-old man is arrested",
+      "published": "Thu, 01 Oct 2026 14:56:18 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/worle-police-raid-guns-drugs-37720749",
+      "title": "'Explosives, guns and drugs' found in Worle police raid as 150 homes evacuated",
+      "published": "Thu, 1 Oct 2026 15:02:42 +0000"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.dailymail.com/news/royals/article-16174883/Meghan-launches-advent-calendar-ever.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Meghan launches $148 advent calendar in first commercial venture since moving to UK and reveals she was 'Christmas planning in June'",
+      "published": "Thu, 01 Oct 2026 14:44:27 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/royals/meghan-markle-luxury-advent-calendar-37724269",
+      "title": "Meghan Markle releases £100 luxury advent calendar inspired by her California home",
+      "published": "Thu, 1 Oct 2026 14:37:04 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 129,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/article-910334",
+      "title": "Trump says he doesn't believe Netanyahu was warned about Oct. 7 by Egypt, UAE",
+      "published": "Thu, 01 Oct 2026 15:13:30 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/us-news/2026-10-01/ty-article/.premium/trump-cant-imagine-netanyahu-was-warned-ahead-of-oct-7/000001a0-f747-d9ab-abfd-f7e747150000",
+      "title": "Trump: 'Can't imagine' Netanyahu was warned by Egypt, UAE before October 7 Hamas attack",
+      "published": "Thu, 01 Oct 2026 14:58:43 +0300"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 136,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [],
+   "error": "HTTPError: 429 Client Error: Too Many Requests for url: https://nordicmonitor.com/feed/"
+  }
+ }
+}

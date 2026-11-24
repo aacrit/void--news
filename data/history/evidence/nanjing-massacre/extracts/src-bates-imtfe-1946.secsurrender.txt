@@ -1,0 +1,8 @@
+source: src-bates-imtfe-1946
+locator: secsurrender
+url: https://www.legal-tools.org/doc/a5a0b0/pdf/
+read: 2026-10-09
+note: the text is the scan's own OCR layer as the Legal Tools Database serves it, whitespace collapsed; the transcript's printed line numbers (1 to 25) and the OCR's glyph errors sit inside the text and are kept as the layer gives them
+note: transcript pages 2,630 to 2,631
+
+Large parties of Chinese soldiers laid down their arms, surrendered, immedia:tely outside the walls bf the city and there, within the first seventy- two hours, were 'cut down by machine gun fire, mostly PURL: https://www.legal-tools.org/doc/a5a0b0/ ·; 1 2 3 4 5 6 7 .' 8 t 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 . 2,.631 BATES DIRECT upon,the bank of the Yangtze River. We of the Internati_onal Committee hired laborers to carry out the burials of more than thirty thousand of these soldiers.

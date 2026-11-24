@@ -1,0 +1,7 @@
+source: src-polish-note-19421210
+locator: sechead
+url: https://archive.org/details/the_mass_extermination_of_jews_in_german_occupied_poland
+read: 2026-10-07
+note: the title page as the OCR layer reads it
+
+REPUBLIC OF POLAND Ministry of Foreign Affairs THE MASS EXTERMINATION of JEWS in GERMAN OCCUPIED POLAND NOTE addressed to the Governments of the United Nations on December 10th, 1942, and other documents

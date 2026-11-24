@@ -1,0 +1,6 @@
+source: src-hansard-19421217
+locator: secc2083b
+url: https://api.parliament.uk/historic-hansard/commons/1942/dec/17/united-nations-declaration
+read: 2026-10-07
+
+The above mentioned Governments and the French National Committee condemn in the strongest possible terms this bestial policy of cold-blooded extermination. They declare that such events can only strengthen the resolve of all freedom loving peoples to overthrow the barbarous Hitlerite tyranny. They re-affirm their solemn resolution to ensure that those responsible for these crimes shall not escape retribution, and to press on with the necessary practical measures to this end."

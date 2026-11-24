@@ -1,0 +1,8 @@
+source: src-diet-20070425-watanabe
+locator: secchang
+url: https://www.shugiin.go.jp/internet/itdb_kaigirokua.nsf/html/kaigirokua/000516620070425008.htm
+read: 2026-10-09
+note: the text is the page's own text in Japanese, whitespace collapsed; a Void translation is beside it (.en.txt)
+note: Watanabe Shu (Democratic Party), questioning the Foreign Minister
+
+これの原作になりましたのは、アイリス・チャンという中国系アメリカ人の亡くなった作家の書いた「レイプ・オブ・南京」という、正直言ってでっち上げの本の中がもととなってできている映画でございます。

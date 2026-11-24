@@ -1,0 +1,16 @@
+source: src-clo-19480429
+locator: p610-611
+url: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+read: 2026-09-25
+note: the page is the volume's, read from the scan's running numbers, which the OCR layer prints between pages: the passage lies between the two numbers given
+note: the OCR layer's Seikhupura is kept as printed
+
+(a) Seikhupura
+
+The total number of persons still to be evacuated is about 1900, out of whom at least 1300 are baazigars. Almost all of them are converts. They are being collecied in the camp and sent to Lahore from where they will be evacuated to Amritsar. These people have no camels with them.
+
+The number of abducted women still to be recovered is about 100 and the District Liaison Officer has clues of 47 out of them. The progress of recovery is very slow. From Istof April, 1948 to 25th April, 1948 only 16 women and 10 children were recovered. About 30-35 guides are always present in the camp. In these circumstances it is necessary that the District Liaison Officer must continue to work here.
+
+(b) Sargodha
+
+The total number of persons still to be evacuated is about 300. Most of them are converts, About 100 women have still to be recovered; 28 are reported to do with pathans and clues of another 70 are available with the District Liaison Officer and a list has been given to the Superintendent of Police. The progress of recovery is very slow as in other districts.

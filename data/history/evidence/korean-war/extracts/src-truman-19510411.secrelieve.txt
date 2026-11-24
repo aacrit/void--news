@@ -1,0 +1,8 @@
+source: src-truman-19510411
+locator: secrelieve
+url: https://www.trumanlibrary.gov/library/public-papers/78/radio-report-american-people-korea-and-us-policy-far-east
+read: 2026-10-09
+note: Public Papers, 1951, Item 78; broadcast from the White House at 10:30 p.m.
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+I believe that we must try to limit the war to Korea for these vital reasons: to make sure that the precious lives of our fighting men are not wasted; to see that the security of our country and the free world is not needlessly jeopardized; and to prevent a third world war. A number of events have made it evident that General MacArthur did not agree with that policy. I have therefore considered it essential to relieve General MacArthur so that there would be no doubt or confusion as to the real purpose and aim of our policy. It was with the deepest personal regret that I found myself compelled to take this action.

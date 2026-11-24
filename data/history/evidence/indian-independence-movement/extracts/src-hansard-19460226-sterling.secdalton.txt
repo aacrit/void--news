@@ -1,0 +1,8 @@
+source: src-hansard-19460226-sterling
+locator: secdalton
+url: https://api.parliament.uk/historic-hansard/commons/1946/feb/26/reserve-bank-of-india-sterling-balances
+read: 2026-10-09
+note: the text is the Hansard page's own text (UK Parliament, historic Hansard), whitespace collapsed
+note: the Chancellor of the Exchequer (Mr. Dalton)
+
+The average weekly increase for the last 19 weeks of 1945 was£7 million, and for the first seven weeks of 1946,£2 million. This increase represents mainly repayment to the Government of India of their expenditure on Indian Forces outside India.

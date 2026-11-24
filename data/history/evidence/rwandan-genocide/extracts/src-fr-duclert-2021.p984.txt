@@ -1,0 +1,8 @@
+source: src-fr-duclert-2021
+locator: p984
+url: https://www.vie-publique.fr/files/rapport/pdf/279186.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+note: the report's own English text
+
+And yet French authorities gave clear orders, as of April 8, to suspend the authorization of exports of war material to Rwanda, which had previously been granted to industrialists. On 16 May 1994, the Minister of Foreign Affairs, Alain Juppé, took measure of the massacres perpetrated against the Tutsi and qualified them as a genocide. On May 24 in Geneva, the Minister for Humanitarian Action and Human Rights, Lucette Michaud-Chevry, stated in turn that it was a genocide, before the UN Commission on Human Rights. Use of the term genocide did not, however, lead to a fundamental reconsideration of France’s policy which remained obsessed by the threat of the RPF, and never abandoned the « balanced » condemnation of massacres committed by both sides.

@@ -1,0 +1,6 @@
+source: src-hiroshima-city-deaths
+locator: para3
+url: https://www.city.hiroshima.lg.jp/english/peace/1029875/1010074.html
+read: 2026-10-05
+
+Roughly 50% of those within 1.2 kilometers of the hypocenter are estimated to have died that day. Approaching the hypocenter, 80 to100% died. Of those who survived the detonation and through the rest of the day, death rates increased with proximity to the hypocenter and severity of injury.

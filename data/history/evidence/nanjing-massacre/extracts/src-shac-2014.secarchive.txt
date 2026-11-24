@@ -1,0 +1,8 @@
+source: src-shac-2014
+locator: secarchive
+url: https://www.saac.gov.cn/zt/2014-12/11/content_77681.htm
+read: 2026-10-09
+note: the text is the page's own text in Chinese (simplified characters, as the archive publishes it), whitespace collapsed; a Void translation is beside it (.en.txt)
+note: the archive's own account of the trial (2014), not the judgment
+
+1947年2月6日，南京审判战犯军事法庭对谷寿夫进行公审。3月10日下午，南京审判战犯军事法庭对战犯谷寿夫作最后审判。审判长石美瑜律师宣布审判谷寿夫的判决书。

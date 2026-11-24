@@ -1,0 +1,7 @@
+source: src-nsa-press-20021011
+locator: sec1
+url: https://nsarchive2.gwu.edu/nsa/cuba_mis_cri/press3.htm
+read: 2026-10-04
+note: the release's first paragraph, from 'US intelligence'; the page's HTML read as text
+
+US intelligence never located the nuclear warheads for the Soviet missiles in Cuba during the crisis, and only 33 of what photography later showed was a total of 42 medium-range ballistic missiles.

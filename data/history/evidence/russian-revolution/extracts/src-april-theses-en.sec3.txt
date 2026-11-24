@@ -1,0 +1,8 @@
+source: src-april-theses-en
+locator: sec3
+url: https://www.marxists.org/archive/lenin/works/1917/apr/04.htm
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+note: the page prints a space before the semicolon after 'Government'; held as served
+
+3) No support for the Provisional Government ; the utter falsity of all its promises should be made clear, particularly of those relating to the renunciation of annexations. Exposure in place of the impermissible, illusion-breeding “demand” that this government, a government of capitalists, should cease to be an imperialist government.

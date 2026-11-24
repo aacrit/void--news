@@ -1,0 +1,7 @@
+source: src-moh-1920
+locator: secnaming
+url: https://archive.org/download/pandemic-of-influenza-1918-1919_UK-MinistryofHealth_HMSO-1920/PandemicofInfluenzaHMSO_entire_book_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+
+When it was first recognised that influenza was spreading over Europe in 1918, the source of the epidemic was attributed to Spain, and the disease was, on this account, termed " the Spanish Influenza." Although the presence of epidemic influenza in Spain was recognised in the early months of 1918, it is beyond doubt that at the same time outbreaks were occurring in other European countries, including France and Germany and in the Russian war zones. It cannot, therefore, be admitted that the European epidemic began in Spain. A recent American report contains the statement that: "It seems " probable that the earliest appearance of the 1918 influenza " pandemic was in Eastern Europe, and that by April it was " spreading in the war zones of Western Europe." It may be remembered that the 1889 epidemic was believed to have originated in China, and spread thence to Russia, where it was spoken of as the "Chinese" influenza. From Russia the disease spread westward into Europe, where it was named the " Russian" influenza. From Europe the infection was carried to North America by shipping, and there it was called the "European" influenza; and when it spread from North America across the Pacific to Japan it was known there as the "American" influenza.

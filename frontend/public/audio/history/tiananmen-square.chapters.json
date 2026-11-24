@@ -1,0 +1,82 @@
+{
+ "version": "1.2.0",
+ "title": "Tiananmen Square, 1989",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 61.941
+  },
+  {
+   "startTime": 61.941,
+   "title": "The kneeling petition",
+   "endTime": 92.293
+  },
+  {
+   "startTime": 92.293,
+   "title": "Ten to five in the morning",
+   "endTime": 145.962
+  },
+  {
+   "startTime": 145.962,
+   "title": "The night of June third",
+   "endTime": 189.221
+  },
+  {
+   "startTime": 189.221,
+   "title": "Counting",
+   "endTime": 251.978
+  },
+  {
+   "startTime": 251.978,
+   "title": "The morning after",
+   "endTime": 292.176
+  },
+  {
+   "startTime": 292.176,
+   "title": "Five accounts",
+   "endTime": 308.584
+  },
+  {
+   "startTime": 308.584,
+   "title": "Chinese Communist Party / State",
+   "endTime": 375.492
+  },
+  {
+   "startTime": 375.492,
+   "title": "Student Protesters / Democracy Movement",
+   "endTime": 435.523
+  },
+  {
+   "startTime": 435.523,
+   "title": "Foreign Journalist / Witness",
+   "endTime": 499.32
+  },
+  {
+   "startTime": 499.32,
+   "title": "Post-Tiananmen Academic / Dissident",
+   "endTime": 565.369
+  },
+  {
+   "startTime": 565.369,
+   "title": "Workers' Movement / Labor",
+   "endTime": 652.464
+  },
+  {
+   "startTime": 652.464,
+   "title": "What each one leaves out",
+   "endTime": 757.927
+  },
+  {
+   "startTime": 757.927,
+   "title": "Legacy",
+   "endTime": 770.319
+  },
+  {
+   "startTime": 770.319,
+   "endTime": 783.419,
+   "title": "Also from Void News"
+  }
+ ]
+}

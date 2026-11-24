@@ -1,0 +1,7 @@
+source: src-april-theses-en
+locator: sec5
+url: https://www.marxists.org/archive/lenin/works/1917/apr/04.htm
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+
+5) Not a parliamentary republic—to return to a parliamentary republic from the Soviets of Workers’ Deputies would be a retrograde step—but a republic of Soviets of Workers’, Agricultural Labourers’ and Peasants’ Deputies throughout the country, from top to bottom.

@@ -1,0 +1,10 @@
+source: src-unsc-res83-1950
+locator: op1
+url: https://documents.un.org/doc/resolution/gen/nr0/064/96/pdf/nr006496.pdf
+read: 2026-10-09
+note: the UN scan prints English and French in two columns; the English column was taken from the PDF by word position (x0 in the left half of the page), then sliced
+note: Resolution 83 (1950) of 27 June 1950, S/1511, operative paragraph
+note: the copy is a scan with an OCR text layer; its misreadings are kept as read, not corrected
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Recommends that the Members of the United Nations furnish such assistance to the Republic of Korea as may be necessary to repel the armed attack and to restore international peace and security in the area.

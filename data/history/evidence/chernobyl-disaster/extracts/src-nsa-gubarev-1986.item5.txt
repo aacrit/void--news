@@ -1,0 +1,7 @@
+source: src-nsa-gubarev-1986
+locator: item5
+url: https://nsarchive.gwu.edu/sites/default/files/documents/6279556/National-Security-Archive-Doc-12-Letter-from.pdf
+read: 2026-10-07
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+5. Fire-fighting units performed marvelously. They prevented the accident from spreading at an early stage. But even the units based in Pripyat did not have appropriate uniforms for working in a zone of elevated radiation.

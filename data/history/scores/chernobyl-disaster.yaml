@@ -1,0 +1,338 @@
+# The documentary score for "The Chernobyl Disaster", as note data on sampled
+# real instruments. Rendered by pipeline/history/score.py; the samples live in
+# ~/.cache/void-score-samples (never in the repository) and are pinned by sha256.
+#
+# The music claims nothing about the event. Nothing in it imitates a counter, a
+# siren or an alarm (no click, no pulse, no rising tone); nothing in it is a
+# music of Ukraine, of Russia or of the church (no bell, no choir, no drone of a
+# folk string); no brass, no drum, nothing that swells to a blow. The moment
+# itself is dry (mood.py), and what follows it is a glass tone drawn out of
+# silence and let go, with nothing struck. The palette is three instruments no
+# earlier score uses, each presented as what it is: wine glasses, rubbed on the
+# rim, a pure tone that does not breathe and does not decay while the finger
+# moves; a harpsichord, the one keyboard whose keys cannot be played louder or
+# softer, so every note is stated at the mechanism's one level and dies on its
+# own in two or three seconds; and a tenor saxophone, played without vibrato
+# and soft, in its lowest octave, the score's one low breath, chosen because
+# every other low wind in the cache belongs to another episode (bassoon,
+# horn, trombone, tuba, clarinet, bass recorder, organ pedal). The glass never
+# moves: it holds the fifth, G sharp, or the tonic above it. The harpsichord
+# states the cell and nothing else. The saxophone sings the same four notes,
+# slowly, once, under the title, and otherwise holds one note at a time.
+#
+# The theme is built from the house cell (tonic, fifth, tonic, third: the shape
+# of the On Air motif), in C sharp minor, at 38 beats a minute, the slowest of
+# the eleven scores: one beat is 1.579 s. The same four notes are said twice,
+# by two different things. First the harpsichord, dry and high, one key a beat
+# (beats 1 to 4), each left to die; a beat and a half of nothing; then the
+# saxophone, low and slow, two beats a note (beats 5.5 to 14.5), the third held
+# longest. The glass holds G sharp above the first statement and C sharp above
+# the second. Then, alone, the harpsichord's lowest C sharp, once, and the
+# title is spoken into its decay. The outro says the cell once more on the
+# harpsichord, in the low octave, over the saxophone's G sharp, and ends on
+# the lowest key. Dread is the glass breathing over the saxophone; procedure
+# is the harpsichord alone and dry; reckoning is the saxophone alone, in long
+# breaths with gaps; grief is the glass alone, with the saxophone falling once
+# from the third to the tonic and then silent.
+#
+# Cues are keyed to the producer's moods and segment kinds, never to a line of
+# text, so the cinematic variant renders from this manifest whatever moods it
+# picks. Where each cue plays is the producer's (mood_plan): the theme under
+# the TITLE, the first word 1.2 s before its end; beds under the spoken body by
+# mood, ducked to the mood's floor; transitions in the clear before a scene;
+# the rupture entry on the last word of the moment, or 1,200 ms after a clip's
+# trailing silence, never under it; the outro at the close, with the house
+# promo riding its held bars, so it is at most 13.75 s and silent at its end.
+slug: chernobyl-disaster
+title: The Chernobyl Disaster
+version: 1
+key: C#
+mode: minor, with the sixth and seventh left unraised; the glass holds only the fifth and the tonic, so the mode is said by the harpsichord and the saxophone alone
+tempo_bpm: 38
+house_cell: [0, 7, 0, 3]
+textures: []
+
+instruments:
+  harpsichord:
+    library: Versilian Community Sample Library (VCSL, Versilian Studios), Harpsichord, Italian, the "Harpsichord_stop1" Sustains set (one eight-foot stop, one take per key, every semitone or whole tone). The files are named an octave below what they sound (the file "C#3" measures 277.0 Hz, C#4, within 1 cent, by harmonic product spectrum; "C#2" measures 138.5 Hz, C#3, within 1 cent; "G#3" measures 415.1 Hz, G#4, within 1 cent; "C#1" measures 69.3 Hz, C#2, within 1 cent); `note` is the sounding pitch. Every note this manifest asks of it is a recording of that note, unshifted. Each recording is a key plucked and left to ring, 6 to 13 s to silence; in half-second frames a middle key falls 20 dB in 2.5 s and 40 dB in 5 s, the lowest key 20 dB in 5 s and 40 dB in 11 s. A note given no length rings out; a note given a length is the key released there, the jack's damper falling over 0.15 s
+    role_as_presented: a harpsichord, one eight-foot stop
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme calls it public domain, no royalties, no credit, no special terms)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VCSL/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios, Versilian Community Sample Library
+    kind: pluck
+    attack_s: 0.0
+    release_s: 0.15
+    gain_db: 0.0
+    samples:
+      - {file: "vcsl/Chordophones/Zithers/Harpsichord, Italian/Sustains/stop1/Harpsichord_stop1_C#1_1.wav", note: C#2, sha256: 6a9b64bc8e4a56ef1fc75924d5ea2607a5af2acd728339e6c9bdd8c089d3dff7, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Chordophones/Zithers/Harpsichord%2C%20Italian/Sustains/stop1/Harpsichord_stop1_C%231_1.wav"}
+      - {file: "vcsl/Chordophones/Zithers/Harpsichord, Italian/Sustains/stop1/Harpsichord_stop1_C#2_1.wav", note: C#3, sha256: 2185b95a845d9f140af7dd468452be3bc2f81fe4fd99192e12caac5cec1a7cc2, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Chordophones/Zithers/Harpsichord%2C%20Italian/Sustains/stop1/Harpsichord_stop1_C%232_1.wav"}
+      - {file: "vcsl/Chordophones/Zithers/Harpsichord, Italian/Sustains/stop1/Harpsichord_stop1_E2_1.wav", note: E3, sha256: 9b13fc3ffab9456be8584edc856c2fe59f7136360453608ed8a226e4101668b8, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Chordophones/Zithers/Harpsichord%2C%20Italian/Sustains/stop1/Harpsichord_stop1_E2_1.wav"}
+      - {file: "vcsl/Chordophones/Zithers/Harpsichord, Italian/Sustains/stop1/Harpsichord_stop1_G#2_1.wav", note: G#3, sha256: 955c489b76160df68dca3bf294d1ca872dfdc0eb0b1f7cbf4089491c97582cf5, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Chordophones/Zithers/Harpsichord%2C%20Italian/Sustains/stop1/Harpsichord_stop1_G%232_1.wav"}
+      - {file: "vcsl/Chordophones/Zithers/Harpsichord, Italian/Sustains/stop1/Harpsichord_stop1_B2_1.wav", note: B3, sha256: b2b4a1797a62daad248b83a1b483b65f6ce56bf8a57818e2f39bacf38be161c2, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Chordophones/Zithers/Harpsichord%2C%20Italian/Sustains/stop1/Harpsichord_stop1_B2_1.wav"}
+      - {file: "vcsl/Chordophones/Zithers/Harpsichord, Italian/Sustains/stop1/Harpsichord_stop1_C#3_1.wav", note: C#4, sha256: cd378300a0145fbcb20d04dded53a92848752c49b0ad570c0860b2dfe211ef20, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Chordophones/Zithers/Harpsichord%2C%20Italian/Sustains/stop1/Harpsichord_stop1_C%233_1.wav"}
+      - {file: "vcsl/Chordophones/Zithers/Harpsichord, Italian/Sustains/stop1/Harpsichord_stop1_D#3_1.wav", note: Eb4, sha256: abd127b45556a00ad3a219b7350053f746b7c6c5880adc34c2c7dad6471218f8, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Chordophones/Zithers/Harpsichord%2C%20Italian/Sustains/stop1/Harpsichord_stop1_D%233_1.wav"}
+      - {file: "vcsl/Chordophones/Zithers/Harpsichord, Italian/Sustains/stop1/Harpsichord_stop1_E3_1.wav", note: E4, sha256: 8b04919ab1985508d4abbc6b4dc1f441f695f8ca09b158080d6670f975471eb2, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Chordophones/Zithers/Harpsichord%2C%20Italian/Sustains/stop1/Harpsichord_stop1_E3_1.wav"}
+      - {file: "vcsl/Chordophones/Zithers/Harpsichord, Italian/Sustains/stop1/Harpsichord_stop1_G#3_1.wav", note: G#4, sha256: 003c707a0152fe2ded67808ab58dac5da3ce3df162ad02d481a36686c223233a, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Chordophones/Zithers/Harpsichord%2C%20Italian/Sustains/stop1/Harpsichord_stop1_G%233_1.wav"}
+      - {file: "vcsl/Chordophones/Zithers/Harpsichord, Italian/Sustains/stop1/Harpsichord_stop1_C#4_1.wav", note: C#5, sha256: a72dbf8de018aae9cc9a61528f9797a43eb7a8949776c7231f6e1aa50acbd634, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Chordophones/Zithers/Harpsichord%2C%20Italian/Sustains/stop1/Harpsichord_stop1_C%234_1.wav"}
+
+  saxophone:
+    library: Versilian Community Sample Library (VCSL, Versilian Studios), Tenor Saxophone, the Non-Vibrato set (the "_Main" microphone, the soft layer "vl2", one take per key, every whole tone). The files are named an octave below what they sound (the file "G#1" measures 103.9 Hz, G#2, within 1 cent, by harmonic product spectrum; "C2" measures 130.9 Hz, C3, within 1 cent; "E2" measures 164.8 Hz, E3, within 1 cent; "G#2" measures 207.6 Hz, G#3, within 1 cent); `note` is the sounding pitch. G sharp and E are recordings of those notes, unshifted; C sharp is one semitone over the recorded C. Nothing is shifted more than one semitone. Each recording is a note held 6.7 to 8.9 s and released, steady within 1 dB in half-second frames from its onset to half a second before its end; the loop regions below sit inside that steady part. A hold longer than the recording loops that region with an equal-power crossfade
+    role_as_presented: a tenor saxophone, played without vibrato
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme calls it public domain, no royalties, no credit, no special terms)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VCSL/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios, Versilian Community Sample Library
+    kind: sustain
+    attack_s: 0.3
+    release_s: 0.6
+    gain_db: 0.0
+    samples:
+      - {file: "vcsl/Aerophones/Reed Aerophones/Tenor Saxophone/Non-Vibrato/BrettTenor_NV_Main_G#1_vl2_rr1.wav", note: G#2, loop_start_s: 1.0, loop_end_s: 6.5, sha256: 65082f5260afeea5f28b7a66ed7d7076d9ea09927e5775c9bc530752f847bd10, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Aerophones/Reed%20Aerophones/Tenor%20Saxophone/Non-Vibrato/BrettTenor_NV_Main_G%231_vl2_rr1.wav"}
+      - {file: "vcsl/Aerophones/Reed Aerophones/Tenor Saxophone/Non-Vibrato/BrettTenor_NV_Main_C2_vl2_rr1.wav", note: C3, loop_start_s: 1.0, loop_end_s: 7.0, sha256: 09ab83ec9ddccc53dfbcc2fe938eacf35c1f5e6a2add063a24808f294cee40ba, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Aerophones/Reed%20Aerophones/Tenor%20Saxophone/Non-Vibrato/BrettTenor_NV_Main_C2_vl2_rr1.wav"}
+      - {file: "vcsl/Aerophones/Reed Aerophones/Tenor Saxophone/Non-Vibrato/BrettTenor_NV_Main_E2_vl2_rr1.wav", note: E3, loop_start_s: 1.0, loop_end_s: 7.5, sha256: b2eaabe51741561e10d998e55cdc202546d33f394d9a35e5ba3e5ea397b2a12e, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Aerophones/Reed%20Aerophones/Tenor%20Saxophone/Non-Vibrato/BrettTenor_NV_Main_E2_vl2_rr1.wav"}
+      - {file: "vcsl/Aerophones/Reed Aerophones/Tenor Saxophone/Non-Vibrato/BrettTenor_NV_Main_G#2_vl2_rr1.wav", note: G#3, loop_start_s: 1.0, loop_end_s: 5.5, sha256: c40b27a266b8547893834ef79f97ee05c4d78cd198d6d91b27aad7b556f68fda, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Aerophones/Reed%20Aerophones/Tenor%20Saxophone/Non-Vibrato/BrettTenor_NV_Main_G%232_vl2_rr1.wav"}
+
+  glass:
+    library: Versilian Community Sample Library (VCSL, Versilian Studios), Wine Glasses, the Sustains "Fast" set (a glass rim rubbed with a wet finger at the faster of two speeds, the "_Main" microphone). Wine glasses are not tuned instruments, so the four recordings are named loosely, an octave low and up to half a semitone off; only the two within a few cents are used. The file "glass2_F#4" measures 735.0 Hz, F#5, 12 cents under, by harmonic product spectrum; "glass4_D5" measures 1182.1 Hz, D6, 11 cents over; `note` is the sounding pitch. The two notes this manifest asks of them are shifts of two semitones (G sharp from the F sharp) and one (C sharp from the D), stated here because a rubbed glass is a near-pure tone and the shift changes nothing but its rate. The "glass2" recording holds 20.2 s and the "glass4" 14.2 s, each wavering within 3 dB in half-second frames the whole way, which is the finger on the rim and is left in; the loop regions below sit inside each recording. A hold longer than the recording loops that region with an equal-power crossfade. Every entry is drawn in over 1.2 s and let go over 1.5 s
+    role_as_presented: wine glasses, rubbed on the rim
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme calls it public domain, no royalties, no credit, no special terms)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VCSL/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios, Versilian Community Sample Library
+    kind: sustain
+    attack_s: 1.2
+    release_s: 1.5
+    gain_db: 0.0
+    samples:
+      - {file: "vcsl/Idiophones/Friction Idiophones/Wine Glasses/Sustains/Fast/glass2_F#4_Fast_1_Main.wav", note: F#5, loop_start_s: 1.0, loop_end_s: 18.0, sha256: 560c2ec792a26a329bf29b17114f41cd7663b2b4a75db6f4d2a9fd145a087638, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Idiophones/Friction%20Idiophones/Wine%20Glasses/Sustains/Fast/glass2_F%234_Fast_1_Main.wav"}
+      - {file: "vcsl/Idiophones/Friction Idiophones/Wine Glasses/Sustains/Fast/glass4_D5_Fast_1_Main.wav", note: D6, loop_start_s: 1.0, loop_end_s: 12.5, sha256: 1404d10e7ff4ced99db9af3d95f2aa99edca3aee4163f7a88580f438d8ea6bb0, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Idiophones/Friction%20Idiophones/Wine%20Glasses/Sustains/Fast/glass4_D5_Fast_1_Main.wav"}
+
+# Note rows are [instrument, note, start in beats, length in beats or null, velocity].
+# One beat is 1.579 s. A harpsichord note with null rings out; one with a length
+# is the key released there. A saxophone or glass note always has a length.
+cues:
+  # Statement 1, under the TITLE. The glass's G sharp is drawn in from 0. The
+  # harpsichord states the cell on C sharp, one key a beat from beat 1, each
+  # left to die. Beats 5 to 5.5 carry only the glass. The saxophone then says
+  # the same four notes, low, two beats a note from beat 5.5, the third held
+  # three beats, while the glass lets go of G sharp (beat 9.5) and draws in C
+  # sharp above (beat 10.5). At beat 15.5 (24.5 s) the harpsichord's lowest C
+  # sharp, alone; the title's first word lands at 25.8 s, inside its decay.
+  theme:
+    claims: []
+    length_s: 27.0
+    peak_dbfs: -13.0
+    room_wet: 1.0
+    fade_out_ms: 1200
+    notes:
+      - [glass, G#5, 0, 9.5, 0.16]
+      - [harpsichord, C#4, 1, null, 0.50]
+      - [harpsichord, G#4, 2, null, 0.40]
+      - [harpsichord, C#4, 3, null, 0.46]
+      - [harpsichord, E4, 4, null, 0.44]
+      - [saxophone, C#3, 5.5, 1.8, 0.22]
+      - [saxophone, G#3, 7.5, 1.8, 0.19]
+      - [saxophone, C#3, 9.5, 1.8, 0.22]
+      - [saxophone, E3, 11.5, 3.0, 0.20]
+      - [glass, C#6, 10.5, 5.0, 0.12]
+      - [harpsichord, C#2, 15.5, null, 0.42]
+
+  # Statement 3, at the close: the cell once more on the harpsichord, in the
+  # low octave, one key a beat, over the saxophone's G sharp and the glass's C
+  # sharp; then the lowest key at beat 4.5 and nothing after it. Everything
+  # released by 8 s and faded to silence inside 13.0 s so the promo can ride it.
+  outro:
+    claims: []
+    length_s: 13.0
+    peak_dbfs: -13.0
+    room_wet: 1.0
+    fade_out_ms: 3000
+    tail_silence: true
+    notes:
+      - [saxophone, G#2, 0, 4.0, 0.30]
+      - [glass, C#6, 0.5, 3.5, 0.12]
+      - [harpsichord, C#3, 0, null, 0.46]
+      - [harpsichord, G#3, 1, null, 0.40]
+      - [harpsichord, C#3, 2, null, 0.44]
+      - [harpsichord, E3, 3, null, 0.42]
+      - [harpsichord, C#2, 4.5, null, 0.40]
+
+  # On the last word of the moment, or after a recording's trailing silence:
+  # nothing struck. Two glasses, the fifth and the tonic above it, drawn out of
+  # silence over 1.8 s, held 1.2 s and let go over 3 s, inside the 6 s
+  # mood_plan opens. No blow, no low note, no swell to one.
+  rupture_entry:
+    claims: []
+    length_s: 6.0
+    peak_dbfs: -16.0
+    room_wet: 1.4
+    swell: [1.8, 1.2, 3.0]
+    notes:
+      - [glass, G#5, 0, 2.2, 0.30]
+      - [glass, C#6, 0.3, 1.9, 0.20]
+
+  # The change of voice (the log, the order, the account read by the document
+  # voice): one high key of the harpsichord, released.
+  sting:to_document:
+    claims: []
+    length_s: 0.9
+    peak_dbfs: -22.0
+    room_wet: 0.5
+    fade_out_ms: 150
+    notes:
+      - [harpsichord, C#5, 0, 0.3, 0.50]
+
+  # The music returning after a recording, once its trailing silence is over.
+  # Defined for the producer's grammar; it fires only if the cinematic variant
+  # admits a clip.
+  sting:from_clip:
+    claims: []
+    length_s: 2.4
+    peak_dbfs: -20.0
+    room_wet: 1.0
+    swell: [0.5, 0.9, 1.0]
+    notes:
+      - [saxophone, G#2, 0, 0.9, 0.40]
+      - [harpsichord, E4, 0.1, null, 0.40]
+
+  # Dread (the test, the night shift, the readings nobody believed, the town
+  # the next morning): the glass's G sharp in four breaths of 7.5 s on a
+  # 10.5 s cycle, and the saxophone taking its breath while the glass is full
+  # and holding across the glass's gap, so one of the two is always sounding.
+  # The saxophone holds G sharp, then C sharp, then G sharp, then E, the third,
+  # once, the only time dread says the mode. The harpsichord's lowest C sharp
+  # once near the start and its C sharp an octave up once past the middle,
+  # both off the seam. The first sound is at 0.7 s, not 0.
+  bed:dread:
+    claims: []
+    length_s: 40.0
+    fold: true
+    rms_dbfs: -34.0
+    room_wet: 0.6
+    notes:
+      - [glass, G#5, 0.45, 4.75, 0.20]
+      - [glass, G#5, 7.1, 4.75, 0.19]
+      - [glass, G#5, 13.75, 4.75, 0.20]
+      - [glass, G#5, 20.4, 4.75, 0.19]
+      - [saxophone, G#2, 3.0, 4.0, 0.34]
+      - [saxophone, C#3, 9.65, 4.0, 0.32]
+      - [saxophone, G#2, 16.3, 4.0, 0.34]
+      - [saxophone, E3, 22.95, 4.0, 0.26]
+      - [harpsichord, C#2, 1.3, null, 0.28]
+      - [harpsichord, C#3, 14.9, null, 0.24]
+
+  # Procedure (the test programme, the control room, the commission, the
+  # evacuation order, the dates): the harpsichord alone, dry, one key every
+  # two beats, each left to die before the next so nothing gathers into a
+  # chord. The cell on C sharp, then the cell a fourth lower on G sharp, then
+  # the cell on C sharp closing on the second instead of the third. The count
+  # starts on beat 1, not 0, so the loop's seam falls between keys.
+  bed:procedure:
+    claims: []
+    length_s: 37.895
+    fold: true
+    rms_dbfs: -33.0
+    room_wet: 0.0
+    notes:
+      - [harpsichord, C#4, 1, null, 0.50]
+      - [harpsichord, G#4, 3, null, 0.40]
+      - [harpsichord, C#4, 5, null, 0.46]
+      - [harpsichord, E4, 7, null, 0.42]
+      - [harpsichord, G#3, 9, null, 0.48]
+      - [harpsichord, Eb4, 11, null, 0.40]
+      - [harpsichord, G#3, 13, null, 0.44]
+      - [harpsichord, B3, 15, null, 0.42]
+      - [harpsichord, C#4, 17, null, 0.50]
+      - [harpsichord, G#4, 19, null, 0.40]
+      - [harpsichord, C#4, 21, null, 0.46]
+      - [harpsichord, Eb4, 23, null, 0.40]
+
+  # Reckoning (the counts, the dose tables, what each report leaves out): the
+  # saxophone alone, three breaths of 7.9 s with 3.8 s of silence between
+  # them, G sharp, C sharp, G sharp, under the deepest duck. No glass, no
+  # harpsichord. The first breath is taken at 0.95 s, not 0, and the last ends
+  # at 32.8 s, so the seam falls in the silence.
+  bed:reckoning:
+    claims: []
+    length_s: 37.895
+    fold: true
+    rms_dbfs: -35.0
+    room_wet: 0.3
+    notes:
+      - [saxophone, G#2, 0.6, 5.0, 0.34]
+      - [saxophone, C#3, 8.0, 5.0, 0.32]
+      - [saxophone, G#2, 15.4, 5.0, 0.34]
+
+  # Grief (the firemen, the wards, the villages, the close): the glass's G
+  # sharp alone, faint, in four breaths of 6.6 s on a 10 s cycle, so the bed
+  # falls near-silent for a moment four times a loop; the dread bed's breaths
+  # are covered by the saxophone, these are not. The saxophone, quiet, falls
+  # once from the third to the tonic, E to C sharp, and is then silent; the
+  # harpsichord is silent throughout. The first breath is taken at 0.5 s, not
+  # 0, and the last ends at 38.6 s, so the seam falls in a gap.
+  bed:grief:
+    claims: []
+    length_s: 40.0
+    fold: true
+    rms_dbfs: -35.0
+    room_wet: 1.0
+    notes:
+      - [glass, G#5, 0.3, 4.2, 0.22]
+      - [glass, G#5, 6.63, 4.2, 0.21]
+      - [glass, G#5, 12.97, 4.2, 0.22]
+      - [glass, G#5, 19.3, 4.2, 0.21]
+      - [saxophone, E3, 2.0, 1.6, 0.20]
+      - [saxophone, C#3, 3.8, 3.0, 0.22]
+
+  # Into a dread scene, in the clear: the glass's G sharp drawn in on a swell,
+  # the saxophone's G sharp under it, both let go.
+  transition:dread:
+    claims: []
+    length_s: 3.8
+    peak_dbfs: -14.0
+    room_wet: 1.0
+    swell: [0.4, 1.9, 1.5]
+    notes:
+      - [glass, G#5, 0, 1.4, 0.30]
+      - [saxophone, G#2, 0, 1.3, 0.36]
+
+  # Into a procedure scene: three keys, dry, the cell's opening, left to die.
+  transition:procedure:
+    claims: []
+    length_s: 4.3
+    peak_dbfs: -14.0
+    room_wet: 0.0
+    fade_out_ms: 900
+    notes:
+      - [harpsichord, C#4, 0, null, 0.50]
+      - [harpsichord, G#4, 1, null, 0.42]
+      - [harpsichord, C#4, 2, null, 0.46]
+
+  # Into a grief scene: the saxophone's fall, E onto C sharp, held, the glass's
+  # C sharp faint above it.
+  transition:grief:
+    claims: []
+    length_s: 4.8
+    peak_dbfs: -14.0
+    room_wet: 1.0
+    fade_out_ms: 800
+    notes:
+      - [saxophone, E3, 0, 0.9, 0.22]
+      - [saxophone, C#3, 1.0, 1.5, 0.24]
+      - [glass, C#6, 0, 1.6, 0.12]
+
+  # Into the counts and the reports: the saxophone's G sharp, and one low key
+  # of the harpsichord under it, left to die.
+  transition:reckoning:
+    claims: []
+    length_s: 4.2
+    peak_dbfs: -14.0
+    room_wet: 0.3
+    fade_out_ms: 800
+    notes:
+      - [saxophone, G#2, 0, 1.6, 0.34]
+      - [harpsichord, C#3, 0.6, null, 0.40]

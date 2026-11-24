@@ -1,0 +1,7 @@
+source: src-jfkl-cmc-19621027
+locator: secday
+url: https://microsites.jfklibrary.org/cmc/oct27/
+read: 2026-10-07
+note: the Library's own summary of the day on its Cuban Missile Crisis pages for October 27; the page spells the pilot's first name two ways, 'Rudolph' and 'Rudolf', and both are kept; 'An' is capitalised as the page prints it
+
+Over Cuba, An American U-2 plane is shot down by a Soviet-supplied surface-to-air missile and the pilot, Major Rudolph Anderson, is killed. President Kennedy writes a letter to the widow of USAF Major Rudolf Anderson, Jr., offering condolences, and informing her that President Kennedy is awarding him the Distinguished Service Medal, posthumously.

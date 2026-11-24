@@ -1,0 +1,7 @@
+source: src-robespierre-17940205
+locator: secterreur
+url: https://archive.org/download/rapportsurlespri00robe_18/rapportsurlespri00robe_18_djvu.txt
+read: 2026-10-09
+note: the free copy is the scan's OCR text layer, held as the layer prints it (long s read as f and other misreadings included); line breaks collapsed to spaces, nothing else changed
+
+Il faut étouf- fer les ennemis intérieurs et extérieurs de la Ré- publique , ou périr avec elle; or, dans cette si- tuation , la première maxime de votre politique doit être qu’on conduit le peuple par la raison, et les ennemis du peuple par la terreur. Si le ressort du gouvernement populaire dans la paix , est la vertu , le ressort du gouvernement populaire en révolution est à la fois la vertu et la terreur : la vertu , sans laquelle là terreur est funeste ; la terreur , sans laquelle la vertu est impuissante. La terreur n’est autre chose que la justice prompte , sévère , inflexible ; elle est donc une émanation de la vertu ; elle est moins un principe particulier , qu’une conséquence du principe général de la démocratie , appliqué aux plus pressans besoins de la patrie.

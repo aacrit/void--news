@@ -1,0 +1,8 @@
+source: src-cwmg-23-great-trial
+locator: secfaith
+url: https://archive.org/download/HindSwaraj-CWMG-023/CWMG-v023-XXIII-MC-BETA_djvu.txt
+read: 2026-10-09
+note: the text is the archive.org full-text (djvu.txt) layer of the electronic edition of the Collected Works (Publications Division), whitespace collapsed; line-end hyphens and glyph errors kept as the layer gives them
+note: the oral remarks before the written statement; the caret after the first sentence is a note marker whose note says 'These sentences do not occur in the official transcript'
+
+I wanted to avoid violence. I want to avoid violence.^ Non- violence is the first article of my faith. It is also the last article of my creed. But I had to make my choice. I had either to sub- mit to a system which I considered had done an irreparable harm to my country, or incur the risk of the mad fury of my people burst- ing forth when they understood the truth from my lips. I know that my people have sometimes gone mad; I am deeply sorry for it. I am, therefore, here to submit not to a light penalty but to the highest penalty.

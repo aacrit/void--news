@@ -1,0 +1,8 @@
+source: src-radkey-1950
+locator: p17
+url: https://archive.org/download/dli.ernet.504284/504284-The%20Election%20To%20The%20Russian%20Constituent%20Assembly%20Of%201917_djvu.txt
+read: 2026-10-09
+note: the free copy is the scan's OCR text layer, held as the layer prints it (misreadings included); line breaks collapsed to spaces, nothing else changed
+note: the last row of the same table, p. 17; the layer glues a footnote mark to the last figure ('41,686,8768', which the next page's prose rounds as 'a grand total of nearly 42,000,000')
+
+TOTALS FOR COUNTRY ... 36,256,960 not given 41,686,8768

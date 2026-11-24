@@ -1,0 +1,7 @@
+source: src-chugoku-watch-2015
+locator: para1
+url: https://www.hiroshimapeacemedia.jp/?p=54789
+read: 2026-10-07
+note: the report's first paragraph
+
+It was learned on December 10 that the short hand of a pocket watch that stopped at precisely 8:15 a.m. on August 6, 1945, the time of the atomic bombing of Hiroshima, and has been on display at the Hiroshima Peace Memorial Museum, has broken. Museum staff believe that the damage is due to the deterioration of the aging artifact and have now replaced it with a replica. As 70 years have passed since that day, the condition of other artifacts on display or in storage are inexorably deteriorating, too. The museum is now facing the difficult task of maintaining these items.

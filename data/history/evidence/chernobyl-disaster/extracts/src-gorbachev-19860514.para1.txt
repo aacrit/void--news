@@ -1,0 +1,8 @@
+source: src-gorbachev-19860514
+locator: para1
+url: https://www.gorby.ru/presscenter/2026/aprel/post_8265
+read: 2026-10-07
+note: the opening of Gorbachev's televised address of 14 May 1986, as the Gorbachev Foundation quotes it in its post of 24 April 2026; the Foundation gives no source for the text
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+«Добрый вечер, товарищи! Все вы знаете, недавно нас постигла беда - авария на Чернобыльской атомной электростанции. Она больно затронула советских людей, взволновала международную общественность. Мы впервые реально столкнулись с такой грозной силой, какой является ядерная энергия, вышедшая из под контроля».

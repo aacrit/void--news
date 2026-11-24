@@ -1,0 +1,140 @@
+{
+ "collected_at": "2026-10-02T15:04:09Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 39,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16178483/Family-girl-killed-boys-car-plunged-River-Wear-tribute.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Heartbroken families of 'beautiful' girl, 16, and 'funny and handsome' boy, also 16, pay tribute to teens killed when car plunged into River Wear",
+      "published": "Fri, 02 Oct 2026 14:56:45 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/river-wear-teen-deaths-car-37728680",
+      "title": "Families pay tribute to teens after river Wear deaths - 'Our hearts will ache forever'",
+      "published": "Fri, 2 Oct 2026 14:57:20 +0000"
+     }
+    },
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16178027/Celebrity-Traitors-viewers-hail-Julie-Hesmondhalgh-icon-fangirls-list-castmates-Corrie-star-admits-starstruck-lead-murder.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Celebrity Traitors viewers hail Julie Hesmondhalgh as 'an icon' as she fangirls over her A-list castmates but Corrie star admits being so 'starstruck' could lead to her murder",
+      "published": "Fri, 02 Oct 2026 12:06:03 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/tv/tv-news/bbc-celebrity-traitors-live-updates-37724646",
+      "title": "Celebrity Traitors: Richard E. Grant dire history of over-sharing - 'tell him nothing'",
+      "published": "Fri, 2 Oct 2026 14:55:50 +0000"
+     }
+    },
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16178595/Saturday-Kitchen-star-James-Martins-flagship-restaurant-Manchester.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Saturday Kitchen star James Martin's flagship restaurant in Manchester closes after 14 years",
+      "published": "Fri, 02 Oct 2026 15:43:04 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/3am/celebrity-news/james-martin-restaurant-closes-after-37728294",
+      "title": "James Martin restaurant closes after 14 years with customers issued refunds",
+      "published": "Fri, 2 Oct 2026 13:48:08 +0000"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16175923/Richard-E-Grant-makes-HUGE-mistake-Traitor.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Richard E. Grant makes HUGE slip-up in front of Faithfuls just minutes after being told he is a Traitor",
+      "published": "Thu, 01 Oct 2026 23:38:13 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/3am/celebrity-news/jerry-halls-wild-rock-rock-37727546",
+      "title": "Jerry Hall's wild rock and rock life from cheating scandals to huge net worth",
+      "published": "Fri, 2 Oct 2026 13:48:16 +0000"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16177781/Brooklyn-Beckham-wife-Nicola-Peltz-party-Paris-mile-estranged-brother-Romeo.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Brooklyn Beckham and wife Nicola Peltz party in Paris just a mile away from his estranged brother Romeo as they attend MESSIKA catwalk hours before Victoria's fashion show",
+      "published": "Fri, 02 Oct 2026 14:02:33 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/3am/celebrity-news/brooklyn-beckham-risks-tense-showdown-37727780",
+      "title": "Brooklyn Beckham risks tense showdown with Romeo as they party nine minutes apart",
+      "published": "Fri, 2 Oct 2026 13:43:29 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 146,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 32,
+     "right": {
+      "url": "https://www.jpost.com/international/article-910404",
+      "title": "Indian flydubai pilot who opened cockpit door shares story with Prime Minister Narendra Modi",
+      "published": "Fri, 02 Oct 2026 09:55:30 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/middle-east-news/2026-10-02/ty-article/flydubai-pilot-i-opened-cockpit-door-letting-passengers-overpower-co-pilot/000001a0-fbcd-d2b3-a1b8-fbcf0d6c0000",
+      "title": "Stabbed flydubai pilot says he opened cockpit door, letting passengers overpower co-pilot",
+      "published": "Fri, 02 Oct 2026 12:29:23 +0300"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 136,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 21,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/new-party-walkout-during-erdogan-speech-draws-criticism-in-turkiye/news",
+      "title": "New Party walkout during Erdoğan speech draws criticism in Türkiye",
+      "published": "Fri, 02 Oct 2026 15:09:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/09/turkey-shelters-emirati-brotherhood-figures-accused-of-plotting-to-oust-uae-rulers/",
+      "title": "Turkey shelters Emirati Brotherhood figures accused of plotting to oust UAE rulers",
+      "published": "Sun, 20 Sep 2026 22:18:23 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 305,
+    "left": 10
+   }
+  }
+ }
+}

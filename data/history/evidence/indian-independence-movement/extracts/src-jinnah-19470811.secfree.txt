@@ -1,0 +1,7 @@
+source: src-jinnah-19470811
+locator: secfree
+url: https://na.gov.pk/en/content.php?id=74
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+
+You are free; you are free to go to your temples, you are free to go to your mosques or to any other places of worship in this State of Pakistan. You may belong to any religion or caste or creed — that has nothing to do with the business of the State

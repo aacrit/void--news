@@ -1,0 +1,8 @@
+source: src-un-carlsson-1999
+locator: secword
+url: https://web.archive.org/web/20001203205100/http://www.un.org:80/News/ossg/rwanda_report.htm
+read: 2026-10-07
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: section III, Conclusions, '5. Failure to respond to the genocide', cut at a sentence end
+
+The delay in identifying the events in Rwanda as a genocide was a failure by the Security Council. The reluctance by some States to use the term genocide was motivated by a lack of will to act, which is deplorable.

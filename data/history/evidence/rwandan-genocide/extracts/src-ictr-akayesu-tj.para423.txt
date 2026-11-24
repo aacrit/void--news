@@ -1,0 +1,7 @@
+source: src-ictr-akayesu-tj
+locator: para423
+url: https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-96-4/trial-judgements/en/980902.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+
+423. When Witness JJ fled from the bureau communal, she left her one year-old child with a Hutu man and woman, who said they had milk for the child and subsequently killed him. Witness JJ spoke of the heavy sorrow the war had caused her. She testified to the humiliation she felt as a mother, by the public nudity and being raped in the presence of children by young men. She said that just thinking about it made the war come alive inside of her. Witness JJ told the Chamber that she had remarried but that her life had never been the same because of the beatings and rapes she suffered. She said the pain in her ribs prevents her from farming because she can no longer use a hoe, and she used to live on the food that she could grow.

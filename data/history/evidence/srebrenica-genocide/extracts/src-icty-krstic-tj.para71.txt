@@ -1,0 +1,8 @@
+source: src-icty-krstic-tj
+locator: para71
+url: https://www.icty.org/x/cases/krstic/tjug/en/krs-tj010802e.pdf
+read: 2026-09-24
+note: the ICTY PDF text layer renders some diacritics with substitute glyphs (Poto~ari for Potocari, Erdemovi} for Erdemovic, @ivanovi} for Zivanovic, ^an~ari for Cancari); the passage is stored as the text layer prints it
+note: the paragraph crosses a page; the footnote block and running header between the two spans are omitted
+
+71. The extensive forensic evidence presented by the Prosecution strongly corroborates important aspects of the testimony of survivors from the various execution sites. Commencing in 1996, the Office of the Prosecutor (hereafter “OTP”) conducted exhumations of 21 gravesites associated with the take-over of Srebrenica: four in 1996 (at Cerska, Nova Kasaba, Orahovac (also known as Lazete 2) and Branjevo Military Farm (Pilica)); eight in 1998 (Petkovci Dam, Can~ari Road 12, ^an~ari Road 3, Hod`i}i Road 3, Hod`i}i Road 4, Hod`i}i Road 5, Lipje 2, Zeleni Jadar 5); five in 1999 (Kozluk, Nova Kasaba, Konjevi} Polje 1, Konjevic Polje 2, and Glogova 2); 134 and four in 2000 (Lazete 1, Lazete 2C,135 Ravnice and Glogova 1). Of the 21 gravesites exhumed, 14 were primary gravesites, where bodies had been put directly after the individuals were killed. Of these, eight were subsequently disturbed and bodies were removed and reburied elsewhere, often in secondary gravesites located in more remote regions.136 Seven of the exhumed gravesites were secondary burial sites.137

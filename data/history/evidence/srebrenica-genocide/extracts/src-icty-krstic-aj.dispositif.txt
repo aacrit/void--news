@@ -1,0 +1,7 @@
+source: src-icty-krstic-aj
+locator: dispositif
+url: https://www.icty.org/x/cases/krstic/acjug/en/krs-aj040419e.pdf
+read: 2026-09-24
+note: two operative clauses of the disposition; the clauses between them are omitted
+
+SETS ASIDE, Judge Shahabuddeen dissenting, Radislav Krstić’s conviction as a participant in a joint criminal enterprise to commit genocide (Count 1), and FINDS, Judge Shahabuddeen dissenting, Radislav Krstić guilty of aiding and abetting genocide; SENTENCES Radislav Krstić to 35 years’ imprisonment to run as of this day, subject to credit being given under Rule 101(C) of the Rules of Procedure and Evidence for the period

@@ -1,0 +1,101 @@
+{
+ "collected_at": "2026-11-07T15:13:01Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 26,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16272077/Venezuela-Fury-reveals-bonfire-night-horror-husband-Noah-Prices-car-broken-fireworks-stolen.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Venezuela Fury reveals bonfire night horror as her husband Noah Price's car is broken into with fireworks being stolen",
+      "published": "Fri, 06 Nov 2026 20:17:55 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/3am/celebrity-news/venezula-fury-noah-price-theft-37853940",
+      "title": "Venezuela Fury left upset after thieves break into husband’s car to steal clothes and fireworks",
+      "published": "Sat, 7 Nov 2026 13:32:57 +0000"
+     }
+    },
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.dailymail.com/lifestyle/article-16262497/Laura-Brand-Bernard-Gallacher-family-Russell-teenager-KATIE-HIND.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "What 'sweet and shy' Laura Gallacher's well-heeled family really think of her obsessive loyalty to rapist husband Russell Brand... after she acted like a 'hostage' in court",
+      "published": "Fri, 06 Nov 2026 13:30:56 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/russell-brand-verdict-court-london-37847231",
+      "title": "Russell Brand — latest updates: Rapist's wife faces uncertain future as ex makes demand of 'unwell' star",
+      "published": "Sat, 7 Nov 2026 14:58:12 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 148,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.jpost.com/podcast/article-914011",
+      "title": "Vance, Trump and the midterms: Is US support for Israel ending?",
+      "published": "Thu, 05 Nov 2026 21:09:41 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/us-news/2026-11-04/ty-article/.premium/vance-republicans-lost-midterms-because-of-iran-war-trump-said-so-himself/000001a1-a749-d5c5-ade1-bf7f5c340000",
+      "title": "Vance: Republicans lost midterms because of Iran war, U.S.-Israel relations",
+      "published": "Wed, 04 Nov 2026 18:03:15 +0200"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/erdogans-family-business-ties-complicate-azerbaijan-dispute/",
+      "title": "Erdogan’s family business ties complicate Azerbaijan dispute",
+      "published": "Mon, 26 Oct 2026 23:01:29 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 310,
+    "left": 10
+   }
+  }
+ }
+}

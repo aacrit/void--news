@@ -1,0 +1,87 @@
+{
+ "collected_at": "2026-11-14T15:22:28Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 36,
+     "right": {
+      "url": "https://www.dailymail.com/news/royals/article-16292215/King-Charles-Elton-John-jokes-ageing.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "'I'm still sitting!': Elton John jokes with King Charles about problems of getting older as they team up for special radio show to mark monarch's 78th birthday",
+      "published": "Sat, 14 Nov 2026 13:36:51 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/royals/king-charles-elton-john-joke-37877440",
+      "title": "King Charles enjoys a joke with Sir Elton John about ageing as monarch turns 78",
+      "published": "Sat, 14 Nov 2026 13:57:21 +0000"
+     }
+    },
+    {
+     "score": 23,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16291161/Strictlys-Kai-Widdrington-forced-pull-Saturdays-illness-replaced-Alja-korjanec-weeks-Delta-Goodrems-rib-injury.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Strictly's Kai Widdrington forced to pull out of Saturday's show due to illness and is replaced by Aljaž Škorjanec - weeks after Delta Goodrem's rib injury",
+      "published": "Sat, 14 Nov 2026 14:55:11 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/tv/tv-news/strictly-come-dancing-tonight-live-37877260",
+      "title": "Strictly Come Dancing 2026 week 8 live – Who went out of BBC show last week?",
+      "published": "Sat, 14 Nov 2026 15:10:22 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.jpost.com/international/article-914860",
+      "title": "Israeli police arrest Bat Yam man wanted by Bulgaria over killing of 83-year-old in Sofia",
+      "published": "Sat, 14 Nov 2026 14:44:07 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/israel-crime/2026-11-13/ty-article/.premium/bat-yam-resident-arrested-for-alleged-role-in-murder-of-israeli-in-bulgaria/000001a1-d4d2-d63e-a1b1-d6d317380000",
+      "title": "Man arrested in central Israel for alleged role in murder of Israeli in Bulgaria",
+      "published": "Fri, 13 Nov 2026 14:31:33 +0200"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 308,
+    "left": 10
+   }
+  }
+ }
+}

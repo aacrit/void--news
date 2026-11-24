@@ -1,0 +1,8 @@
+source: src-unscear-2000-annex-j
+locator: para14
+url: https://www.unscear.org/unscear/uploads/documents/publications/UNSCEAR_2000_Annex-J.pdf
+read: 2026-10-07
+note: Annex J, paragraph 14, its first five sentences; the text layer runs two words together ('consisted ofdumping', 'bythe') and they are separated as the rendered page prints them (checked at 200 dpi)
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+14. The first measures taken to control the fire and the radionuclide releases consisted of dumping neutron-absorbing compounds and fire-control materials into the crater formed by the destruction of the reactor. The total amount of materials dumped on the reactor was approximately 5,000 t, including about 40 t of boron compounds, 2,400 t of lead, 1,800 t of sand and clay, and 600 t of dolomite, as well as sodium phosphate and polymer liquids [B4]. About 150 t of materials were dumped on 27 April, followed by 300 t on 28 April, 750 t on 29 April, 1,500 t on 30 April, 1,900 t on 1 May, and 400 t on 2 May. About 1,800 helicopter flights were carried out to dump materials onto the reactor.

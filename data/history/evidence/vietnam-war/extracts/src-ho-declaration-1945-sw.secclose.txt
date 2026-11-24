@@ -1,0 +1,7 @@
+source: src-ho-declaration-1945-sw
+locator: secclose
+url: https://www.marxists.org/reference/archive/ho-chi-minh/works/1945/declaration-independence.htm
+read: 2026-10-09
+note: the declaration's last three paragraphs in the Selected Works translation
+
+We are convinced that the Allied nations which at Tehran and San Francisco have acknowledged the principles of self-determination and equality of nations, will not refuse to acknowledge the independence of Vietnam. A people who have courageously opposed French domination for more than eighty years, a people who have fought side by side with the Allies against the Fascists during these last years, such a people must be free and independent. For these reasons, we, members of the Provisional Government of the Democratic Republic of Vietnam, solemnly declare to the world that Vietnam has the right to be a free and independent country and in fact it is so already. The entire Vietnamese people are determined to mobilise all their physical and mental strength, to sacrifice their lives and property in order to safeguard their independence and liberty.

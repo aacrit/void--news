@@ -1,0 +1,8 @@
+source: src-hansard-19460315
+locator: sectide
+url: https://api.parliament.uk/historic-hansard/commons/1946/mar/15/india-cabinet-mission
+read: 2026-10-09
+note: the text is the Hansard page's own text (UK Parliament, historic Hansard), whitespace collapsed
+note: the Prime Minister (Mr. Attlee)
+
+I am quite certain that at the present time the tide of nationalism is running very fast in India and, indeed, all over Asia. One always has to remember that India is affected by what happens elsewhere in Asia.

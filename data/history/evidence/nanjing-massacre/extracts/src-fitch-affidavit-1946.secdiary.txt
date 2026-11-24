@@ -1,0 +1,8 @@
+source: src-fitch-affidavit-1946
+locator: secdiary
+url: https://www.legal-tools.org/doc/a4c38a/pdf/
+read: 2026-10-09
+note: the text is the scan's own OCR layer as the Legal Tools Database serves it, whitespace collapsed; the transcript's printed line numbers (1 to 25) and the OCR's glyph errors sit inside the text and are kept as the layer gives them
+note: transcript pages 4,462 to 4,463, exhibit 307, read by Mr Sutton; Fitch swears these are 'excerpts or paraphrases' of his diary, so no sentence here is certainly the diary's own wording
+
+Director of the Safety Zone; that the following ex- cerpts or paraphrases, taken from a diary which,I kept at that time, are true: :l~\iany hundreds of innocent civilians are taken out before your eyes to be shot or used for bayonet practice and you have to listen to the sound· of the guns that are killing them. It seems to be the rule here that anyone who runs must be sho't or bayonetted. We happened to be beside the Ministry: of War at the time, and it w'as all too evident that execution was going Oll1 hundreds of poor disarmed- soldiers with many: innq,cent Civilians among 'them

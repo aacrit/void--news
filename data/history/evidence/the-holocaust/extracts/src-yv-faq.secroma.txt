@@ -1,0 +1,6 @@
+source: src-yv-faq
+locator: secroma
+url: https://www.yadvashem.org/holocaust/faqs.html
+read: 2026-10-07
+
+Roma and Sinti (often called by the derogatory term Gypsies) were murdered by the Nazis in large numbers. Estimates range from 200,000 to over 500,000 victims.

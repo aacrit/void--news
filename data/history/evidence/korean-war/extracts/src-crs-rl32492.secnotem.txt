@@ -1,0 +1,8 @@
+source: src-crs-rl32492
+locator: secnotem
+url: https://www.congress.gov/crs_external_products/RL/PDF/RL32492/RL32492.25.pdf
+read: 2026-10-09
+note: note m to Table 1
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+m. Worldwide military deaths during the Korean War totaled 54,246. In-theater casualty records are updated annually.

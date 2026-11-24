@@ -1,0 +1,5 @@
+rendering: void-translation
+of: src-lei-581-1850.sectitle
+names: Imperio=Empire
+
+Establishes measures for the repression of the traffic in Africans in this Empire.

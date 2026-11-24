@@ -1,0 +1,7 @@
+source: src-unesco-775
+locator: secdesc
+url: https://whc.unesco.org/en/list/775/
+read: 2026-10-05
+note: the Brief synthesis paragraph as the page prints it
+
+The Hiroshima Peace Memorial (Genbaku Dome) was the only structure left standing in the area where the first atomic bomb exploded on 6 August 1945. Through the efforts of many people, including those of the city of Hiroshima, it has been preserved in the same state as immediately after the bombing. Not only is it a stark and powerful symbol of the most destructive force ever created by humankind; it also expresses the hope for world peace and the ultimate elimination of all nuclear weapons.

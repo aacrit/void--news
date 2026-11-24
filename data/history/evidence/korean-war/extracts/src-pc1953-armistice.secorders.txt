@@ -1,0 +1,9 @@
+source: src-pc1953-armistice
+locator: secorders
+url: https://www.marxists.org/subject/china/peoples-china/1953/PC1953-15-Sup-OCR-sm.pdf
+read: 2026-10-09
+note: Supplement to People's China, 1953 no. 15, 'Armistice Orders From Marshal Kim Il Sung and General Peng Teh-huai to Their Units, July 27, 1953'
+note: the copy is a scan with an OCR text layer; its misreadings are kept as read, not corrected
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Comrades of the Korean Peop1e's Army and Comrades of the Chinese People's Volunteers: The Korean Peop1e's Army and the Chinese People's Volunteers, af ter flghting heroically for three years against aggression and in def ence of peaee and after persevering for two years in the armistice negotiations for a peace- ful settlement of the Korean question, have won a glorious victory of an armistice in Korea and signed a Korean Armistice Agreement with the United Nations Command.

@@ -1,0 +1,8 @@
+source: src-chernobyl-forum-2006
+locator: p15
+url: https://www.iaea.org/sites/default/files/chernobyl.pdf
+read: 2026-10-07
+note: printed page 15 (PDF page 13), the sub-heading 'Cancer mortality' and its first paragraph
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+Cancer mortality It is impossible to assess reliably, with any precision, numbers of fatal cancers caused by radiation exposure due to Chernobyl accident. Further, radiation-induced cancers are at present indistinguishable from those due to other causes.

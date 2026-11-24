@@ -1,0 +1,6 @@
+source: src-barry-2004
+locator: para26
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC340389/fullTextXML
+read: 2026-09-25
+
+The disease did not, however, slip from Miner's thoughts. Influenza was neither a reportable disease, nor a disease that any state or federal public health agency tracked. Yet Miner considered this incarnation of the disease so dangerous that he warned national public health officials about it. Public Health Reports(now Morbidity and Mortality Weekly Report), a weekly journal produced by the U.S. Public Health Service to alert health officials to outbreaks of communicable diseases throughout the world, published his warning. In the first six months of 1918, this would be the only reference in that journal to influenza anywhere in the world.

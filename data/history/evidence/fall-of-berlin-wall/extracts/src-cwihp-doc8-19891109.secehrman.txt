@@ -1,0 +1,8 @@
+source: src-cwihp-doc8-19891109
+locator: secehrman
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_12-13.pdf
+read: 2026-10-09
+note: CWIHP Bulletin 12/13, p. 157, Document No. 8; the Bulletin's English translation by Howard Sargeant of Hertle's transcript of the television broadcast; the ANSA correspondent's question is about 'mistakes', not about timing
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Question: My name is Ricardo Ehrman, representing the Italian press agency ANSA. Mr. Schabowski, you spoke about mistakes. Don’t you believe that it was a big mistake to introduce this travel law several days ago?

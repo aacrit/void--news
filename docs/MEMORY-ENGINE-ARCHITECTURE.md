@@ -1,4 +1,5 @@
 # News Memory Engine — Architecture Diagram
+> Historical. Written before the 2026-09-01 Supabase decommission and the Kokoro switch; the current state is CLAUDE.md.
 
 ## System Overview
 
@@ -11,7 +12,7 @@
 │  │  Main Pipeline       │         │  Live Poller         │          │
 │  │  (4x daily)          │         │  (every 30 min)      │          │
 │  │                      │         │                      │          │
-│  │  • RSS fetch (370)   │         │  • RSS fetch (15-20) │          │
+│  │  • RSS fetch (951)   │         │  • RSS fetch (15-20) │          │
 │  │  • Cluster           │         │  • Scrape full text  │          │
 │  │  • Bias analyze      │         │  • Gemini summary    │          │
 │  │  • Rank              │         │  • Insert to DB      │          │

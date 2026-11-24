@@ -1,0 +1,7 @@
+source: src-walrus-owen-2006
+locator: sectonnage
+url: https://thewalrus.ca/2006-10-history/
+read: 2026-10-09
+note: The Walrus's web text of 'Bombs Over Cambodia', October 2006, bylined on the page to Taylor Owen
+
+The still-incomplete database (it has several “dark” periods) reveals that from October 4, 1965, to August 15, 1973, the United States dropped far more ordnance on Cambodia than was previously believed: 2,756,941 tons’ worth, dropped in 230,516 sorties on 113,716 sites. Just over 10 percent of this bombing was indiscriminate, with 3,580 of the sites listed as having “unknown” targets and another 8,238 sites having no target listed at all. The database also shows that the bombing began four years earlier than is widely believed—not under Nixon, but under Lyndon Johnson.

@@ -1,0 +1,7 @@
+source: src-souza-2023
+locator: abstract
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10395612/fullTextXML
+read: 2026-09-25
+note: the article's Portuguese abstract (Resumo)
+
+O artigo analisa a epidemia de gripe de 1918 em Diamantina, no interior de Minas Gerais. A partir de fontes bibliográficas e documentais, discute como o ramal ferroviário da Estrada de Ferro Vitória a Minas, inaugurado em 1914, contribuiu para a chegada da doença à cidade que, até então, era representada no discurso de suas elites como isolada e salubre. Aborda as imbricadas relações entre a expansão dos sistemas de transportes pelo interior do Brasil, o meio ambiente, o conhecimento científico e os processos saúde/doença.

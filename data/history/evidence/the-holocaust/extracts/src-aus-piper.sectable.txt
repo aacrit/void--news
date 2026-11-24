@@ -1,0 +1,20 @@
+source: src-aus-piper
+locator: sectable
+url: https://www.auschwitz.org/en/history/the-number-of-victims/overall-numbers-by-ethnicity-or-category-of-deportee
+read: 2026-10-07
+
+Ethnicity/category
+Number
+Jews
+1 million
+Poles
+70-75 thousand
+Roma and Sinti
+21 thousand
+Soviet POWs
+15 thousand
+Others
+10-15 thousand
+Total
+Approx. 1.1 million
+Source: Franciszek Piper, Ilu ludzi zginęło w KL Auschwitz. Liczba ofiar w świetle źródeł i badań, Oświęcim 1992.

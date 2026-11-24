@@ -1,0 +1,6 @@
+source: src-hansard-19421217
+locator: secc2084
+url: https://api.parliament.uk/historic-hansard/commons/1942/dec/17/united-nations-declaration
+read: 2026-10-07
+
+As regards the second question, my hon. Friend knows the immense difficulties in the way of what he suggests, but he may be sure that we shall do all we can to alleviate these horrors, though I fear that what we can do at this stage must inevitably be slight.

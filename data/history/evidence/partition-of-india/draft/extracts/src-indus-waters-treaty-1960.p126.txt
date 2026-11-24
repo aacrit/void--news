@@ -1,0 +1,8 @@
+source: src-indus-waters-treaty-1960
+locator: p126
+url: https://treaties.un.org/doc/Publication/UNTS/Volume%20419/volume-419-I-6032-English.pdf
+read: 2026-09-25
+note: United Nations Treaty Series, vol. 419, No. 6032; the PDF's line breaks are joined and its line-break hyphens rejoined
+note: page 126, the title and the plenipotentiaries; the layer's 'I960' in the title is kept
+
+No. 6032. THE INDUS WATERS TREATY I960 1 BETWEEN THE GOVERNMENT OF INDIA, THE GOVERNMENT OF PAKISTAN AND THE INTERNATIONAL BANK FOR RECONSTRUCTION AND DEVELOPMENT. SIGNED AT KARACHI, ON 19 SEPTEMBER 1960 PREAMBLE The Government of India and the Government of Pakistan, being equally desirous of attaining the most complete and satisfactory utilisation of the waters of the Indus system of rivers and recognising the need, therefore, of fixing and delim iting, in a spirit of goodwill and friendship, the rights and obligations of each in relation to the other concerning the use of these waters and of making provision for the settle ment, in a cooperative spirit, of all such questions as may hereafter arise in regard to the interpretation or application of the provisions agreed upon herein, have resolved to conclude a Treaty in furtherance of these objectives, and for this purpose have named as their plenipotentiaries : The Government of India : Shri Jawaharlal Nehru, Prime Minister of India, and The Government of Pakistan : Field Marshal Mohammad Ayub Khan, H.P., H.J., President of Pakistan ;

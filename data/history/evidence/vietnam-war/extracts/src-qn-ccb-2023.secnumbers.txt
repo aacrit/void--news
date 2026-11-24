@@ -1,0 +1,7 @@
+source: src-qn-ccb-2023
+locator: secnumbers
+url: https://www.quangninh.gov.vn/bannganh/hoicuuchienbinh/Trang/ChiTietTinTuc.aspx?nid=395
+read: 2026-10-09
+note: the Quảng Ninh Veterans' Association page on the provincial portal, dated 24/07/2023; Unicode NFC; no translation is held
+
+Có 1.146.250 Liệt sỹ trên cả nước. + 191.605 Liệt sỹ hi sinh trong kháng chiến chống Pháp + 849.018 Liệt sỹ hi sinh trong kháng chiến chống Mỹ + 105.627 Liệt sỹ hi sinh trong các cuộc chiến tranh bảo vệ Tổ quốc (chiến tranh biên giới Tây Nam, chiến tranh biên giới phía Bắc, cuộc chiến bảo vệ chủ quyền biển đảo…)

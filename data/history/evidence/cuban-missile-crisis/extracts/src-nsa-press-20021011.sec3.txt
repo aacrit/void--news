@@ -1,0 +1,7 @@
+source: src-nsa-press-20021011
+locator: sec3
+url: https://nsarchive2.gwu.edu/nsa/cuba_mis_cri/press3.htm
+read: 2026-10-04
+note: the release's third paragraph, on the submarine; the page's HTML read as text
+
+In the middle of this sequence of escalating tensions, according to new documents released today, the US Navy was dropping a series of "signaling depth charges" (equivalent to hand grenades) on a Soviet submarine at the quarantine line. Navy deck logs show the depth charges at 1659 and 1729 military time. At the conference table in Havana were the US Navy watch officer, Captain John Peterson, who ordered the depth charges as part of standard operating procedure for signaling submarines, and the Soviet signals intelligence officer, Vadim Orlov, on the receiving end inside submarine B-59, where the depth charges felt like "sledgehammers on a metal barrel." Unbeknownst to the Navy, the submarine carried a nuclear-tipped torpedo with orders that allowed its use if the submarine was "hulled" (hole in the hull from depth charges or surface fire).

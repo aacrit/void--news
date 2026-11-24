@@ -1,0 +1,7 @@
+source: src-nunn-wantchekon-2009
+locator: abstract
+url: https://www.nber.org/system/files/working_papers/w14783/w14783.pdf
+read: 2026-10-09
+note: the abstract, PDF text layer; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+Combining contemporary household survey data with historic data on slave shipments, we show that individuals whose ancestors were heavily raided during the slave trade today exhibit less trust in neighbors, relatives, and their local government.

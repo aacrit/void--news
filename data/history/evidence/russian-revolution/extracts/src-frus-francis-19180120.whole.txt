@@ -1,0 +1,8 @@
+source: src-frus-francis-19180120
+locator: whole
+url: https://history.state.gov/historicaldocuments/frus1918Russiav01/d342
+read: 2026-10-09
+note: the Office of the Historian's text of FRUS as served, tags removed; whitespace collapsed, nothing else changed
+note: the figure 1 after 'October revolution' is FRUS's note mark ('November revolution, if the new-style calendar is used')
+
+2259. Continuing my 2255. Assembly which adjourned at 6 p.m. yesterday excluded from Duma not attempting entrance when advised by committee would be refused. Central Committee of Commissaries issued a decree dissolving Constituent Assembly because counterrevolutionary bourgeois influenced and not acknowledging result of October revolution 1 which demonstrated that all power rests with Workmen-Soldiers-Peasants’ Soviet. Shall advise Allied chiefs, meeting this afternoon, to take no action concerning Assembly, certainly not until further developments. Social Revolutionists had decided majority in Assembly voting solidly on every proposition but Soviet were organized more; Cossacks had giant power and used it.

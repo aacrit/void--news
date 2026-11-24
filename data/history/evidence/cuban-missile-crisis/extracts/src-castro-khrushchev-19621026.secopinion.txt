@@ -1,0 +1,8 @@
+source: src-castro-khrushchev-19621026
+locator: secopinion
+url: https://microsites.jfklibrary.org/cmc/oct26/doc2.html
+read: 2026-10-07
+note: the JFK Library's web text of the letter; the page does not name the translator or the source of the English text
+note: the letter's third, fourth and fifth paragraphs, Castro's 'personal opinion', line breaks folded to spaces. The letter does not use the word 'nuclear' of any Soviet act: the one use of the word is 'a nuclear first strike against it' by the imperialists
+
+I would like to briefly express my own personal opinion. If the second variant takes place and the imperialists invade Cuba with the aim of occupying it, the dangers of their aggressive policy are so great that after such an invasion the Soviet Union must never allow circumstances in which the imperialists could carry out a nuclear first strike against it. I tell you this because I believe that the imperialists' aggressiveness makes them extremely dangerous, and that if they manage to carry out an invasion of Cuba--a brutal act in violation of universal and moral law--then that would be the moment to eliminate this danger forever, in an act of the most legitimate self-defense. However harsh and terrible the solution, there would be no other.

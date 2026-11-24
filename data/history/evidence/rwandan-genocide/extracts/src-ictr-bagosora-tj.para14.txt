@@ -1,0 +1,7 @@
+source: src-ictr-bagosora-tj
+locator: para14
+url: https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-98-41/trial-judgements/en/081218.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+
+14. Consequently, the Prosecution has not proven beyond reasonable doubt that the only reasonable inference to be drawn from the evidence is that the four Accused conspired amongst themselves or with others to commit genocide before it unfolded from 7 April 1994. The Chamber has acquitted them of the count of conspiracy.

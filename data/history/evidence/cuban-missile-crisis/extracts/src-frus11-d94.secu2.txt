@@ -1,0 +1,9 @@
+source: src-frus11-d94
+locator: secu2
+url: https://history.state.gov/historicaldocuments/frus1961-63v11/d94
+read: 2026-10-04
+note: Document 94, Summary Record of the Eighth Meeting of the Executive Committee of the National Security Council, October 27, 1962, 4 p.m.: the report of the U-2 shot down and the Secretary of Defense's response
+
+General Taylor read a late report of the shooting down of the U-2 reconnaissance plane in Cuba which said that the wreckage of the U-2 was on the ground and that the pilot had been killed. He felt that we should make an air attack tomorrow on the SAM site responsible for shooting down the U-2 plane.
+
+Secretary McNamara said that we must now be ready to attack Cuba by launching 500 sorties on the first day. Invasion had become almost inevitable.

@@ -1,0 +1,7 @@
+source: src-ddhc-1789
+locator: art1
+url: https://www.conseil-constitutionnel.fr/le-bloc-de-constitutionnalite/declaration-des-droits-de-l-homme-et-du-citoyen-de-1789
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+
+Les hommes naissent et demeurent libres et égaux en droits. Les distinctions sociales ne peuvent être fondées que sur l'utilité commune.

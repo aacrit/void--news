@@ -1,0 +1,8 @@
+source: src-dod-nogunri-20010111
+locator: seccohen
+url: https://usinfo.org/wf-archive/2001/010112/epf503.htm
+read: 2026-10-09
+note: Department of State Washington File transcript of the DoD news briefing, 11 January 2001; Secretary of Defense William S. Cohen
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+The passage of 50 years has reduced the possibility that all of the facts can be known about the tragic incident that took place in the vicinity of No Gun Ri in South Korea. We have determined, however, that U.S. soldiers killed or injured an unconfirmed number of Korean refugees in the last week of July of 1950 during a withdrawal under pressure in the vicinity of No Gun Ri.

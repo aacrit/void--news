@@ -1,0 +1,7 @@
+source: src-un-sres-918
+locator: op13
+url: https://documents.un.org/doc/undoc/gen/n94/218/36/pdf/n9421836.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+
+13. Decides that all States shall prevent the sale or supply to Rwanda by their nationals or from their territories or using their flag vessels or aircraft of arms and related matériel of all types, including weapons and ammunition, military vehicles and equipment, paramilitary police equipment and spare parts;

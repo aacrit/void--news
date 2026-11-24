@@ -1,0 +1,8 @@
+source: src-cwihp-politburo-19490924
+locator: secmilitary
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_5.pdf
+read: 2026-10-09
+note: CWIHP Bulletin 5, Document V, the Politburo's directive to the ambassador, translated by Kathryn Weathersby
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+From the military side it is impossible to consider that the Peoples’ Army is prepared for such an attack. If not prepared for in the necessary manner, the attack can turn into a prolonged military operation, which not only will not lead to the defeat of the enemy but will also create significant political and economic difficulties for North Korea, which, finally, cannot be permitted.

@@ -1,0 +1,7 @@
+source: src-mandela-19610626
+locator: secclose
+url: https://www.un.org/en/events/mandeladay/struggle.shtml
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+
+For my own part I have made my choice. I will not leave South Africa, nor will I surrender. Only through hardship, sacrifice and militant action can freedom be won. The struggle is my life. I will continue fighting for freedom until the end of my days.

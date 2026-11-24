@@ -1,0 +1,77 @@
+name: Deploy Worker
+
+# The ship board / feedback Worker (worker/) and its D1 database. Until
+# 2026-10-03 nothing deployed it: it went out by hand (`npm run deploy`), so
+# rev 85's ip_hash fix, its migration and the IP_SALT secret sat unapplied.
+# It now deploys on any change under worker/ that reaches main, and on demand.
+#
+# Order matters: the migration adds the ip_hash columns the new code writes,
+# so it runs BEFORE the deploy. IP_SALT is generated once, only if the Worker
+# has none (rotating it would orphan every stored hash), and never printed.
+# Uses the same CLOUDFLARE_API_TOKEN as deploy-cloudflare.yml; that token
+# needs Workers Scripts:Edit and D1:Edit on the account for this to pass.
+
+on:
+  push:
+    branches: [main]
+    paths: ["worker/**", ".github/workflows/deploy-worker.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-worker
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: worker
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+
+      - name: Install, typecheck, test
+        run: |
+          set -euo pipefail
+          npm ci
+          npm run typecheck
+          npm test
+
+      - name: Apply D1 migrations
+        run: npx wrangler d1 migrations apply void-live --remote
+
+      - name: Deploy
+        run: npx wrangler deploy
+
+      - name: Set IP_SALT once, if the Worker has none
+        run: |
+          set -euo pipefail
+          if npx wrangler secret list --format json | grep -q '"IP_SALT"'; then
+            echo "IP_SALT already set; left as is."
+          else
+            salt=$(openssl rand -hex 32)
+            echo "::add-mask::$salt"
+            printf '%s' "$salt" | npx wrangler secret put IP_SALT
+            echo "IP_SALT set."
+          fi
+
+      - name: Smoke test the live Worker
+        run: |
+          set -euo pipefail
+          sleep 5
+          code=$(curl -sS -o /tmp/stats.json -w '%{http_code}' \
+            -H 'Origin: https://news.voidvision.org' \
+            https://void-api.aacrit.workers.dev/api/ship/stats)
+          echo "GET /api/ship/stats -> $code"
+          head -c 300 /tmp/stats.json; echo
+          test "$code" = "200"

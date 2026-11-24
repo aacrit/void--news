@@ -1,0 +1,7 @@
+source: src-cwmg-23-great-trial
+locator: secpunjab
+url: https://archive.org/download/HindSwaraj-CWMG-023/CWMG-v023-XXIII-MC-BETA_djvu.txt
+read: 2026-10-09
+note: the text is the archive.org full-text (djvu.txt) layer of the electronic edition of the Collected Works (Publications Division), whitespace collapsed; line-end hyphens and glyph errors kept as the layer gives them
+
+The first shock came in the shape of the Rowlatt Act, a law designed to rob the people of all real freedom. I felt called upon to lead an intensive agitation against it. Then followed the Punjab horrors beginning with the massacre at Jallianwala Bagh and culminating in crawling orders, public floggings and other in- describable humiliations.

@@ -1,0 +1,6 @@
+source: src-un-goe-1999
+locator: para37
+url: https://documents.un.org/doc/undoc/gen/n99/059/72/pdf/n9905972.pdf
+read: 2026-09-25
+
+37. From 1975 to 1977, Democratic Kampuchea and Viet Nam engaged in a low- intensity border war. By 1977, Cambodia had escalated the conflict to include raids in which it massacred hundreds of Vietnamese in border villages. Viet Nam eventually responded by sending troops into Cambodia in December 1977.

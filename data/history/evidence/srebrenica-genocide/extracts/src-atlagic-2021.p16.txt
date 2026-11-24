@@ -1,0 +1,8 @@
+source: src-atlagic-2021
+locator: p16
+url: https://scindeks-clanci.ceon.rs/data/pdf/0353-9008/2021/0353-90082155147A.pdf
+read: 2026-09-24
+note: from the article's English summary; its three opening sentences are held as the extract secsummary, cut here for the 150-word cap
+note: line-break hyphenation in the PDF text layer (Сре- бреници) rejoined; nothing else changed
+
+Searching in their research, the authors could not find a single statement by Republika Srpska officials who, before the war, during the war or during Operation Srebrenica, stated that they wanted to destroy the Muslim population, their language or script or cultural and religious monuments. During the liberation of Srebrenica, the Republika Srpska Army passed through 42 Muslim villages and did not leave behind a single killed civilian, woman, child or wounded. That was the biggest surprise for the directors of the war and Srebrenica. Furthermore, the Army of the Republika Srpska had no plan to destroy the Muslim population or capture Srebrenica, it just wanted to reduce the enclave to Srebrenica. The crime in Srebrenica was prepared by Bill Clinton, Alija Izetbegović and Franjo Tuđman. Clinton told Izetbegović that at least 5,000 Muslims must be killed for NATO to bomb Serbs.

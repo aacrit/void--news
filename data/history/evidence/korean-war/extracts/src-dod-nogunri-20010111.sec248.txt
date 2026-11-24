@@ -1,0 +1,8 @@
+source: src-dod-nogunri-20010111
+locator: sec248
+url: https://usinfo.org/wf-archive/2001/010112/epf503.htm
+read: 2026-10-09
+note: the same briefing; Charles L. Cragin answering a reporter
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Q: Mr. Cragin, why was it so difficult to assess the number of casualties, when the South Koreans gave a figure of 248, and we're left with "unknown"? Cragin: Well, please recall that the figure of 248 is not the figure that the South Korean government has given. What that is is a figure that has been provided to the Yongdong County office by the civilians in the No Gun Ri area. The Republic of Korea, in the Statement of Mutual Understanding, recognizes that it must further investigate that situation. There was, as the Statement of Mutual Understanding says, a wide disparity between the two investigating teams

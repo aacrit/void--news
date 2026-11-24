@@ -1,0 +1,6 @@
+source: src-un-goe-1999
+locator: fn5
+url: https://documents.un.org/doc/undoc/gen/n99/059/72/pdf/n9905972.pdf
+read: 2026-09-25
+
+These data also show a death rate of 50 per cent for the Chinese minority, 36 per cent for the Cham, and 40 per cent for ethnic Thai.

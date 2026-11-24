@@ -1,0 +1,8 @@
+source: src-armistice-19530727
+locator: secsupersede
+url: https://www.usfk.mil/portals/105/documents/sofa/g_armistice_agreement.pdf
+read: 2026-10-09
+note: Article V, paragraphs 62 and 63
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+62. The Articles and Paragraphs of this Armistice Agreement shall remain in effect until expressly superseded either by mutually acceptable amendments and additions or by provision in an appropriate agreement for a peaceful settlement at a political level between both sides. 63. All of the provisions of this Armistice Agreement, other than Paragraph 12, shall become effective at 2200 hours on 27 July 1953.

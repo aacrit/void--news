@@ -1,0 +1,11 @@
+source: src-hidankyo-20100507
+locator: p3
+url: https://www.un.org/en/conf/npt/2010/pdf/japanconfederation.pdf
+read: 2026-10-05
+note: page 3
+
+I am not a guinea pig nor am I an exhibit.  But those of you who are here today, please don't turn your 
+eyes away from me.  Please look at me again.  I have survived miraculously, but for me, to “live” was 
+to “endure the agony.”  The atomic bomb survivors, who reached the maximum number of 380,000 at 
+one time, have now decreased to 230,000.  Bearing the cursed scars of the atomic bomb all over our 
+bodies, we the Hibakusha continue to live in pain.

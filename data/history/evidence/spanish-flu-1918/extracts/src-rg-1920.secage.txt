@@ -1,0 +1,7 @@
+source: src-rg-1920
+locator: secage
+url: https://archive.org/download/sid14156800/sid14156800_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+
+Age Distribution.—The type of age distribution which had consistently characterised influenza mortality for many years suddenly and completely changed with the onset of the summer epidemic of 1918, and the new type then established continued to characterise the succeeding waves of the outbreak. The nature of the change is shown by Diagram I; which represents the age incidence of mortality attributed to influenza during the epidemic of 1847-48 and from 1890 onwards to the recent epidemic (page 38). In order to avoid the difficulty caused by the depletion of the male population by war service during the recent outbreak the comparison refers throughout to females only.

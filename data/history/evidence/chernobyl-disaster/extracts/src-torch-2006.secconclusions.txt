@@ -1,0 +1,8 @@
+source: src-torch-2006
+locator: secconclusions
+url: https://www.nirs.org/wp-content/uploads/c20/torch.pdf
+read: 2026-10-07
+note: Executive summary, 'Conclusions', printed page 11 (PDF page 12)
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+The full effects of the Chernobyl accident will most certainly never be known. However, 20 years after the disaster, it is clear that they are far greater than implied by official estimates. Our overall conclusion is that the unprecedented extent of the disaster and its long-term global environmental, health and socio-economic consequences should be fully acknowledged and taken into account by governments when considering their energy policies.

@@ -1,0 +1,8 @@
+source: src-cdm-chronicle-198911
+locator: sec1120
+url: https://www.chronik-der-mauer.de/en/chronicle/_year1989/_month11/?month=11&year=1989&moc=1
+read: 2026-10-09
+note: the entry for 20 November
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+20 November 1989 In many cities and localities in the GDR, "Monday demonstrations" take place; in Leipzig, the motto is now "Germany – united Fatherland".

@@ -1,0 +1,5 @@
+rendering: void-translation
+of: src-ap-17890620-arrete.whole
+names: Target=Target; Assemblée nationale=National Assembly
+
+The Assembly, having deliberated, adopted on the motion of M. Target the following decree, unanimously less one vote: "The National Assembly, considering that, called to fix the Constitution of the kingdom, to carry out the regeneration of public order and to maintain the true principles of the monarchy, nothing can prevent it from continuing its deliberations in whatever place it may be forced to establish itself, and that, in short, wherever its members are gathered, there is the National Assembly; "Decrees that all the members of this Assembly shall at once take a solemn oath never to separate, and to reassemble wherever circumstances require, until the Constitution of the kingdom is established and set on solid foundations; and that, the oath having been taken, all the members, and each of them individually, shall confirm this unshakeable resolution by their signature."

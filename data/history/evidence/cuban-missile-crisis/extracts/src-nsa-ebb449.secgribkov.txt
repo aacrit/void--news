@@ -1,0 +1,7 @@
+source: src-nsa-ebb449
+locator: secgribkov
+url: https://nsarchive2.gwu.edu/NSAEBB/NSAEBB449/
+read: 2026-10-07
+note: the briefing book's fourth paragraph, to the end of its first sentence; 'in Cuba in 1962' is the page's
+
+The question of tactical nuclear weapons — their number, their intended use, command and control procedures, and even the dates of their arrival and departure — has created many puzzles for students of the Cuban Missile Crisis for years since the planner of Operation Anadyr, General Anatoly Ivanovich Gribkov, revealed their presence in Cuba in 1962 at a critical oral history conference of American, Soviet and Cuban policymakers and scholars in Havana in January 1992, co-organized by the National Security Archive.

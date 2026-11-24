@@ -1,0 +1,140 @@
+## OPEN
+N: Say the fall of Rome and most people picture fire: legions broken, a city burning, the barbarians at the gates.
+N: On the day historians use to mark the end of the Western Roman Empire, there was no battle. No siege. No sack.
+N: A sixteen year old emperor surrendered without a fight, and the man who deposed him gave him a pension and a house on the Bay of Naples.
+N: The empire did not fall. It was retired.
+
+## TITLE
+N: Fall of the Western Roman Empire. Four seventy six.
+
+## SCENE 1 | Piacenza, the twenty eighth of August
+N: Odoacer's soldiers are foederati, Germanic troops fighting under Roman command, and they have one demand: one third of the land of Italy.
+N: The boy emperor's father, the general Orestes, refuses.
+N: Odoacer kills him at Piacenza on the twenty eighth of August, four seventy six, and marches for Ravenna.
+
+## SCENE 2 | Ravenna, the fourth of September
+N: The city does not resist. Romulus Augustulus, sixteen years old, surrenders.
+N: Odoacer does not execute him. He grants the boy a pension of six thousand solidi a year and sends him to a villa in Campania, on the Bay of Naples, possibly once the palace of a Roman general named Lucullus.
+
+## REST
+
+## SCENE 3 | The little Augustus
+N: Romulus was never his own idea. His father, Orestes, once a secretary to Attila the Hun, had put him on the throne the previous October, after deposing the sitting emperor, Julius Nepos, who fled to Dalmatia and kept claiming the title until his death four years later.
+N: Constantinople never recognized the boy. And even his name was a joke: Romulus, for the city's founder, Augustus, for its first emperor. Little Augustus. Augustulus.
+
+## DOCUMENT | Marcellinus Comes | Chronicle | c. 520 CE
+N: Decades later, a chronicler named Marcellinus Comes, writing in Constantinople, records the whole event in a single sentence.
+M: The Western Empire of the Roman people, which first began in the seven hundred ninth year after the founding of the city with Octavian Augustus, perished with this Augustulus.
+
+## ASIDE
+N: Here is what that sentence is, and is not. Marcellinus is not describing a catastrophe. He is closing a file.
+N: A political office that had run for five hundred years, from Britain to Egypt, stops being filled, and the man closest to the event states it once and moves on.
+
+## REST
+
+## SCENE 4 | The gift to Constantinople
+N: Then Odoacer does something stranger than deposing an emperor. He gathers the imperial regalia, the purple cloak, the diadem, the scepter, and ships them to Constantinople, to the eastern emperor, Zeno.
+N: The message is not "I have destroyed Rome." It is "there is no need for a western emperor. One, in Constantinople, is enough."
+N: Zeno, busy with his own usurpers, accepts the regalia and grants Odoacer the title of patrician. Nobody in either city calls this a catastrophe. It is a transfer, filed and stamped.
+
+## SCENE 5 | The morning after
+N: In Rome itself, the Senate keeps meeting. The aqueducts keep flowing, for a while. The law courts stay open. Latin stays the language of government, and Odoacer mints coins with Zeno's face on them and calls himself a Roman official, not a conqueror.
+N: To someone living in Rome in four seventy seven, the change of management is less disruptive than the two sacks the city has already survived: the Goths in four ten, the Vandals in four fifty five.
+
+## REST
+
+## TURN | Five accounts
+N: Five accounts, and the argument between them is not only about what happened. It is about whether anything was lost at all.
+
+## PERSPECTIVE | Late Roman / Imperial | vanquished
+N: This account starts earlier, at the sack that broke something first.
+N: Alaric's Visigoths took Rome on the twenty fourth of August, four ten, the first time a foreign army had held the city in eight hundred years. Refugees poured into North Africa, and a bishop named Augustine spent thirteen years writing a book to explain what it meant.
+N: By the time Romulus surrendered, the empire had already lost Spain to the Visigoths and North Africa to the Vandals, its two richest provinces. The grain stopped, the tax revenue collapsed, and the army was paid in land instead of coin.
+N: The historian Bryan Ward-Perkins reads the wreckage in objects: roof tile production in Britain stops after four ten, pottery quality falls across the former provinces, and cattle get smaller for generations after. Rome itself falls from a million people to about thirty thousand.
+N: Jerome, writing from Bethlehem when the news of four ten reached him, put it in five words.
+M: The city which had taken the whole world was itself taken.
+
+## PERSPECTIVE | Germanic Successor Kingdoms | victor
+N: Odoacer did not think of himself as Rome's killer. He ruled Italy for seventeen years using Roman offices: keeping the Senate, appointing consuls, minting coins with the eastern emperor's face on them.
+N: His successor went further. Theodoric the Ostrogoth, raised as a hostage at the imperial court in Constantinople, spoke Latin and Greek, restored the Colosseum after an earthquake, and kept a scholar named Cassiodorus on staff to run the correspondence. Theodoric put it in his own words.
+M: We delight to live after the law of the Romans, whom we seek to defend with our arms.
+N: A century later, Clovis, king of the Franks, chose the Roman church over the Arian faith other Germanic kings had picked. On Christmas Day, eight hundred, Pope Leo the Third crowned Charlemagne emperor of the Romans, and what grew from that called itself Roman for over a thousand years.
+N: And the soldiers Rome called barbarians were often already Roman. Stilicho, the empire's own best general, was half Vandal. Odoacer's own troops were foederati, contract soldiers inside the system, not outside it. On this account, Rome did not fall. It changed hands.
+
+## REST | short
+
+## PERSPECTIVE | Eastern Roman / Byzantine | bystander
+N: Constantinople did not consider four seventy six a catastrophe. It considered it a paperwork problem that had already solved itself.
+N: Emperor Zeno, who had his own usurper to deal with at home, accepted Odoacer's regalia, granted him the title of patrician, and kept up the polite fiction that the empire was still one empire, ruled from one city. The western throne was not abolished. It was simply left empty.
+N: And Constantinople had reason to feel it had lost little. The city held four hundred to five hundred thousand people, working aqueducts, a hippodrome seating a hundred thousand, and a bureaucracy running twenty million subjects, while Rome's own population fell toward thirty thousand.
+N: The Eastern Empire did not end for another nine hundred seventy seven years. Its own chroniclers attributed a last line to the final Roman emperor, Constantine the Eleventh, spoken as those walls finally came down.
+M: The city is fallen, and I am still alive.
+N: From Constantinople, the real fall of Rome happened almost a thousand years after this one.
+
+## PERSPECTIVE | Modern Historiographic Debate: Fall vs. Transformation | academic
+N: The fourth account is not about four seventy six at all. It is about the argument historians have been having about it for two hundred fifty years.
+N: Edward Gibbon published the first volume of his Decline and Fall in seventeen seventy six, the same year Thomas Jefferson drafted the Declaration of Independence, and the question he asked, whether Rome fell and why, is the one every historian of the period has answered since.
+N: One school reads objects. Bryan Ward-Perkins points to pottery that gets cruder, farms that produce less, and a population that collapses, and calls it what it looks like.
+M: The end of civilization is not an event like a house falling down. It is a process, like a house slowly rotting.
+N: The other school, led by Peter Brown and Chris Wickham, reads institutions instead: law, religion, the shape of government, and finds those persisting long after four seventy six, changed but intact. On their account, Rome did not fall. It transformed.
+N: A mathematician named Hypatia was murdered by a mob in Alexandria in four fifteen, five years after Rome's own sack. Whether that death marks the end of something or a local killing is exactly the kind of question this argument never settles.
+
+## PERSPECTIVE | North African / Berber | bystander
+N: The theologian behind the most influential Christian answer to all of this, Augustine, was not Roman by blood. He was a Berber, born in Thagaste, in what is now Algeria, and bishop of Hippo.
+N: North Africa had been feeding Rome for centuries. Its provinces supplied about a third of the empire's grain, and Carthage, at its peak, was the second largest city in the empire. Rome had destroyed Carthage once already, in one hundred forty six BCE, and rebuilt it as its own.
+N: When the Vandals crossed the Strait of Gibraltar in four twenty nine, an army of some eighty thousand under King Gaiseric, they were not conquering a peaceful province. Berber revolts against Roman taxation and conscription had flared for centuries already. By four thirty nine, Gaiseric held Carthage. In four fifty five, his fleet sailed from Carthage and sacked Rome itself.
+N: The historian Andrew Merrills put the relationship plainly.
+M: The Vandals did not destroy Roman Africa. They inherited it, taxed it, and used its grain fleet to hold the Mediterranean hostage.
+N: For the Berber communities of the interior, who ruled the coast mattered less than who was taxing them. When Rome's grip loosened, some of those communities governed territory they had not held in centuries.
+
+## REST
+
+## TURN | What each one leaves out
+N: Each of these accounts leaves out exactly what would complicate its own case.
+N: The imperial account counts every province it lost and every barbarian at the border, and says far less about the civil wars, corruption and inflation hollowing out the Roman state long before Alaric arrived.
+N: The Germanic account calls it continuation, and says less about the Vandal sack of Rome in four fifty five, or the wars, massacres and displacement that came with some of those migrations.
+N: The Byzantine account is content to watch Rome fall as long as Constantinople does not, and it says nothing about how Greek, and how much less Latin, its own empire had already become.
+N: The modern debate argues about pottery and institutions while leaving out most of the world: Persia, India, the Maya, all flourishing while Rome declined, outside the frame entirely.
+N: And the North African account, the one told least of the five, still passes over the persecution the Vandals inflicted on the region's own Catholic clergy.
+
+## REST
+
+## CLOSE
+N: Decades before Romulus surrendered, Emperor Honorius kept a pet hen at Ravenna. He had named her Roma.
+N: A messenger arrived to tell him Rome had perished. Honorius, by the account that survives, was relieved. He thought the man meant the hen.
+
+## SAY
+Odoacer = oh-doh-AY-ser
+Piacenza = pyah-CHEN-zah
+Ravenna = rah-VEN-nah
+Orestes = oh-RES-teez
+Romulus Augustulus = ROM-yoo-lus aw-GUS-tyoo-lus
+Campania = kam-PAY-nyah
+Lucullus = loo-KUL-us
+Julius Nepos = JOO-lee-us NEE-pos
+Dalmatia = dal-MAY-shah
+Marcellinus Comes = mar-sel-EYE-nus KOH-mez
+Octavian Augustus = ok-TAY-vee-an aw-GUS-tus
+Zeno = ZEE-noh
+Alaric = AL-ah-rik
+Visigoths = VIZ-ih-goths
+Bethlehem = BETH-leh-hem
+Ward-Perkins = WARD PER-kinz
+Theodoric = thee-OD-or-ik
+Ostrogoth = OS-troh-goth
+Cassiodorus = kas-ee-oh-DOR-us
+Clovis = KLOH-vis
+Arian = AIR-ee-an
+Charlemagne = SHAR-leh-main
+Stilicho = STIL-ih-koh
+Constantine the Eleventh = KON-stan-teen
+Gibbon = GIB-un
+Peter Brown = PEE-ter BROWN
+Wickham = WIK-um
+Hypatia = hy-PAY-shah
+Alexandria = al-ex-AN-dree-ah
+Thagaste = tah-GAH-steh
+Hippo = HIP-oh
+Carthage = KAR-thij
+Gaiseric = GY-ser-ik
+Andrew Merrills = AN-droo MER-ilz

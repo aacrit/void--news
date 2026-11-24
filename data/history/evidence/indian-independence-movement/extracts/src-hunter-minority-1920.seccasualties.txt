@@ -1,0 +1,8 @@
+source: src-hunter-minority-1920
+locator: seccasualties
+url: https://archive.org/download/disordersinquiry00unse/disordersinquiry00unse_djvu.txt
+read: 2026-10-09
+note: the text is the scan's OCR layer (archive.org djvu.txt), whitespace collapsed; line-end hyphens and glyph errors kept as printed
+note: minority report (the three Indian members)
+
+In all 1,650 rounds were fired, and the casualties have now been ascertained to be at least 379 killed and about 1,200 wounded.

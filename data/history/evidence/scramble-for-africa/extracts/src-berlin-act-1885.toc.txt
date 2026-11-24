@@ -1,0 +1,51 @@
+source: src-berlin-act-1885
+locator: toc
+url: https://archive.org/download/mapofafricabytre02hert/mapofafricabytre02hert_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+note: the Act's own enumeration of the six documents it combines; Hertslet's bracketed running head and footnote marks dropped
+
+Freedom of Trade in Basin of the Congo , &c.
+
+1. A Declaration relative to freedom of trade in the basin of the
+Congo, its embouchures and circumjacent regions, with other provisions connected therewith. (See p. 471.)
+
+Slave Trade hy Sea or Land.
+
+2. A Declaration relative to the slave trade, and the operations by
+sea or land which furnish slaves to that trade. (See p. 474.)
+
+Neutrality of Territories comprised in the Conventional Basin of the
+
+Congo.
+
+3. A Declaration relative to the neutrality of the territories comprised in the Conventional basin of the Congo. (See p. 474.)
+
+Navigation of the Congo , &c.
+
+4. An Act of Navigation for the Congo, which, while having regard
+to local circumstances, extends to this river, its affluents, and the
+waters in its system (“ eaux qui leur sont assimilees ”), the general
+principles enunciated in Articles CVIII to CXYI of the Final Act of
+the Congress of Vienna,* and intended to regulate, as between the
+Signatory Powers of that Act, the free navigation of the waterways
+separating or traversing several States — these said principles having
+since then been applied by agreement to certain rivers of Europe and
+America, but especially to the Danube with the modifications stipulated
+by the Treaties of Paris (1856) f of Berlin (1878) J and of London
+(1871 and 1883).§ (See p. 475.)
+
+Navigation of the Niger.
+
+5. An Act of Navigation for the Niger, which, while likewise
+having regard to local circumstances, extends to this river and its
+affluents the same principles as set forth in Articles CVIII to CXVI,
+of the Final Act of the Congress of Vienna. (See p. 481.)
+
+Future Occupations on the Coast of Africa.
+
+6. A Declaration introducing into international relations certain
+uniform rules with reference to future occupations on the coast of the
+African Continent. (See p. 484.)
+
+And deeming it expedient that all these several documents should

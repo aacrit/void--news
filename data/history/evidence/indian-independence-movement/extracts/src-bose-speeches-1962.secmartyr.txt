@@ -1,0 +1,8 @@
+source: src-bose-speeches-1962
+locator: secmartyr
+url: https://archive.org/download/selectedspeeches00subh/selectedspeeches00subh_djvu.txt
+read: 2026-10-09
+note: the text is the scan's OCR layer (archive.org djvu.txt), whitespace collapsed; line-end hyphens and glyph errors kept as printed
+note: the close of 'I.N.A. on Indian Soil', dated by the compilation July 4, 1944
+
+It will be a fatal mistake for you to wish to live and see India free, simply because victory is now within reach. No one here should have the desire to live to enjoy freedom. A bitter fight is still in front of us. We should have but one desire today, the desire to die so that India may live, the desire to face a martyr’s death so that the path to freedom may be paved with the martyr’s blood.

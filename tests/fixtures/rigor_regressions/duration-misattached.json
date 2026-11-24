@@ -1,0 +1,18 @@
+{
+ "class": "duration-misattached",
+ "gate": "pipeline/editorial/derived_grounding.py::check_headline",
+ "product": "opinion",
+ "covers": [
+  "pipeline/editorial/corrections.json#2026-11-19-opinion-headline-nine-month",
+  "pipeline/editorial/corrections.json#2026-11-19-radio-nine-month"
+ ],
+ "note": "A length of time the sources give to one thing, written onto another: the war was nine months old, the headline made the calm nine months long. The number is sourced, so check_numbers passes it.",
+ "planted": {
+  "evidence": "Iran said the United States had struck Qeshm Island in the Strait of Hormuz despite efforts to end the nine-month-old war. The exchanges follow a prior period of relative calm.",
+  "sentence": "The Strait Of Hormuz Claims A Nine Month Calm"
+ },
+ "clean": {
+  "evidence": "Iran said the United States had struck Qeshm Island in the Strait of Hormuz despite efforts to end the nine-month-old war. The exchanges follow a prior period of relative calm.",
+  "sentence": "The Strait Of Hormuz Claims A Period Of Calm"
+ }
+}

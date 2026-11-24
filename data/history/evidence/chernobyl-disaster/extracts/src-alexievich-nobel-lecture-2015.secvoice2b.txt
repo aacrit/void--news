@@ -1,0 +1,8 @@
+source: src-alexievich-nobel-lecture-2015
+locator: secvoice2b
+url: https://www.nobelprize.org/prizes/literature/2015/alexievich/lecture/
+read: 2026-10-07
+note: the close of the same voice
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+A few months after his death, I gave birth to a little girl, but she lived only a few days. She … We were so excited about her, and I killed her … She saved me, she absorbed all the radiation herself. She was so little … teeny-tiny … But I loved them both. Can you really kill with love? Why are love and death so close? They always come together. Who can explain it? At the grave I go down on my knees …

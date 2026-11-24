@@ -1,0 +1,7 @@
+source: src-arnold-2019
+locator: secabstractb
+url: https://doi.org/10.1017/S0080440119000082
+read: 2026-09-25
+note: the abstract, continued from the extract abstract
+
+In seeking to explain this absence, it is argued that, while India was exposed to influenza as a global event and to the effects of its involvement in the Great War, the influenza episode needs to be more fully understood in terms of local conditions. The impact of the disease was overshadowed by the prior encounter with bubonic plague, by military recruitment and the war, and by food shortages and price rises that pushed India to the brink of famine.

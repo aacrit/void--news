@@ -1,0 +1,7 @@
+source: src-pa-niamat-ali
+locator: para1
+url: https://www.1947partitionarchive.org/niamat-ali-malak/
+read: 2026-09-25
+note: the first paragraph of the story page, the Archive's summary
+
+Niamat Ali Malak, son of Khair Deen, was born at the village of Lasoi in the princely state of Patiala, now in Punjab, India. He migrated with his family members in 1947 during the mass migration and finally settled at Chak 361 GB Daudpur, now in the district of Toba Tek Singh in Punjab, Pakistan; he was eighteen years old or older.

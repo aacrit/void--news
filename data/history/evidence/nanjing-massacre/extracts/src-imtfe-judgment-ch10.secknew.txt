@@ -1,0 +1,8 @@
+source: src-imtfe-judgment-ch10
+locator: secknew
+url: https://www.ibiblio.org/hyperwar/PTO/IMTFE/IMTFE-10.html
+read: 2026-10-09
+note: the text is the HyperWar Foundation's HTML transcription of the Judgment (transcribed by Patrick Clancey), whitespace collapsed; its typing errors are kept as it prints them (e.g. 'tow' for 'two'); the transcription's page markers ('--1014--', the printed page of the Judgment) are removed by the builder and the page is given here instead
+note: printed pages 1180 to 1181
+
+The Tribunal is satisfied that MATSUI knew what was happening. He did nothing, or nothing effective, to abate these horrors. He did issue orders before the capture of the City enjoining propriety of conduct upon his troops, and later he issued further orders to the same purport. THese orders were of no effect, as is no known, and as he must have known. It was pleaded in his behalf that at this time he was ill. His illness was not sufficient to prevent his conducting the military operations of his command nor to prevent his visiting the City for days while these atrocities were occurring. He was in command of the Army responsible for these happenings. He knew of them. He had the power as he had the duty to control his troops and to protect the unfortunate citizens of Nanking. He must be held criminally responsible for his failure to discharge this duty.

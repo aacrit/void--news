@@ -1,0 +1,15 @@
+source: src-bundestag-2004
+locator: p25
+url: https://www.bundestag.de/resource/blob/594462/19e7006b4e99355d020d3b7fb4df4145/WD-1-080-04-pdf-data.pdf
+read: 2026-09-25
+note: sliced from the PDF's text layer; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed
+note: the paper's summary of the critics of the genocide thesis; the dash bullets are the layer's
+
+Die Kritiker der Völkermordthese bezweifeln auch den Wahrheitsgehalt der Berichte über die elenden Zustände in den Gefangenenlagern. Der Begriff „Konzentrationslager“ würde in diesem Zusammenhang bewusst in diffamierender Absicht verwendet. Tatsächlich seien die Lager aus humanitären Überlegungen eingerichtet
+worden, um die Herero vor dem sicheren Tod in der Wüste zu retten. Auch werde
+die Zahl der in den Lagern gestorbenen Herero bei einer Reihe von Autoren viel zu
+hoch angegeben. 84
+Der quantitative Umfang der Vernichtung wird bei den Gegnern der Genozidthese
+erheblich geringer veranschlagt. Auch wenn grundsätzlich nicht abgestritten wird,
+dass die Zahl der Opfer insgesamt sehr hoch war, sehen diese Autoren den Vorwurf
+des Völkermords auch in quantitativer Hinsicht als nicht gerechtfertigt an. 85

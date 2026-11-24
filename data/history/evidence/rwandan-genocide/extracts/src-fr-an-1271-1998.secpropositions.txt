@@ -1,0 +1,8 @@
+source: src-fr-an-1271-1998
+locator: secpropositions
+url: https://www.assemblee-nationale.fr/11/dossiers/rwanda/r1271.asp
+read: 2026-10-07
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: the opening of part 4, 'Les propositions de la Mission', cut at a sentence end
+
+A des causes spécifiquement rwandaises se sont ajoutés des dysfonctionnements institutionnels et des erreurs d’appréciation.

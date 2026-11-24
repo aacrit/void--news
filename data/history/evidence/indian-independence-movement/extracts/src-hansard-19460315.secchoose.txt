@@ -1,0 +1,8 @@
+source: src-hansard-19460315
+locator: secchoose
+url: https://api.parliament.uk/historic-hansard/commons/1946/mar/15/india-cabinet-mission
+read: 2026-10-09
+note: the text is the Hansard page's own text (UK Parliament, historic Hansard), whitespace collapsed
+note: the Prime Minister (Mr. Attlee)
+
+India herself must choose what will be her future Constitution; what will be her position in the world.

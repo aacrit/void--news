@@ -1,0 +1,8 @@
+source: src-lii-nyt-v-us-1971
+locator: para84
+url: https://www.law.cornell.edu/supremecourt/text/403/713
+read: 2026-10-09
+note: the Legal Information Institute's web text of the opinion; the locator is LII's own paragraph number, printed at the head of each paragraph, not a U.S. Reports page
+note: Chief Justice Burger, dissenting
+
+It is not disputed that the Times has had unauthorized possession of the documents for three to four months, during which it has had its expert analysts studying them, presumably digesting them and preparing the material for publication. During all of this time, the Times, presumably in its capacity as trustee of the public's 'right to know,' has held up publication for purposes it considered proper and thus public knowledge was delayed. No doubt this was for a good reason; the analysis of 7,000 pages of complex material drawn from a vastly greater volume of material would inevitably take time and the writing of good news stories takes time. But why should the United States Government, from whom this information was illegally acquired by someone, along with all the counsel, trial judges, and appellate judges be placed under needless pressure? After these months of deferral, the alleged 'right to know' has somehow and suddenly become a right that must be vindicated instanter.

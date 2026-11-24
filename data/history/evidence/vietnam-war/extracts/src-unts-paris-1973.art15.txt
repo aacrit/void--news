@@ -1,0 +1,8 @@
+source: src-unts-paris-1973
+locator: art15
+url: https://treaties.un.org/doc/Publication/UNTS/Volume%20935/volume-935-I-13295-English.pdf
+read: 2026-10-09
+note: the United Nations Treaty Series PDF for volume 935, registration I-13295, its text layer, line breaks folded to spaces; footnote numbers print inline ('Viet-Nam.2')
+note: Article 15 and its paragraph (a); the first of the volume's two printings
+
+Article 15 The reunification of Viet-Nam shall be carried out step by step through peaceful means on the basis of discussions and agreements between North and South Viet-Nam, without coercion or annexation by either party, and without foreign interference. The time for reunification will be agreed upon by North and South Viet-Nam. Pending reunification : (a) The military demarcation line between the two zones at-the 17th parallel is only provisional and not a political or territorial boundary, as provided for in paragraph 6 of the Final Declaration of the 1954 Geneva Conference.

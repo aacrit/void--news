@@ -1,0 +1,8 @@
+source: src-rbth-gorbachev-2014
+locator: secspirit
+url: https://www.rbth.com/international/2014/10/16/mikhail_gorbachev_i_am_against_all_walls_40673.html
+read: 2026-10-09
+note: the same interview
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+The decision for the U.S. and its allies to expand NATO into the east was decisively made in 1993. I called this a big mistake from the very beginning. It was definitely a violation of the spirit of the statements and assurances made to us in 1990. With regards to Germany, they were legally enshrined and are being observed.

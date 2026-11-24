@@ -1,0 +1,8 @@
+source: src-fr-duclert-2021
+locator: p972
+url: https://www.vie-publique.fr/files/rapport/pdf/279186.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+note: the French text of the conclusion on page 972, cut at a sentence end
+
+La France est-elle pour autant complice du génocide des Tutsi ? Si l’on entend par là une volonté de s’associer à l’entreprise génocidaire, rien dans les archives consultées ne vient le démontrer. La France s’est néanmoins longuement investie au côté d’un régime qui encourageait des massacres racistes. Elle est demeurée aveugle face à la préparation d’un génocide par les éléments les plus radicaux de ce régime.

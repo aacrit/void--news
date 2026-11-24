@@ -1,0 +1,7 @@
+source: src-np-trc-1996
+locator: secmemory
+url: https://www.justice.gov.za/trc/hrvtrans/submit/np_truth.htm
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+
+During their freedom struggle their homes were burned, their country was devastated and more than 20 000 of their women and children died in concentration camps.

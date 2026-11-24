@@ -1,0 +1,8 @@
+source: src-rhee-19530618
+locator: secwithdraw
+url: https://history.state.gov/historicaldocuments/frus1952-54v15p2/d607
+read: 2026-10-09
+note: the same letter
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Personally I hate it like a poison to tell you that I shall have to withdraw the ROKA from your command, but things standing where they are now, there seems to be no alternative.

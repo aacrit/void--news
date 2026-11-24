@@ -1,0 +1,7 @@
+source: src-nsa-dobbs-eyeball-2008
+locator: secclaim
+url: https://nsarchive2.gwu.edu/nsa/cuba_mis_cri/dobbs/
+read: 2026-10-07
+note: the first sentence of the posting of 2 July 2008; the page's HTML read as text
+
+Senior Kennedy administration aides claimed incorrectly that U.S. warships had come “eyeball to eyeball” with Soviet missile-carrying ships during the Cuban missile crisis, a myth that has persisted for over four decades, according to evidence published today by the National Security Archive.

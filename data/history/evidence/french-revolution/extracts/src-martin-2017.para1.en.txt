@@ -1,0 +1,5 @@
+rendering: void-translation
+of: src-martin-2017.para1
+names: Prudhomme=Prudhomme; Vendée=Vendée; Thermidor=Thermidor
+
+The question of the human toll of the Terror and of the French Revolution is a recurring one. And a polemical one. The counting of the victims begins in 1792, when lists are drawn up to discredit the killers or to denounce the counter-revolutionaries. Right after Thermidor, in 1797, the publicist Prudhomme, a former Girondin who had gone over to the Counter-Revolution, estimates in his Histoire générale et impartiale des erreurs et fautes commises pendant la Révolution française that 2 022 903 individuals died because of the Revolution, of whom 120 000 in the Vendée, 184 000 in the colonies, 800 000 in the armies, and 18 613 all causes combined.

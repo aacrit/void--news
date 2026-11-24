@@ -1,0 +1,7 @@
+source: src-april-theses-en
+locator: secintro
+url: https://www.marxists.org/archive/lenin/works/1917/apr/04.htm
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+
+I did not arrive in Petrograd until the night of April 3, and therefore at the meeting on April 4, I could, of course, deliver the report on the tasks of the revolutionary proletariat only on my own behalf, and with reservations as to insufficient preparation.

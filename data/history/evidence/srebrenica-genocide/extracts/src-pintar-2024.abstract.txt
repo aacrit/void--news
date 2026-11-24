@@ -1,0 +1,8 @@
+source: src-pintar-2024
+locator: abstract
+url: https://tokovi.istorije.rs/lat/uploaded/1%202024/Tokovi%20istorije%201%202024%20MANOJLOVIC%20PINTAR.pdf
+read: 2026-09-24
+note: line-break hyphenation in the PDF text layer (Сре- бреници) rejoined; nothing else changed
+note: one sentence of the article's Serbian summary
+
+У раду је истовремено указано на динамику промена званичних тумачења рата, од првобитних покушаја прикривања злочина, преко периода током кога је дошло до промена у процесу усклађивања политике историје са пресудама међународних судова МКСЈ, МСП и одлукама политичких организација УН и ЕУ, до одлучног супротстављања и негирања историјских интерпретација које су утемељене на чињеницама презентованим у судским процесима.

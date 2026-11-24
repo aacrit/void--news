@@ -1,0 +1,8 @@
+source: src-trc-v3-ch6
+locator: para168
+url: https://www.justice.gov.za/trc/report/finalreport/Volume%203.pdf
+read: 2026-10-09
+note: the text is the PDF's own text layer, whitespace collapsed to single spaces; line-end hyphenation and glyph errors are kept as the layer prints them
+note: the Report's summary of the state-appointed Cillie Commission's findings; the quotation inside it is the Cillie Commission's, at second hand
+
+The Cillie Commission found that 575 people died and that 2 389 were injured, and concluded that: “Bantu Education was not a cause of the riots. It was, to a certain degree, a cause of dissatisfaction; this dissatisfaction was to some extent stirred up and exploited by those bent on creating disturbances.” It found the SSRC primarily responsible for the fact that the “riots” did not abate sooner. The Cillie Commission stated that the police force had acquitted itself well in executing its duties and could find no evidence that police had perpe- trated deliberate and impermissible assaults on the protesters, or that they had used their firearms indiscriminately.

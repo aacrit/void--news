@@ -1,0 +1,6 @@
+source: src-imt-19460415
+locator: sechoessnotes
+url: https://avalon.law.yale.edu/imt/04-15-46.asp
+read: 2026-10-07
+
+DR. KAUFFMANN: Is it true that you, yourself, have made no exact notes regarding the figures of the number of those victims because you were forbidden to make them? HOESS: Yes, that is correct. DR. KAUFFMANN: Is it furthermore correct that exclusively one man by the name of Eichmann had notes about this, the man who had the task of organizing and assembling these people? HOESS: Yes. DR. KAUFFMANN: Is it furthermore true that Eichmann stated to you that in Auschwitz a total sum of more than 2 million Jews had been destroyed? HOESS: Yes. DR. KAUFFMANN: Men, women, and children? HOESS: Yes.

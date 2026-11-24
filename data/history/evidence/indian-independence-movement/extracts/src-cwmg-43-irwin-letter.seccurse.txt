@@ -1,0 +1,7 @@
+source: src-cwmg-43-irwin-letter
+locator: seccurse
+url: https://archive.org/download/HindSwaraj-CWMG-043/CWMG-v043-XLIII-MC-BETA_djvu.txt
+read: 2026-10-09
+note: the text is the archive.org full-text (djvu.txt) layer of the electronic edition of the Collected Works (Publications Division), whitespace collapsed; line-end hyphens and glyph errors kept as the layer gives them
+
+My personal faith is absolutely clear. I cannot intentionally hurt anything that lives, much less fellow human beings, even though they may do the greatest wrong to me and mine. Whilst, therefore, I hold the British rule to be a curse, I do not intend harm to a single Englishman or to any legitimate interest he may have in India.

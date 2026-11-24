@@ -1,0 +1,9 @@
+source: src-bundestag-2004
+locator: p19
+url: https://www.bundestag.de/resource/blob/594462/19e7006b4e99355d020d3b7fb4df4145/WD-1-080-04-pdf-data.pdf
+read: 2026-09-25
+note: sliced from the PDF's text layer; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed
+note: the sentence on camp deaths, with its footnote numbers and the start of the next sentence as the layer prints them
+
+Swakopmund den sicheren Tod.54 So starben zwischen Oktober 1904 und März 1907
+insgesamt 7682 Gefangene, was einer Sterberate von 30-50 Prozent entsprach. 55 Susan-

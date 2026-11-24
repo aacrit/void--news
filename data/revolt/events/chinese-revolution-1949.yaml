@@ -1,0 +1,235 @@
+slug: chinese-revolution-1949
+title: The Chinese Communist Revolution
+subtitle: Twenty-two years of civil war end with a proclamation in Tiananmen Square
+date_display: 1927-1949
+date_start: 1927
+date_end: 1949
+date_precision: year
+era: anticolonial
+region: east-asia
+country: China
+revolt_type: communist
+status: concluded
+summary: Chiang Kai-shek's 1927 purge of his communist allies in Shanghai forced the Chinese Communist Party into rural exile, where it built peasant support through land reform and outlasted both a Nationalist encirclement and a Japanese occupation before defeating the Kuomintang in a final four-year civil war.
+significance: The largest communist revolution to succeed anywhere, founding the world's most populous state under one-party rule and permanently dividing China from the Nationalist government that fled to Taiwan.
+grievances:
+  - kind: Landlord exploitation of tenant farmers
+    intensity: 80
+    evidence: Tenant farmers across much of China paid rents as high as 50 percent of their harvest to landlords, leaving many families without enough grain to survive a poor season.
+  - kind: Kuomintang corruption and warlordism
+    intensity: 65
+    evidence: The 1927 Shanghai massacre killed thousands of communists and allied labor organizers as Chiang Kai-shek consolidated Nationalist power through allied warlord militias.
+  - kind: Japanese occupation devastation
+    intensity: 75
+    evidence: Japan's occupation from 1931 to 1945 killed an estimated 15 to 20 million Chinese and devastated the industrial base the Kuomintang depended on for its army.
+  - kind: Hyperinflation collapse
+    intensity: 70
+    evidence: Kuomintang currency lost most of its value between 1947 and 1949, wiping out urban middle-class savings and eroding support for Chiang's government in its final years.
+actors:
+  - actor_type: vanguard
+    name: Mao Zedong
+    description: Chairman of the Chinese Communist Party from the 1930s.
+    role_in_arc: Led the Long March retreat in 1934-35, built the Yan'an base area, and proclaimed the People's Republic of China on October 1, 1949.
+    defected: false
+  - actor_type: masses
+    name: The Red Army and peasant base
+    description: Communist military forces recruited heavily from landless and land-poor peasants who benefited from CCP land redistribution in liberated zones.
+    role_in_arc: Provided the manpower that outlasted Kuomintang encirclement campaigns and eventually overwhelmed Nationalist forces in the 1948-49 civil war offensives.
+    defected: false
+  - actor_type: old-regime
+    name: Chiang Kai-shek
+    description: Leader of the Kuomintang Nationalist government.
+    role_in_arc: Purged communist allies in 1927, fought the Japanese occupation, then lost the renewed civil war and retreated to Taiwan in December 1949.
+    defected: false
+  - actor_type: foreign-intervener
+    name: Imperial Japan
+    description: Occupying power in northern and eastern China from 1931 to 1945.
+    role_in_arc: Devastated Kuomintang-held territory and industry, indirectly weakening the Nationalist government's postwar capacity relative to the communists.
+    defected: false
+tactics:
+  - tactic_type: guerrilla-warfare
+    description: The Long March retreat and Yan'an base-area strategy preserved CCP forces through Kuomintang encirclement campaigns in the early 1930s.
+    prominence: primary
+  - tactic_type: parallel-institutions
+    description: Land redistribution and local governance in CCP-controlled liberated zones built peasant loyalty years before the final military victory.
+    prominence: primary
+  - tactic_type: armed-insurgency
+    description: Conventional battles in the 1946-1949 civil war, including the Huaihai and Liaoshen campaigns, destroyed the bulk of Nationalist field armies.
+    prominence: secondary
+resistance_type: armed
+phases:
+  - phase: old-regime-crisis
+    label: The Shanghai massacre
+    date_start: '1927-04-12'
+    t_start: 0
+    t_end: 0.12
+    intensity: 60
+    reached: true
+    summary: Chiang Kai-shek turns on his communist allies, killing thousands and forcing the CCP into rural exile and armed self-defense.
+    key_events:
+      - Shanghai massacre, April 12, 1927
+      - CCP forced into rural base areas, 1927-1930
+  - phase: the-spark
+    label: The Long March
+    date_start: '1934-10-16'
+    t_start: 0.22
+    t_end: 0.34
+    intensity: 65
+    reached: true
+    summary: Encircled by Nationalist forces, roughly 86,000 communist troops begin a year-long retreat that becomes the CCP's founding legend and cements Mao's leadership.
+    key_events:
+      - Long March begins, October 1934
+      - Long March ends at Yan'an, October 1935
+  - phase: moderate-phase
+    label: United front against Japan
+    t_start: 0.34
+    t_end: 0.48
+    intensity: 45
+    reached: true
+    summary: The CCP and Kuomintang form a wartime alliance against Japanese occupation, giving the communists breathing room to expand base areas across northern China.
+    key_events:
+      - Second United Front formed, 1937
+      - Japanese surrender, August 1945
+  - phase: dual-power
+    label: Liberated zones expand
+    t_start: 0.48
+    t_end: 0.6
+    intensity: 55
+    reached: true
+    summary: CCP-administered rural zones with redistributed land coexist alongside shrinking Kuomintang-controlled territory as the wartime truce breaks down.
+    key_events:
+      - Full-scale civil war resumes, 1946
+      - Land reform campaigns expand in CCP zones, 1946-47
+  - phase: radical-phase
+    label: The civil war's decisive campaigns
+    t_start: 0.6
+    t_end: 0.72
+    intensity: 85
+    reached: true
+    summary: The Liaoshen, Huaihai, and Pingjin campaigns of 1948-49 destroy the core of the Nationalist army within months.
+    key_events:
+      - Liaoshen campaign, September-November 1948
+      - Huaihai campaign, November 1948-January 1949
+  - phase: consolidation
+    label: The People's Republic proclaimed
+    date_start: '1949-10-01'
+    t_start: 0.92
+    t_end: 1
+    intensity: 50
+    reached: true
+    summary: Communist forces take Beijing and Nanjing, Chiang Kai-shek retreats to Taiwan, and Mao proclaims the People's Republic of China in Tiananmen Square.
+    key_events:
+      - Beijing falls, January 1949
+      - Chiang retreats to Taiwan, December 1949
+      - People's Republic proclaimed, October 1, 1949
+outcome: consolidated-autocracy
+peak_participation_pct: null
+crossed_participation_threshold: null
+military_defection: partial
+foreign_intervention: material
+duration_days: 8035
+death_toll: Estimates for the full 1927-1949 conflict, including the Japanese occupation years, range into the tens of millions when war, famine, and reprisal deaths are combined; the final 1946-1949 civil war phase alone is estimated at several million military and civilian deaths.
+death_toll_low: 3000000
+death_toll_high: 6000000
+regime_before: military
+regime_after: one-party
+democratization_delta: -2
+success_factors:
+  - factor_key: protracted-base-strategy
+    label: Protracted base-area guerrilla strategy can outlast the standard armed-campaign timeline
+    framework: tilly
+    status: confirmed
+    direction: favors-movement
+    base_rate: Tilly's mobilization framework identifies durable base-area control and repeated resource extraction cycles as a mechanism by which weaker challengers outlast stronger incumbents over long timeframes
+    rationale: The CCP survived nearly a decade of Nationalist encirclement and a further eight years of Japanese occupation before its final, comparatively short, 1946-1949 offensive.
+    sources:
+      - Tilly, From Mobilization to Revolution (1978)
+  - factor_key: occupation-weakens-incumbent
+    label: Foreign occupation of the incumbent's territory can erode its coercive capacity
+    framework: goldstone
+    status: confirmed
+    direction: favors-movement
+    base_rate: Goldstone's comparative cases find that a foreign occupation absorbing an incumbent regime's military resources often benefits an internal challenger indirectly, distinct from foreign backing given directly to the challenger
+    rationale: Japan's occupation devastated Kuomintang-held industrial and agricultural regions far more than CCP base areas, leaving Chiang's postwar army poorly supplied relative to the CCP's.
+    sources:
+      - 'Goldstone, Revolutions: A Very Short Introduction (2014)'
+  - factor_key: agrarian-mass-mobilization
+    label: Land redistribution mobilized a peasant base beyond narrow elite politics
+    framework: skocpol
+    status: confirmed
+    direction: favors-movement
+    base_rate: Skocpol's account of the Chinese case specifically identifies peasant mobilization through land reform in liberated zones as decisive to the CCP's eventual military manpower advantage
+    rationale: CCP-controlled areas redistributed land to tenant farmers years before national victory, generating both recruits and logistical support that a purely urban movement could not have matched.
+    sources:
+      - Skocpol, States and Social Revolutions (1979)
+key_figures:
+  - name: Mao Zedong
+    role: CCP Chairman, founding leader of the People's Republic
+    born: 1893
+    died: 1976
+  - name: Chiang Kai-shek
+    role: Kuomintang leader, president of the Republic of China
+    born: 1887
+    died: 1975
+  - name: Zhou Enlai
+    role: CCP negotiator and later premier
+    born: 1898
+    died: 1976
+  - name: Lin Biao
+    role: Communist military commander of the Liaoshen and Pingjin campaigns
+    born: 1907
+    died: 1971
+legacy_points:
+  - The People's Republic of China, proclaimed October 1, 1949, remains the world's most populous state under continuous one-party rule.
+  - Land reform redistributed holdings from landlords to an estimated 300 million peasants in the years immediately following the revolution.
+  - Chiang Kai-shek's retreat to Taiwan created the cross-strait political divide that continues to shape East Asian geopolitics today.
+  - The CCP is now among the longest continuously governing parties to have taken power through revolutionary armed struggle anywhere in the world.
+related_revolt_slugs:
+  - cuban-revolution
+  - chinese-cultural-revolution
+related_history_slugs: []
+is_published: true
+perspectives:
+  - viewpoint: CCP official historiography
+    viewpoint_type: regime
+    region_origin: China
+    narrative: The revolution liberated China from a century of foreign imperialism, warlordism, and landlord exploitation, uniting a fractured country under a government finally answerable to its peasant majority.
+    key_arguments:
+      - Land reform ended centuries of landlord exploitation for hundreds of millions of tenant farmers
+      - The revolution ended a century of foreign concessions and unequal treaties dating to the Opium Wars
+      - National unification ended decades of warlordism and civil fragmentation
+    sources: []
+    notable_quotes:
+      - text: The Chinese people have stood up.
+        speaker: Mao Zedong
+        context: Widely cited framing of the October 1, 1949 proclamation
+    emphasized:
+      - land reform's scale
+      - the end of foreign concessions
+    omitted:
+      - the death toll of the civil war and subsequent political campaigns
+      - the loss of political pluralism under one-party rule
+  - viewpoint: Kuomintang and Taiwan exile view
+    viewpoint_type: diaspora
+    region_origin: Taiwan
+    narrative: The communist victory was a national tragedy that ended the Republic of China's project of modernizing democracy on the mainland, driving millions into exile and dividing families across the strait for generations.
+    key_arguments:
+      - The Republic of China had already begun constitutional reforms before the civil war interrupted them
+      - Communist land reform in later decades produced its own severe famines and violence
+      - Millions of mainlanders fled to Taiwan rather than live under the new government
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - the disruption of the Republic's constitutional project
+      - the scale of postwar displacement to Taiwan
+    omitted:
+      - Kuomintang corruption and hyperinflation in the war's final years
+      - the Kuomintang's own record of political repression before 1949
+media: []
+connections:
+  - target_slug: cuban-revolution
+    connection_type: inspired
+    description: Che Guevara and other Cuban revolutionaries studied Mao's protracted guerrilla and base-area doctrine directly when planning their own campaign.
+  - target_slug: chinese-cultural-revolution
+    connection_type: parallel
+    description: The same party and leader who won the 1949 revolution would, seventeen years later, turn a mass campaign against much of its own governing structure.

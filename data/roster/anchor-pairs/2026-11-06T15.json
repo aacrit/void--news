@@ -1,0 +1,38 @@
+[
+ {
+  "newsroom": "Deutsche Welle",
+  "lang_a": "en",
+  "lang_b": "de",
+  "score": 21,
+  "a": {
+   "title": "How Berlin&apos;s Arab queers are building their community",
+   "summary": "As the co-founder of the ADIRA Drag Festival, Lebanese performance artist, drag performer, DJ and cultural organizer Hassandra has become an essential part of Berlin&apos;s queer artistic landscape.",
+   "link": "https://www.dw.com/en/how-berlin-s-arab-queers-are-building-their-community/a-79833143?maca=en-rss-en-all-1573-rdf",
+   "published": ""
+  },
+  "b": {
+   "title": "Wie Berlins arabische Queers ihre Community aufbauen",
+   "summary": "Hassandra gehört zu den bekanntesten Stimmen der queeren arabischen Kunstszene in Berlin. Mit dem 2023 gegründeten ADIRA Drag Festival schafft Hassandra gemeinsam mit anderen, Räume für Austausch und Gemeinschaft.",
+   "link": "https://www.dw.com/de/wie-berlins-arabische-queers-ihre-community-aufbauen/a-79863753?maca=de-rss-de-all-1119-rdf",
+   "published": ""
+  }
+ },
+ {
+  "newsroom": "France 24",
+  "lang_a": "en",
+  "lang_b": "es",
+  "score": 19,
+  "a": {
+   "title": "Is Israel opposition figure Gadi Eisenkot going to replace Benjamin Netanyahu?",
+   "summary": "In Israel, Gadi Eisenkot emerged on Thursday, November 5, as the frontrunner to be tasked with forming a government. This comes after one of the two main parties representing ultra-Orthodox Jewish voters – a longtime ally of Prime Minister Benjamin Netanyahu's coalition – declined to recommend any candidate for the task. FRANCE 24's correspondent in Jerusalem Noga Tarnopolsky reports.",
+   "link": "https://www.france24.com/en/video/20261106-is-israel-opposition-figure-gadi-eisenkot-going-to-replace-benjamin-netanyahu",
+   "published": "Fri, 06 Nov 2026 13:25:57 GMT"
+  },
+  "b": {
+   "title": "Finalizan consultas políticas en Israel con Eisenkot sumando apoyos",
+   "summary": "Las negociaciones de Gadi Eisenkot avanzan para formar Gobierno y multiplica sus apoyos, incluso con algunos de los partidos árabes, el primer ministro Benjamin Netanyahu perdió el respaldo de la lista ultraortodoxa Judaísmo Unido de la Torá, que se negó a apoyar a un candidato.",
+   "link": "https://www.france24.com/es/video/20261106-finalizan-consultas-pol%C3%ADticas-en-israel-con-eisenkot-sumando-apoyos",
+   "published": "Fri, 06 Nov 2026 04:39:37 GMT"
+  }
+ }
+]

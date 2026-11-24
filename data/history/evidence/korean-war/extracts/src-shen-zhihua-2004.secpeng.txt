@@ -1,0 +1,8 @@
+source: src-shen-zhihua-2004
+locator: secpeng
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_14-15.pdf
+read: 2026-10-09
+note: CWIHP Bulletin 14/15 (Winter 2003-Spring 2004), Shen Zhihua, 'Sino-North Korean Conflict and its Resolution during the Korean War', translated by Dong Gil Kim and Jeffrey Becker; Peng's report and his remark to Chai Chengwen as Shen quotes them from Chinese sources (his notes 32-33)
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+In his report to the Central Military Commission, Peng stated: The Korean Party’s recruitment situation is extremely serious. All men between the ages of 16 and 45 have been inducted into service. No one is caring for the families of drafted workers, and the masses have nothing to eat. There are no long-term plans, and adventurism is all one can see! Military control has been extremely childish. On the nineteenth Pyongyang issued an order to defend to the death. As a result, 30,000 defenders could not escape [from advancing UN forces]. The North Koreans agreed to conduct party and political work in the KPA, but they have not agreed to construct a political commission system. After the Shenyang meeting, Peng Dehuai exclaimed to Chai Chengwen, “I have a responsibility to the Chinese and Korean people, and to the hundreds of thousands of soldiers!”

@@ -1,0 +1,8 @@
+source: src-unts-paris-1973
+locator: art4
+url: https://treaties.un.org/doc/Publication/UNTS/Volume%20935/volume-935-I-13295-English.pdf
+read: 2026-10-09
+note: the United Nations Treaty Series PDF for volume 935, registration I-13295, its text layer, line breaks folded to spaces; footnote numbers print inline ('Viet-Nam.2')
+note: Articles 4 to 6; the volume prints the agreement twice (the four-party instrument, then the two-party one between the United States and the Democratic Republic of Viet-Nam), and this is the first
+
+Article 4 The United States will not continue its military involvement or intervene in the internal affairs of South Viet-Nam. Article 5 Within sixty days of the signing of this Agreement, there will be a total withdrawal from South Viet-Nam of troops, military advisers, and military personnel, including technical military personnel and military personnel asso ciated with the pacification program, armaments, munitions, and war material of the United States and those of the other foreign countries mentioned in Article 3 (a). Advisers from the above-mentioned countries to all paramilitary organizations and the police force will also be withdrawn within the same period of time. Article 6 The dismantlement of all military bases in South Viet-Nam of the United States and of the other foreign countries mentioned in Article 3 (a) shall be completed within sixty days of the signing of this Agreement.

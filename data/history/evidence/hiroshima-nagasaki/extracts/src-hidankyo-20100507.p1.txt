@@ -1,0 +1,11 @@
+source: src-hidankyo-20100507
+locator: p1
+url: https://www.un.org/en/conf/npt/2010/pdf/japanconfederation.pdf
+read: 2026-10-05
+note: page 1 of the UN-published text; line breaks are the PDF text layer's
+
+In 1945, I was 16 years old. On the morning of August 9, I was riding my bicycle 1.8 kilometers north 
+of what was to become the epicenter of the explosion of the atomic bomb.  When the bomb exploded, I 
+was burned on my entire back by the intense heat rays of 3,000 to 4,000 degrees Celsius, and also 
+exposed to invisible radiation.  The next moment, together with my bike I was blown about 4 meters 
+and smashed to the ground by the bomb blast.

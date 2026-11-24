@@ -1,0 +1,87 @@
+{
+ "collected_at": "2026-11-13T16:46:26Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 23,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16290199/mauricio-pochettino-manchester-united-premier-league.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Mauricio Pochettino breaks down in TEARS as he speaks out on 'most difficult decision' to leave US for Man United after agreeing to replace Michael Carrick at Old Trafford",
+      "published": "Fri, 13 Nov 2026 16:45:11 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/man-utd-news-live-pochettino-37872925",
+      "title": "Man Utd news LIVE: Pochettino breaks down in tears as he sobs during press conference",
+      "published": "Fri, 13 Nov 2026 16:31:57 +0000"
+     }
+    },
+    {
+     "score": 21,
+     "right": {
+      "url": "https://www.dailymail.com/sciencetech/article-16289289/microsoft-outage-fix-struggles.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Microsoft says efforts to fix global outage 'not going as expected' with millions impacted worldwide",
+      "published": "Fri, 13 Nov 2026 16:03:31 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/world-news/microsoft-outage-live-teams-outlook-37872878",
+      "title": "Microsoft outage updates: Outlook and Teams issues continue amid 'improvements'",
+      "published": "Fri, 13 Nov 2026 16:15:55 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 160,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 22,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/politics-and-diplomacy/article-914727",
+      "title": "Miriam Peretz: If Yashar forms a government with an Arab party, my son will leave Knesset",
+      "published": "Thu, 12 Nov 2026 16:00:18 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/elections/2026-11-12/ty-article/.premium/yashar-mks-mother-says-he-will-quit-knesset-if-party-joins-coalition-with-arabs/000001a1-cfe5-d0d3-abb1-dfff63770000",
+      "title": "Mother of Yashar lawmaker says son will quit Knesset if party joins coalition with Arab party",
+      "published": "Thu, 12 Nov 2026 18:38:48 +0200"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 306,
+    "left": 10
+   }
+  }
+ }
+}

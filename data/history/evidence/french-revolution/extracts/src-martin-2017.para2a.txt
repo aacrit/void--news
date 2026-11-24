@@ -1,0 +1,7 @@
+source: src-martin-2017
+locator: para2a
+url: https://shs.cairn.info/la-terreur--9782262067731-page-191?lang=fr
+read: 2026-10-09
+note: the second paragraph of the open opening, first part; whitespace collapsed, nothing else changed
+
+Ses prises de position partisanes ont disqualifié ces chiffres avancés sans preuves. Mais ses successeurs n’apportent pas plus d’arguments dans leurs évaluations. Le juriste du xixe siècle Berriat-Saint-Prix recense 14 807 condamnés à mort judiciairement, avant que l’historien américain Donald Greer n’estime, dans un petit ouvrage publié en 1935, The Incidence of the Terror, à 16 594 les individus jugés et exécutés ; entre 10 000 et 12 000 les morts en prison ; à un chiffre similaire ceux qui ont été tués sans procès, en particulier lors des affrontements dans l’Ouest.

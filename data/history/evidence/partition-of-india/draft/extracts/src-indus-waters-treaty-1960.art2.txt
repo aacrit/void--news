@@ -1,0 +1,8 @@
+source: src-indus-waters-treaty-1960
+locator: art2
+url: https://treaties.un.org/doc/Publication/UNTS/Volume%20419/volume-419-I-6032-English.pdf
+read: 2026-09-25
+note: United Nations Treaty Series, vol. 419, No. 6032; the PDF's line breaks are joined and its line-break hyphens rejoined
+note: Article II, paragraph 1
+
+(1) All the waters of the Eastern Rivers shall be available for the unrestricted use of India, except as otherwise expressly provided in this Article.

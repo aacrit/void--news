@@ -1,0 +1,8 @@
+source: src-iarc-2006
+locator: secconclusions
+url: https://www.iarc.who.int/wp-content/uploads/2018/07/IARCBriefingChernobyl.pdf
+read: 2026-10-07
+note: 'Study conclusions', third bullet, page 1; the 'ƒ' after '16,000' is how the text layer carries a superscript footnote mark 'f' (checked against the rendered page)
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+By 2065, these models predict that about 16,000ƒ cases of thyroid cancer and 25,000 cases of other cancers may be expected due to radiation from the accident and that about 16,000 deaths from these cancers may occur. About two-thirds of the thyroid cancer cases and at least one half of the other cancers are expected to occur in Belarus, Ukraine and the most contaminated territories of the Russian Federation.

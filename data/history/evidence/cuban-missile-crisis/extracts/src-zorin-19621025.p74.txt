@@ -1,0 +1,8 @@
+source: src-zorin-19621025
+locator: p74
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHPBulletin5_p2.pdf
+read: 2026-10-07
+note: the PDF's text layer, line breaks folded to spaces; where the layer breaks a word at a line end its hyphen is kept as it prints it ('docu- ment'); nothing is corrected
+note: printed page 74: Valerian Zorin's ciphered telegram to the USSR Foreign Ministry of 25 October 1962 on that day's Security Council session, in the Bulletin's translation (Mark H. Doctoroff), from the paragraph on Stevenson's photographs
+
+We ridiculed the maneuver which Stevenson had made at the session in showing the photographs which had been fabricated by Ameri- can intelligence which had been assigned the role of “irrefutable” evidence of the presence in Cuba of nuclear-missile arms. We classified this ma- neuver as an attempt to deflect the Security Coun- cil away from the essence of the case, particularly from the aggressive actions of the USA, which had violated the UN Charter and which had created a threat to peace. In response to Stevenson’s attempts to pose to us questions about whether we are placing nuclear weapons in Cuba we referred to the corresponding situation in the TASS announce- ment of 11 September

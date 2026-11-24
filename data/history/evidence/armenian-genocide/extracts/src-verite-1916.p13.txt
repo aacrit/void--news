@@ -1,0 +1,7 @@
+source: src-verite-1916
+locator: p13
+url: https://archive.org/download/vritsurlemou00hlebuoft/vritsurlemou00hlebuoft_djvu.txt
+read: 2026-09-25
+note: Internet Archive OCR text layer; the item binds the 1916 pamphlet with two Russian officers' notes of 1919, and only the pamphlet is cited; hyphens rejoined, spacing collapsed
+
+Le Gouvernement Impérial qui, ne voulant pas soulever dans les circonstances actuelles une grave question d'ordre intérieur, s'était tenu dans l'expectative sans aviser à aucune mesure répressive s'est vu, о la fin, forcé d'adopter les mesures — plutôt préventives que répressives — propres à enrayer ces menées révolutionnaires. En vue de mettre un terme à cette activité criminelle, il a dissous les comités arméniens et a ordonné la fermeture de leurs sièges tant à Constantinople que dans les Provinces. D'autre part, afin d'empê- cher les arméniens se trouvant dans les zones militaires de créer des difficultés au Gouvernement Impérial et à l'armée ainsi que d'enlever aux bandes arméniennes toute possibilité de massacrer les populations musulmanes et, enfin, en vue d'assurer les communications de l'Armée Impériale et prévenir de la sorte tout coup de main, le transfert des arméniens habitant les zones militaires dans d'autres localités fut décidé.

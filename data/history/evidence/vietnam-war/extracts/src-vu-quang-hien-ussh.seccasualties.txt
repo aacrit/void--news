@@ -1,0 +1,7 @@
+source: src-vu-quang-hien-ussh
+locator: seccasualties
+url: https://ussh.vnu.edu.vn/vi/nckh/san-pham-nghien-cuu-tieu-bieu/hau-qua-cua-cuoc-chien-tranh-viet-nam-1954-1975-may-van-de-ban-luan-11757.html
+read: 2026-10-09
+note: the web text on the site of the University of Social Sciences and Humanities, Vietnam National University, Hanoi, signed 'Tác giả: PGS. TS. Vũ Quang Hiển'; footnote numbers print in brackets; Unicode NFC; no translation is held
+
+Số liệu về thương vong của phía Việt Nam được chính thức công bố gần đây nhất là gần 2 triệu thường dân chết; hơn 2 triệu thường dân mang thương tật suốt đời; khoảng 2 triệu người (gồm cả quân nhân) phơi nhiễm các loại hóa chất độc hại. Lực lượng Quân đội Nhân dân Việt Nam (bao gồm cả Quân Giải phóng miền Nam) có khoảng 1,1 triệu quân nhân hy sinh trong những trường hợp khác nhau (trực tiếp chiến đấu trên chiến trường, gặp tai nạn, ốm đau trên đường hành quân), 600.000 quân nhân bị thương hoặc bị bệnh. Trong số hy sinh, có 300.000 quân nhân chưa tìm được hài cốt[7].

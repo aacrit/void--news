@@ -1,0 +1,7 @@
+source: src-fbis-castro-19621023
+locator: secrisks
+url: https://dataverse.tdl.org/api/access/datafile/54331
+read: 2026-10-07
+note: Castro on the risks, as FBIS translated the broadcast; line breaks folded to spaces
+
+We are calmed by knowing that the aggressors will be exterminated. Knowing that makes us calm. We are running risks that we have no choice but to run. They are the risks run by mankind.

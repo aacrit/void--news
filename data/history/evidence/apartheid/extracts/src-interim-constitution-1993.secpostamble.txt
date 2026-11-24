@@ -1,0 +1,8 @@
+source: src-interim-constitution-1993
+locator: secpostamble
+url: https://www.justice.gov.za/trc/legal/interim.htm
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+note: the first four paragraphs of 'National Unity and Reconciliation', the closing provision of the 1993 Constitution
+
+This Constitution provides a historic bridge between the past of a deeply divided society characterised by strife, conflict, untold suffering and injustice, and a future founded on the recognition of human rights, democracy and peaceful co-existence and development opportunities for all South Africans, irrespective of colour, race, class, belief or sex. The pursuit of national unity, the well-being of all South African citizens and peace require reconciliation between the people of South Africa and the reconstruction of society. The adoption of this Constitution lays the secure foundation for the people of South Africa to transcend the divisions and strife of the past, which generated gross violations of human rights, the transgression of humanitarian principles in violent conflicts and a legacy of hatred, fear, guilt and revenge. These can now be addressed on the basis that there is a need for understanding but not for vengeance, a need for reparation but not for retaliation, a need for ubuntu but not for victimisation.

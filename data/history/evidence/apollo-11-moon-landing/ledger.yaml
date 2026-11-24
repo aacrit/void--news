@@ -1,0 +1,365 @@
+# The evidence ledger for apollo-11-moon-landing (docs/proposals/HISTORY-THESIS-PAGE.md §3, §4c, §8).
+# Begun 2026-10-03 for the second archival-audio pilot (docs/proposals/HISTORY-AUDIO-ARCHIVAL.md,
+# policy B): the sources the cinematic script's document voice reads from, and the
+# recordings it may play. Every entry was fetched on 2026-10-03 from the URL it names;
+# every extract under extracts/ was sliced from the fetched copy by a builder script
+# (start marker to end marker), never retyped. Nothing here was written from memory.
+# This is NOT a thesis ledger: no positions, contested claims, exhibits or analyses
+# are adjudicated here, and the event renders the Hearing. The bar of §4e is not claimed.
+slug: apollo-11-moon-landing
+bootstrapped: 2026-10-03
+
+entries:
+  # ----------------------------------------------------------- Tier A: primary record
+  - id: src-jfk-19610525
+    tier: A
+    kind: primary-document
+    author: John F. Kennedy, President of the United States
+    title: "Special Message to the Congress on Urgent National Needs, May 25, 1961"
+    container: "John F. Kennedy Speeches (the Library's text edition)"
+    publisher: John F. Kennedy Presidential Library and Museum
+    place: Boston
+    year: 1961
+    edition: "the Library's web text; the page heads it 'Delivered in person before a joint session of Congress May 25, 1961'"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.jfklibrary.org/archives/other-resources/john-f-kennedy-speeches/united-states-congress-special-message-19610525"}
+    access:
+      free_copy: "https://www.jfklibrary.org/archives/other-resources/john-f-kennedy-speeches/united-states-congress-special-message-19610525"
+      verified_at: 2026-10-03
+      verified_by: document-fetch
+      verified_title: "President Kennedy's Special Message to the Congress on Urgent National Needs, May 25, 1961 | JFK Library"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-jfk-19620912
+    tier: A
+    kind: primary-document
+    author: John F. Kennedy, President of the United States
+    title: "Address at Rice University on the Nation's Space Effort, September 12, 1962"
+    container: "John F. Kennedy Speeches (the Library's text edition)"
+    publisher: John F. Kennedy Presidential Library and Museum
+    place: Boston
+    year: 1962
+    edition: "the Library's web text"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.jfklibrary.org/archives/other-resources/john-f-kennedy-speeches/rice-university-19620912"}
+    access:
+      free_copy: "https://www.jfklibrary.org/archives/other-resources/john-f-kennedy-speeches/rice-university-19620912"
+      verified_at: 2026-10-03
+      verified_by: document-fetch
+      verified_title: "Address at Rice University on the Nation's Space Effort, September 12, 1962 | JFK Library"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-nasa-a11-tec-1969
+    tier: A
+    kind: primary-document
+    author: National Aeronautics and Space Administration, Manned Spacecraft Center
+    title: "Apollo 11 Technical Air-to-Ground Voice Transcription (GOSS NET 1)"
+    container: null
+    publisher: "NASA Manned Spacecraft Center, Houston; the PDF is served by the Apollo Lunar Surface Journal"
+    place: Houston
+    year: 1969
+    edition: "the scanned transcript with its text layer, 402 PDF pages; times are ground elapsed time (day hour minute second); the speaker codes CDR, LMP and CC are the transcript's own, and the Lunar Surface Journal's corrected transcript of the same transmissions gives them to Armstrong, Aldrin and Duke"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.apollojournals.org/alsj/a11/a11transcript_tec.pdf"}
+    access:
+      free_copy: "https://www.apollojournals.org/alsj/a11/a11transcript_tec.pdf"
+      verified_at: 2026-10-03
+      verified_by: document-fetch
+      verified_title: "Technical Air-to-Ground Voice Transcription Apollo 11 (the PDF's first page)"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-nasa-plaque
+    tier: A
+    kind: image
+    author: National Aeronautics and Space Administration
+    title: "Apollo 11 Plaque (NASA Science image resource, with its caption)"
+    container: "science.nasa.gov resources"
+    publisher: NASA
+    place: Washington
+    year: 2017
+    edition: "the resource page, 'Date Published October 20, 2017'; the caption quotes the plaque's text"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://science.nasa.gov/resource/apollo-11-plaque/"}
+    access:
+      free_copy: "https://science.nasa.gov/resource/apollo-11-plaque/"
+      verified_at: 2026-10-03
+      verified_by: document-fetch
+      verified_title: "Apollo 11 Plaque - NASA Science"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  # ----------------------------------------------------------- Tier C: a catalogue record
+  - id: src-jfkwha-127-002
+    tier: C
+    kind: reference
+    author: John F. Kennedy Presidential Library and Museum (catalogue description of a sound recording)
+    title: "Address at Rice University in Houston, Texas on the Nation's Space Effort, 12 September 1962 (White House Audio Collection, JFKWHA-127-002)"
+    container: "White House Audio Collection, Series 1. White House Audio Recordings, 1961-1963"
+    publisher: John F. Kennedy Presidential Library and Museum
+    place: Boston
+    year: 1962
+    edition: "the item page's Description field; the year is the recording's. Held because the Library's description quotes the Rice sentence as a full sentence, which is the form the episode's document voice reads; the full text is src-jfk-19620912"
+    volume: null
+    document_number: "JFKWHA-127-002"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.jfklibrary.org/asset-viewer/archives/JFKWHA/1962/JFKWHA-127-002/JFKWHA-127-002"}
+    access:
+      free_copy: "https://www.jfklibrary.org/asset-viewer/archives/JFKWHA/1962/JFKWHA-127-002/JFKWHA-127-002"
+      verified_at: 2026-10-03
+      verified_by: document-fetch
+      verified_title: "Address at Rice University in Houston, Texas on the Nation's Space Effort, 12 September 1962"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  # ----------------------------------------------------------- Tier B: edited record and recollection
+  - id: src-alsj-a11-landing
+    tier: B
+    kind: edited-documents
+    author: Eric M. Jones (editor), Apollo Lunar Surface Journal
+    title: "Apollo 11 Lunar Surface Journal: The First Lunar Landing (corrected transcript and commentary)"
+    container: Apollo Lunar Surface Journal
+    publisher: "apollojournals.org (formerly hosted by NASA History)"
+    place: null
+    year: 1995
+    edition: "Copyright 1995 by Eric M. Jones; last revised 10 May 2018 (the page's own notice)"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.apollojournals.org/alsj/a11/a11.landing.html"}
+    access:
+      free_copy: "https://www.apollojournals.org/alsj/a11/a11.landing.html"
+      verified_at: 2026-10-03
+      verified_by: document-fetch
+      verified_title: "The First Lunar Landing"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-alsj-a11-step
+    tier: B
+    kind: edited-documents
+    author: Eric M. Jones (editor), Apollo Lunar Surface Journal
+    title: "Apollo 11 Lunar Surface Journal: One Small Step (corrected transcript and commentary)"
+    container: Apollo Lunar Surface Journal
+    publisher: "apollojournals.org (formerly hosted by NASA History)"
+    place: null
+    year: 1995
+    edition: "Copyright 1995 by Eric M. Jones; last revised 3 May 2025 (the page's own notice)"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.apollojournals.org/alsj/a11/a11.step.html"}
+    access:
+      free_copy: "https://www.apollojournals.org/alsj/a11/a11.step.html"
+      verified_at: 2026-10-03
+      verified_by: document-fetch
+      verified_title: "One Small Step"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-mit-hamilton-2009
+    tier: B
+    kind: memoir
+    author: Margaret Hamilton (her own contribution; the piece collects several MIT participants' recollections)
+    title: "Recalling the 'Giant Leap' (MIT News, July 17, 2009)"
+    container: MIT News
+    publisher: Massachusetts Institute of Technology
+    place: Cambridge, Massachusetts
+    year: 2009
+    edition: "web text; the producer id `scholarship` is the class the registry offers for a university publication, not a claim that the recollection is scholarship"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://news.mit.edu/2009/apollo-vign-0717"}
+    access:
+      free_copy: "https://news.mit.edu/2009/apollo-vign-0717"
+      verified_at: 2026-10-03
+      verified_by: document-fetch
+      verified_title: "Recalling the 'Giant Leap' | MIT News | Massachusetts Institute of Technology"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+positions: []
+contested: []
+exhibits: []
+analyses: []
+gaps: []
+
+# ------------------------------------------------------------- recordings
+# Archival audio artifacts (docs/proposals/HISTORY-AUDIO-ARCHIVAL.md §4a).
+# A recording is a factual claim four times over: this speaker, this
+# occasion, this date, these words. Every `*_as_stated` field is copied from
+# the repository's own item page or metadata API as fetched on `fetched_at`,
+# never from memory. `transcript` is verbatim from the ledger extract named in
+# `transcript_extract`. `verification` names the record
+# pipeline/history/verify_clip.py wrote; its WER, coverage, excerpt sha256 and
+# verified_at are the check's, never hand-typed. `signed_by` / `signed_at` are
+# the CEO's, per clip, and nothing plays in an episode until both are set
+# (policy B, §2). These rows are read by the History producer only.
+#
+# Rights, for all three admissible rows: works of the United States government
+# (a President addressing Congress, recorded by the White House; NASA's own
+# mission communications, digitised by NASA's Johnson Space Center). Each row
+# still records what its REPOSITORY states, which is what policy B admits on.
+recordings:
+  - id: clip-kennedy-congress-19610525
+    kind: audio
+    title: "John F. Kennedy, the Moon goal, in the White House recording of the Special Message to Congress on Urgent National Needs"
+    speaker: John F. Kennedy
+    occasion: "Special Message to Congress on Urgent National Needs, delivered before a joint session of Congress, as the Library titles it; the text edition heads it 'Delivered in person before a joint session of Congress May 25, 1961'"
+    date: "1961-05-25"
+    date_as_stated: "25 May 1961 (the item's 'Date(s) of Materials')"
+    repository: "John F. Kennedy Presidential Library and Museum (National Archives and Records Administration), White House Audio Collection"
+    accession: "JFKWHA-032"
+    url: "https://www.jfklibrary.org/asset-viewer/archives/jfkwha-032"
+    file: "https://static.jfklibrary.org/pox43o6b4t44m6wwihi7hx7kfxf33776.mp3"
+    file_md5: "674385e75f3ff32a8cbac1f9ac036383"
+    file_md5_as_stated: "the Library publishes no checksum. This is the md5 of the file as fetched on 2026-10-03 from the item page's Download link (110,471,927 bytes, audio/mpeg, Last-Modified Thu, 25 Jun 2026 13:01:13 GMT, ETag a3457f27cf0dc0d4; the link carried ?filename=JFKWHA-032-AU_WR.mp3 and a dated odc parameter, dropped here), recorded so the render job refuses a changed file"
+    title_as_stated: "Special Message to Congress on Urgent National Needs, 25 May 1961"
+    creator_as_stated: "Contributor(s): Kennedy, John F. (John Fitzgerald), 1917-1963"
+    origin_as_stated: "Collection: White House Audio Collection. Series: Series 1. White House Audio Recordings, 1961-1963. Preferred Citation: 'White House Audio Collection. Special Message to Congress on Urgent National Needs, 25 May 1961'. Extent: 1 audio tape/reel (46 minutes). Description: 'Sound recording of President John F. Kennedy's Special Message to Congress' (the item page)"
+    uploader_as_stated: "the Library's own asset viewer; no third-party uploader"
+    licence_as_stated: "Copyright Status: Public Domain (the item page's own field). The collection's Copyright Notice on the same page: 'Documents in this collection that were prepared by officials of the United States as part of their official duties are in the public domain. Some of the archival materials in this collection may be subject to copyright or other intellectual property restrictions. Users of these materials are advised to determine the copyright status of any document from which they wish to publish.'"
+    licence_url: "https://www.jfklibrary.org/asset-viewer/archives/jfkwha-032"
+    rights_basis: public-domain-as-stated
+    rights_reading: "A recording made by the White House of the President addressing Congress, held by a federal presidential library that marks it Public Domain: a work of the United States government, not subject to copyright under 17 U.S.C. 105, in the US and with no URAA question (a domestic work). The excerpt is the President's own words. Admissible under policy B with the CEO's signature, the basis printed beside the exhibit"
+    fetched_at: 2026-10-03
+    duration_s: 2761.74
+    excerpt: {in: "00:33:51.200", out: "00:34:03.600"}
+    transcript_extract: src-jfk-19610525.sec9
+    transcript: "First, I believe that this nation should commit itself to achieving the goal, before this decade is out, of landing a man on the moon and returning him safely to the earth."
+    verification: recordings/clip-kennedy-congress-19610525.verification.json
+    observed: "The spoken words match the Library's printed text word for word (faster-whisper base.en heard every word). The window opens in the 0.4 s pause after 'national goals.' and closes in the pause after 'the earth.', before 'No single space project'. Applause is not heard inside the window. The sentence that follows ('No single space project in this period will be more impressive to mankind ... none will be so difficult or expensive to accomplish', 2043.6 to 2057.1 s) was checked too and heard word for word, and is left out so that the clip is exactly the sentence the document voice otherwise reads: the event record carries only the first sentence as a quotation, and the script narrates the second. The file is mono, 44.1 kHz, 320 kb/s MP3, 46 min 2 s; the passage sits at 33 min 51 s"
+    shows: "Kennedy's voice, the one sentence the episode's document voice otherwise reads: the commitment and its deadline"
+    does_not_show: "the sentence after it, the eight paragraphs of section IX around it, the rest of the 46-minute address, and the chamber's response, which the window excludes"
+    signed_by: CEO
+    signed_at: 2026-10-03
+
+  - id: clip-armstrong-one-small-step-19690721
+    kind: audio
+    title: "Neil Armstrong, the first words from the lunar surface, in NASA's own sound bite from its Apollo 11 audio highlights"
+    speaker: Neil Armstrong
+    occasion: "Stepping from the footpad of the lunar module Eagle onto the surface at Tranquility Base, the first Apollo 11 EVA, air-to-ground"
+    date: "1969-07-21"
+    date_as_stated: "the item carries no date field and the file is named for its content (Sound-Bite_Apollo-11_One-Small-Step_Quote). The date is the NASA transcript's own ground elapsed time for the line (04 13 24 48, extract src-nasa-a11-tec-1969.p377) read with the Lunar Surface Journal's note that the Mission Report gives 'initial contact' as 109:24:15 or 02:56:15 GMT/UTC on 21 July 1969 (extract src-alsj-a11-step.sec1092423b); the Journal times the words at 109:24:23"
+    repository: "Internet Archive, NASA Audio Collection (collection nasaaudiocollection), the item 'NASA Audio Highlight Reels, Soundbites and Launch Sounds'"
+    accession: "NasaAudioHighlightReels"
+    url: "https://archive.org/details/NasaAudioHighlightReels"
+    file: "https://archive.org/download/NasaAudioHighlightReels/Sound-Bite_Apollo-11_One-Small-Step_Quote.wav"
+    file_md5: "28e0d58d4b886f8112120e1dd4ae18ff"
+    file_md5_as_stated: "the item's metadata API lists this md5 for Sound-Bite_Apollo-11_One-Small-Step_Quote.wav (WAV, 8.22 s, 2,369,770 bytes, 48 kHz 24-bit stereo); the downloaded file matched it on 2026-10-03"
+    title_as_stated: "NASA Audio Highlight Reels, Soundbites and Launch Sounds"
+    creator_as_stated: "NASA"
+    origin_as_stated: "creator NASA; description 'All NASA audio highlight reels, in mp3 format. Digitized, cataloged and archived by the Houston Audio Control Room, at the NASA Johnson Space Center.'; the file is one of the item's named sound bites. The same reel on the sister item Apollo11AudioHighlights (same uploader, same licence) lists its contents, including \"16. 'One small step. . .'\""
+    uploader_as_stated: "john.l.stoll@nasa.gov, public date 2011-08-12 16:57:08; collections nasaaudiocollection, nasa, apolloaudiocollection, audiohighlightreels"
+    licence_as_stated: "Public Domain Mark 1.0 (the item's licenseurl is http://creativecommons.org/publicdomain/mark/1.0/)"
+    licence_url: "https://creativecommons.org/publicdomain/mark/1.0/"
+    rights_basis: pdm-as-stated
+    rights_reading: "NASA's recording of its own mission air-to-ground loop, digitised by NASA's Johnson Space Center and uploaded from a nasa.gov address: a work of the United States government, not subject to copyright under 17 U.S.C. 105, with no URAA question. NASA's media guidelines state that NASA audio 'generally are not subject to copyright in the United States' (https://www.nasa.gov/nasa-brand-center/images-and-media/). The PDM is the repository's mark. Admissible under policy B with the CEO's signature, the basis printed beside the exhibit"
+    fetched_at: 2026-10-03
+    duration_s: 8.22
+    excerpt: {in: "00:00:00.000", out: "00:00:08.224"}
+    transcript_extract: src-alsj-a11-step.sec1092423
+    transcript: "That's one small step for man; one giant leap for mankind"
+    verification: recordings/clip-armstrong-one-small-step-19690721.verification.json
+    observed: "The file is NASA's own cut of the one transmission and is used whole. The transcripts print an 'a' in brackets, 'for (a) man', which the Journal says honours Armstrong's stated intent and which it and this check do not hear in the recording; the transcript here is the sentence as the Journal says the world heard it, which is what the audio carries. faster-whisper base.en heard 'It's' for 'That's' and every other word. The Journal notes that NASA's cut of this moment ends inside the sentence and that the Journal's own clip was merged from two; this file is continuous"
+    shows: "Armstrong's voice, through the air-to-ground loop, saying the one sentence; the pause before 'one giant leap' is the recording's own"
+    does_not_show: "the words before it ('I'm going to step off the LM now', 109:24:12) and after it ('And the surface is fine and powdery'); the inaudible 'a'; where the microphone was"
+    signed_by: CEO
+    signed_at: 2026-10-03
+
+  - id: clip-armstrong-plaque-19690721
+    kind: audio
+    title: "Neil Armstrong reading the plaque on the lunar module's leg, in NASA's own sound bite from its Apollo 11 audio highlights"
+    speaker: Neil Armstrong
+    occasion: "Reading the commemorative plaque on the front landing gear of the lunar module Eagle to Houston, on the surface at Tranquility Base, the first Apollo 11 EVA, air-to-ground"
+    date: "1969-07-21"
+    date_as_stated: "the item carries no date field and the file is named for its content (Sound-Bite_Apollo-11_We-Came-in-peace-for-all-mankind_Quote). The date is the transcripts' ground elapsed time for the transmission, 04 13 52 40 in NASA's transcript (extract src-nasa-a11-tec-1969.p385) and 109:52:40 in the Lunar Surface Journal (extract src-alsj-a11-step.sec1095240), twenty-eight minutes after the first step, which the Journal places at 02:56 UTC on 21 July 1969"
+    repository: "Internet Archive, NASA Audio Collection (collection nasaaudiocollection), the item 'NASA Audio Highlight Reels, Soundbites and Launch Sounds'"
+    accession: "NasaAudioHighlightReels"
+    url: "https://archive.org/details/NasaAudioHighlightReels"
+    file: "https://archive.org/download/NasaAudioHighlightReels/Sound-Bite_Apollo-11_We-Came-in-peace-for-all-mankind_Quote.wav"
+    file_md5: "d6f541d78c11875c759400b41818449a"
+    file_md5_as_stated: "the item's metadata API lists this md5 for Sound-Bite_Apollo-11_We-Came-in-peace-for-all-mankind_Quote.wav (WAV, 12.71 s, 3,664,252 bytes, 48 kHz 24-bit stereo); the downloaded file matched it on 2026-10-03"
+    title_as_stated: "NASA Audio Highlight Reels, Soundbites and Launch Sounds"
+    creator_as_stated: "NASA"
+    origin_as_stated: "creator NASA; description 'All NASA audio highlight reels, in mp3 format. Digitized, cataloged and archived by the Houston Audio Control Room, at the NASA Johnson Space Center.'; the file is one of the item's named sound bites. The same reel on the sister item Apollo11AudioHighlights (same uploader, same licence) lists its contents, including \"17. July 1969, 'We come in peace. . .', VIP cam\""
+    uploader_as_stated: "john.l.stoll@nasa.gov, public date 2011-08-12 16:57:08; collections nasaaudiocollection, nasa, apolloaudiocollection, audiohighlightreels"
+    licence_as_stated: "Public Domain Mark 1.0 (the item's licenseurl is http://creativecommons.org/publicdomain/mark/1.0/)"
+    licence_url: "https://creativecommons.org/publicdomain/mark/1.0/"
+    rights_basis: pdm-as-stated
+    rights_reading: "NASA's recording of its own mission air-to-ground loop, digitised by NASA's Johnson Space Center and uploaded from a nasa.gov address: a work of the United States government, not subject to copyright under 17 U.S.C. 105, with no URAA question. NASA's media guidelines state that NASA audio 'generally are not subject to copyright in the United States' (https://www.nasa.gov/nasa-brand-center/images-and-media/). The PDM is the repository's mark. Admissible under policy B with the CEO's signature, the basis printed beside the exhibit"
+    fetched_at: 2026-10-03
+    duration_s: 12.72
+    excerpt: {in: "00:00:00.000", out: "00:00:12.719"}
+    transcript_extract: src-alsj-a11-step.sec1095240
+    transcript: "Here Men from the planet Earth first set foot upon the Moon, July 1969 A.D. We came in peace for all mankind."
+    verification: recordings/clip-armstrong-plaque-19690721.verification.json
+    observed: "NASA's cut begins at 'Here', inside Armstrong's transmission but at the start of the quoted sentence, and ends at 'mankind.' The two transcripts disagree on the second word: the Lunar Surface Journal and the plaque itself (extract src-nasa-plaque.caption) print 'Men', NASA's 1969 transcript prints 'Man' (extract src-nasa-a11-tec-1969.p385). faster-whisper base.en heard 'men'. The transcript here follows the Journal and the plaque; the script says the disagreement aloud"
+    shows: "Armstrong's voice, through the air-to-ground loop, reading the plaque's two sentences"
+    does_not_show: "the words before it in the same transmission ('For those who haven't read the plaque ... Underneath it says') and after it ('It has the crew members' signatures ...'); the plaque itself, which is a separate exhibit"
+    signed_by: CEO
+    signed_at: 2026-10-03
+
+  # A candidate that FAILS the transcript gate, kept so the reason is on the record.
+  # No `# CLIP:` directive names it; it plays nowhere. The same transmission in the
+  # 61-minute highlights reel (Apollo11AudioHighlights/Apollo11Highlights.wav, md5
+  # 5994800780b91a871108b61a406f1bed, at about 1334.8 s) is heard the same way.
+  - id: clip-armstrong-eagle-has-landed-19690720
+    kind: audio
+    title: "Neil Armstrong, 'Houston, Tranquility Base here. The Eagle has landed.', in NASA's own sound bite (candidate, not admitted)"
+    speaker: Neil Armstrong
+    occasion: "Reporting the landing to Houston from the lunar module Eagle, air-to-ground"
+    date: "1969-07-20"
+    date_as_stated: "the item carries no date field and the file is named for its content (Sound-Bite_Apollo-11_Eagle-has-Landed_Quote). The Lunar Surface Journal dates the contact-light call at 20:17:40 GMT/UTC on 20 July 1969 (extract src-alsj-a11-landing.sec1024540); the words follow eighteen seconds later in both transcripts"
+    repository: "Internet Archive, NASA Audio Collection (collection nasaaudiocollection), the item 'NASA Audio Highlight Reels, Soundbites and Launch Sounds'"
+    accession: "NasaAudioHighlightReels"
+    url: "https://archive.org/details/NasaAudioHighlightReels"
+    file: "https://archive.org/download/NasaAudioHighlightReels/Sound-Bite_Apollo-11_Eagle-has-Landed_Quote.wav"
+    file_md5: "cb68497503b745508538c9e068d0e6ec"
+    file_md5_as_stated: "the item's metadata API lists this md5 for Sound-Bite_Apollo-11_Eagle-has-Landed_Quote.wav (WAV, 6.63 s, 1,910,740 bytes); the downloaded file matched it on 2026-10-03"
+    title_as_stated: "NASA Audio Highlight Reels, Soundbites and Launch Sounds"
+    creator_as_stated: "NASA"
+    origin_as_stated: "creator NASA; description 'All NASA audio highlight reels, in mp3 format. Digitized, cataloged and archived by the Houston Audio Control Room, at the NASA Johnson Space Center.'"
+    uploader_as_stated: "john.l.stoll@nasa.gov, public date 2011-08-12 16:57:08"
+    licence_as_stated: "Public Domain Mark 1.0 (the item's licenseurl is http://creativecommons.org/publicdomain/mark/1.0/)"
+    licence_url: "https://creativecommons.org/publicdomain/mark/1.0/"
+    rights_basis: pdm-as-stated
+    rights_reading: "As the two admitted NASA rows. Rights are not what stops this one"
+    fetched_at: 2026-10-03
+    duration_s: 6.63
+    excerpt: {in: "00:00:00.000", out: "00:00:06.630"}
+    transcript_extract: src-alsj-a11-landing.sec1024557
+    transcript: "Houston, Tranquility Base here. The Eagle has landed."
+    verification: recordings/clip-armstrong-eagle-has-landed-19690720.verification.json
+    observed: "NOT ADMITTED. The gate's ASR (faster-whisper base.en, the model the render job re-verifies with) hears 'Listen, the Tanguillity Base here, the Eagle has landed'. The record: coverage 0.750, WER 0.375, FAIL, 'the window does not open on the transcript's first words' (neither 'Houston' nor 'Tranquility' is recovered, so the first matched word is the third). small.en hears the same; medium.en hears 'Houston, Tanguility Base here' but is not the model the job runs. A longer window that would recover the opening cannot be written: the words before are Houston's and so are the words after, and every transcript held here prints a timestamp and a speaker label between transmissions, so no contiguous extract exists for the exchange (H-14 asks for a verbatim substring of ONE extract). The bar is not lowered; the document voice reads the line instead"
+    shows: "Armstrong's voice, through the air-to-ground loop, the one transmission"
+    does_not_show: "Houston's reply ('Roger, Tranquility. We copy you on the ground...'), which the script narrates from the NASA transcript"
+    signed_by: null
+    signed_at: null

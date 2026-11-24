@@ -1,0 +1,50 @@
+{
+ "clip_id": "clip-ford-nightmare-19740809",
+ "slug": "watergate",
+ "tool": "faster-whisper",
+ "tool_version": "1.2.1",
+ "model": "base.en",
+ "compute_type": "int8",
+ "beam_size": 5,
+ "source": {
+  "file": "https://www.fordlibrarymuseum.gov/sites/default/files/2024-04/740001.mp3",
+  "md5": "2d5347fba3987a8aa6ab06a43d46e267",
+  "md5_expected": "2d5347fba3987a8aa6ab06a43d46e267",
+  "rate": 44100
+ },
+ "window": {
+  "in": 414.8,
+  "out": 429.3,
+  "seconds": 14.5
+ },
+ "excerpt_sha256": "5c592c796abd7d150dc22e1715345c249b494ff47977b9b872261798d42dad84",
+ "excerpt_pcm": "s16le mono at the source rate, ffmpeg atrim, -bitexact",
+ "reference": "My fellow Americans, our long national nightmare is over. Our Constitution works; our great Republic is a government of laws and not of men.",
+ "hypothesis": "My fellow Americans, our long, national nightmare is over. Our Constitution works. Our great republic is a government of laws and not of men.",
+ "wer": 0.0,
+ "coverage": 1.0,
+ "counts": {
+  "ref_words": 24,
+  "hyp_words": 24,
+  "substitutions": 0,
+  "deletions": 0,
+  "insertions": 0,
+  "first_matched_ref": 0,
+  "last_matched_ref": 23,
+  "lead_insertions": 0,
+  "trail_insertions": 0
+ },
+ "diff": [
+  "my fellow americans our long national nightmare is over our constitution works our great republic is a government of laws and not of men"
+ ],
+ "thresholds": {
+  "coverage_min": 0.7,
+  "edge_slack_words": 1,
+  "edge_insert_max": 2
+ },
+ "pass": true,
+ "why": [],
+ "verified_at": "2026-10-10T05:21:46Z",
+ "signed": false,
+ "note": "a pass verifies the words in this window against the stored transcript. It does not verify the occasion, the date or the rights, and it signs nothing."
+}

@@ -1,0 +1,8 @@
+source: src-loh-sung-sze-1946
+locator: sechusband
+url: https://www.legal-tools.org/doc/a4c38a/pdf/
+read: 2026-10-09
+note: the text is the scan's own OCR layer as the Legal Tools Database serves it, whitespace collapsed; the transcript's printed line numbers (1 to 25) and the OCR's glyph errors sit inside the text and are kept as the layer gives them
+note: transcript page 4,489, exhibit 312, statement of Mrs Loh Sung Sze dated 6 April 1946, translated by Henry Chiu, signed by fingerprint
+
+They took away my hus- band with the intention to lJut him in a labor gang. The Japanese asked him to assume a burden of cereal on his back, but because he did not do the job well, the Japanese got rid of him. by bayoneting him to death in several places about a hundred yards away. I saw this because 1 was following him to see what they did with him. The body was buried the next day. ItHe was bayoneted in'the neck, kidney, fore- head, and altogethDr in seven places.

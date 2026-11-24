@@ -1,0 +1,6 @@
+source: src-ushmm-treblinka
+locator: secburning
+url: https://encyclopedia.ushmm.org/content/en/article/treblinka
+read: 2026-10-07
+
+The Sonderkommando (special detachment) was a group of Jewish prisoners selected to remain alive as forced laborers. Members of this group worked in the killing area. They removed bodies from the gas chambers and initially buried them in mass graves. In October 1942, camp personnel deployed Jewish forced laborers to exhume these mass graves. The forced laborers were ordered to burn the bodies on open-air “ovens” made from rail track. This was in keeping with the efforts of the Sonderkommando 1005, tasked with excavating and destroying evidence of Nazi mass murder in the German-occupied east. German personnel and the Trawniki-trained auxiliaries periodically murdered the members of detachments of Jewish laborers and replaced them with persons from newly arriving transports.

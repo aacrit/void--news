@@ -1,0 +1,7 @@
+source: src-moh-1920
+locator: secparts
+url: https://archive.org/download/pandemic-of-influenza-1918-1919_UK-MinistryofHealth_HMSO-1920/PandemicofInfluenzaHMSO_entire_book_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+
+Part II. has been compiled by Dr. Robert Bruce Low, C.B., and Dr. S. P. James, Medical Officers of the Ministry. It presents an account by the former of the incidence of Influenza in Europe and the Western Hemisphere, and by the latter of its incidence in Australasia and parts of Africa and Asia.

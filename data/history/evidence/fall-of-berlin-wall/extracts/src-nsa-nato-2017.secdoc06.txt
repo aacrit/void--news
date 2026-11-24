@@ -1,0 +1,8 @@
+source: src-nsa-nato-2017
+locator: secdoc06
+url: https://nsarchive.gwu.edu/briefing-book/russia-programs/2017-12-12/nato-expansion-what-gorbachev-heard-western-leaders-early
+read: 2026-10-09
+note: the editors' summary of the Soviet record (Document 6, Gorbachev Foundation); the quotations are the Archive's translation of that record
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Baker assured Gorbachev that “neither the President nor I intend to extract any unilateral advantages from the processes that are taking place,” and that the Americans understood that “not only for the Soviet Union but for other European countries as well it is important to have guarantees that if the United States keeps its presence in Germany within the framework of NATO, not an inch of NATO’s present military jurisdiction will spread in an eastern direction.” (See Document 6)

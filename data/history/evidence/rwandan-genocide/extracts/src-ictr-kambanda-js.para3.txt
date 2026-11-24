@@ -1,0 +1,7 @@
+source: src-ictr-kambanda-js
+locator: para3
+url: https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-97-23/trial-judgements/en/980904.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+
+3. On 1 May 1998, during his initial appearance before this Trial Chamber, the accused pleaded guilty to the six counts contained in the indictment, namely genocide, conspiracy to commit genocide, direct and public incitement to commit genocide, complicity in genocide, crimes against humanity (murder), punishable under Article 3 (a) of the Statute and crimes against humanity (extermination), punishable under Article 3 (b) of the Statute.

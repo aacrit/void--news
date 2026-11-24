@@ -1,0 +1,8 @@
+source: src-trc-v3-ch6
+locator: para130
+url: https://www.justice.gov.za/trc/report/finalreport/Volume%203.pdf
+read: 2026-10-09
+note: the text is the PDF's own text layer, whitespace collapsed to single spaces; line-end hyphenation and glyph errors are kept as the layer prints them
+note: Antoinette Sithole's statement to the Commission, as the Report quotes it
+
+Later I saw a group of school children coming towards us holding somebody, who happen to be my younger brother Hector Zolile Peterson. He was carried by Mbuyiswa Makhubo of Orlando West. We rushed to Phomolong clinic, which was nearby. On arrival at the clinic the doctor named Wilson said he was sorry there was nothing he can do because he was already deceased. The time was about 10h30.

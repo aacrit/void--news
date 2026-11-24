@@ -1,0 +1,7 @@
+source: src-baquaqua-1854
+locator: p44
+url: https://docsouth.unc.edu/neh/baquaqua/baquaqua.html
+read: 2026-10-09
+note: the arrival in Brazil; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+We arrived at Pernambuco, South America, early in the morning, and the vessel played about during the day, without coming to anchor.

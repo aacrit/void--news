@@ -1,0 +1,7 @@
+source: src-ictr-akayesu-tj
+locator: para116
+url: https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-96-4/trial-judgements/en/980902.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+
+116. The British cameraman, Simon Cox, took photographs of bodies in many churches in Remera, Biambi, Shangi, between Cyangugu and Kibuye, and in Bisesero. He mentioned identity cards strewn on the ground, all of which were marked "Tutsi". Consequently, in view of these widespread killings the victims of which were mainly Tutsi, the Chamber is of the opinion that the first requirement for there to be genocide has been met, the killing and causing serious bodily harm to members of a group.

@@ -1,0 +1,7 @@
+source: src-dupuis-1824
+locator: p162
+url: https://archive.org/details/journalofresiden00dupu
+read: 2026-10-09
+note: Dupuis's own narration of the king's view; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+The king did not deem it plausible, that this obnoxious traffic should have been abolished from motives of humanity alone ; neither would he admit that it lessened the number either of domestic or foreign wars.

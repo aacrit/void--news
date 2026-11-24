@@ -1,0 +1,7 @@
+source: src-moh-1920
+locator: para16
+url: https://archive.org/download/pandemic-of-influenza-1918-1919_UK-MinistryofHealth_HMSO-1920/PandemicofInfluenzaHMSO_entire_book_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+
+In America, too, influenza had been occurring in greater or less degree in 1915, 1916, and 1917, but it became epidemic in mild form in April and May, 1918, and in September developed more virulent characters and swept over the country, mainly from east to west. In Paris the epidemic broke out in July; in Spain at the end of May; in Italy in April; in Greece in May; in Persia and Mesopotamia in June ; in India in June ; in Australia and New Zealand in July. Such was the universal experience of emergence and the rapid evolution was similar to it. The disease simply had its way. It came like a thief in the night and stole treasure.

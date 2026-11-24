@@ -1,0 +1,7 @@
+source: src-moh-1920
+locator: secindia
+url: https://archive.org/download/pandemic-of-influenza-1918-1919_UK-MinistryofHealth_HMSO-1920/PandemicofInfluenzaHMSO_entire_book_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+
+Reports received indicate that no part of the world suffered as severely as did India during the latter half of 1918. A preliminary report by the Sanitary Commissioner with the Government of India estimated that up to the end of November 1918 no fewer than five million deaths were attributable to the influenza pandemic in British India alone (population, 238,000,000). In the native states influenza deaths certainly exceeded one million in the same period. A later report states that between 1st lune and 31st December 1918, the total mortality in British India exceeded the quinquennial mean mortality for the same period by approximately seven millions. The great majority of this excess mortality occurred in the last four months of the year. There was no abnormal prevalence of other communicable disease, so it is justifiable to accept this figure as a rough approximation of the influenza death roll. In view of the conditions pertaining in India, anything other than approximations of this nature is impossible to obtain.

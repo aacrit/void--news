@@ -1,0 +1,8 @@
+source: src-bose-speeches-1962
+locator: secprice
+url: https://archive.org/download/selectedspeeches00subh/selectedspeeches00subh_djvu.txt
+read: 2026-10-09
+note: the text is the scan's OCR layer (archive.org djvu.txt), whitespace collapsed; line-end hyphens and glyph errors kept as printed
+note: dated by the compilation 'Broadcast to the Indian National Army in Europe, June 1942'; the compilation does not say in what language it was spoken or who translated it
+
+Freedom can never be had by begging. It has to be got by force. Its price is blood. We will not beg freedom from any foreign country.

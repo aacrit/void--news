@@ -1,0 +1,7 @@
+source: src-prince-1831
+locator: secsalt
+url: https://docsouth.unc.edu/neh/prince/prince.html
+read: 2026-10-09
+note: Turk's Island; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+I was immediately sent to work in the salt water with the rest of the slaves. This work was perfectly new to me. I was given a half barrel and a shovel, and had to stand up to my knees in the water, from four o'clock in the morning till nine, when we were given some Indian corn boiled in water, which we were obliged to swallow as fast as we could for fear the rain should come on and melt the salt.

@@ -1,0 +1,7 @@
+source: src-alsj-a11-step
+locator: sec1095240
+url: https://www.apollojournals.org/alsj/a11/a11.step.html
+read: 2026-10-03
+note: the transmission at 109:52:40 ground elapsed time, Armstrong reading the plaque; the page's HTML read as text, whitespace collapsed; the page prints 'Here Men'
+
+109:52:40 Armstrong: For those who haven't read the plaque, we'll read the plaque that's on the front landing gear of this LM. First there's two hemispheres, one showing each of the two hemispheres of the Earth. Underneath it says "Here Men from the planet Earth first set foot upon the Moon, July 1969 A.D. We came in peace for all mankind." It has the crew members' signatures and the signature of the President of the United States. (Pause)

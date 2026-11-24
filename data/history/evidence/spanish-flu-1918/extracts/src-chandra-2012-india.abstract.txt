@@ -1,0 +1,7 @@
+source: src-chandra-2012-india
+locator: abstract
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A22661303&resultType=core&format=json
+read: 2026-09-25
+note: the abstract as the Europe PMC record carries it, read from the REST endpoint named above; cut at a sentence end to stay within the 150-word cap where the abstract is longer
+
+Estimates of worldwide mortality from the influenza pandemic of 1918-1919 vary widely, from 15 million to 100 million. In terms of loss of life, India was the focal point of this profound demographic event. In this article, we calculate mortality from the influenza pandemic in India using panel data models and data from the Census of India. The new estimates suggest that for the districts included in the sample, mortality was at most 13.88 million, compared with 17.21 million when calculated using the assumptions of Davis (1951). We conclude that Davis' influential estimate of mortality from influenza in British India is overstated by at least 24%. Future analyses of the effects of the pandemic on demographic change in India and worldwide will need to account for this significant downward revision.

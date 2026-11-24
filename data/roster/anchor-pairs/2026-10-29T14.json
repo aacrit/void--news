@@ -1,0 +1,74 @@
+[
+ {
+  "newsroom": "Deutsche Welle",
+  "lang_a": "en",
+  "lang_b": "de",
+  "score": 20,
+  "a": {
+   "title": "Wagner brothers begin new NBA chapter on different paths",
+   "summary": "After five years, brothers Franz and Moritz Wagner are no longer playing together for the Orlando Magic. In the new NBA season, their separation will likely mean the new &quot;German&quot; team is the Charlotte Hornets.",
+   "link": "https://www.dw.com/en/wagner-brothers-begin-new-nba-chapter-on-different-paths/a-79712668?maca=en-rss-en-all-1573-rdf",
+   "published": ""
+  },
+  "b": {
+   "title": "Das Ende der Wagners - auf getrennten Wegen in die neue NBA-Saison",
+   "summary": "Nach fünf Jahren spielen die Brüder Franz und Moritz Wagner nicht mehr gemeinsam für die Orlando Magic. In der neuen NBA-Saison haben sie ganz unterschiedliche Rollen. Neuer &quot;deutscher Klub&quot; sind die Charlotte Hornets.",
+   "link": "https://www.dw.com/de/das-ende-der-wagners-auf-getrennten-wegen-in-die-neue-nba-saison/a-79709596?maca=de-rss-de-all-1119-rdf",
+   "published": ""
+  }
+ },
+ {
+  "newsroom": "Deutsche Welle",
+  "lang_a": "en",
+  "lang_b": "de",
+  "score": 19,
+  "a": {
+   "title": "Harry Kane: Ballon d’Or for Bayern Munich striker",
+   "summary": "Bayern Munich striker Harry Kane has won football&apos;s most prestigious individual prize, beating Kylian Mbappe and Lamine Yamal. Kane has developed even more in the Bundesliga despite an uneven league.",
+   "link": "https://www.dw.com/en/harry-kane-ballon-d-or-for-bayern-munich-striker/a-79723299?maca=en-rss-en-all-1573-rdf",
+   "published": ""
+  },
+  "b": {
+   "title": "Bayern-Stürmer Harry Kane gewinnt den Ballon d&apos;Or",
+   "summary": "Harry Kane beendet die jahrzehntelange Ballon d&apos;Or-Durststrecke des FC Bayern München. Der englische Nationalstürmer hat sich seit seinem Wechsel in die Bundesliga sogar noch weiterentwickelt - und wird dafür belohnt.",
+   "link": "https://www.dw.com/de/bayern-stürmer-harry-kane-gewinnt-den-ballon-d-or/a-79760904?maca=de-rss-de-all-1119-rdf",
+   "published": ""
+  }
+ },
+ {
+  "newsroom": "France 24",
+  "lang_a": "en",
+  "lang_b": "es",
+  "score": 22,
+  "a": {
+   "title": "From election defeat to Miami: What to know about Brazil's Bolsonaro's dramatic departure to the US",
+   "summary": "Flávio Bolsonaro fled to Miami with his family after his defeat by Luiz Inácio Lula da Silva in Brazil’s presidential election. The 45-year-old ally of US President Donald Trump arrived in Florida on Wednesday, despite Brazil’s Supreme Court reportedly deeming him a flight risk amid ongoing corruption investigations and ordering his passports seized. FRANCE 24 International Affairs Editor Philip T",
+   "link": "https://www.france24.com/en/video/20261029-from-election-defeat-to-miami-what-to-know-about-brazil-s-bolsonaro-s-dramatic-departure-to-the-us",
+   "published": "Thu, 29 Oct 2026 10:33:13 GMT"
+  },
+  "b": {
+   "title": "De \"presidente electo\" a \"líder de Brasil\": las publicaciones de Bolsonaro tras derrota electoral",
+   "summary": "Horas después de llegar a Estados Unidos y tras perder en las elecciones presidenciales de Brasil contra Luiz Inácio Lula da Silva, el senador Flávio Bolsonaro, fue protagonista de una serie de publicaciones confusas en sus redes sociales: en la primera se autodenominaba el \"verdadero presidente electo de Brasil\", y, minutos después, editó el mensaje para calificarse como \"líder de Brasil\". Además",
+   "link": "https://www.france24.com/es/video/20261029-de-presidente-electo-a-l%C3%ADder-de-brasil-las-publicaciones-de-bolsonaro-tras-derrota-electoral",
+   "published": "Thu, 29 Oct 2026 13:56:10 GMT"
+  }
+ },
+ {
+  "newsroom": "France 24",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 18,
+  "a": {
+   "title": "From election defeat to Miami: What to know about Brazil's Bolsonaro's dramatic departure to the US",
+   "summary": "Flávio Bolsonaro fled to Miami with his family after his defeat by Luiz Inácio Lula da Silva in Brazil’s presidential election. The 45-year-old ally of US President Donald Trump arrived in Florida on Wednesday, despite Brazil’s Supreme Court reportedly deeming him a flight risk amid ongoing corruption investigations and ordering his passports seized. FRANCE 24 International Affairs Editor Philip T",
+   "link": "https://www.france24.com/en/video/20261029-from-election-defeat-to-miami-what-to-know-about-brazil-s-bolsonaro-s-dramatic-departure-to-the-us",
+   "published": "Thu, 29 Oct 2026 10:33:13 GMT"
+  },
+  "b": {
+   "title": "Du Brésil à la Floride : retour sur la fuite immédiate du candidat Flávio Bolsonaro",
+   "summary": "Flávio Bolsonaro a pris la parole depuis son nouvel exil floridien mercredi 28 octobre. Le candidat malheureux se revendique comme \"le nouveau président élu du Brésil\", il remercie Donald Trump de l'accueillir aux Etats-Unis et indique qu'il \"dirigera l'opposition au pouvoir\" depuis son nouveau lieu de résidence. Les explications de Silvia Capanema, historienne du Brésil républicain et maître de c",
+   "link": "https://www.france24.com/fr/vid%C3%A9o/20261029-du-br%C3%A9sil-%C3%A0-la-floride-retour-sur-la-fuite-imm%C3%A9diate-du-candidat-fl%C3%A1vio-bolsonaro",
+   "published": "Thu, 29 Oct 2026 10:39:16 GMT"
+  }
+ }
+]

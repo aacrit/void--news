@@ -1,0 +1,7 @@
+source: src-genc-2020
+locator: p294
+url: https://dergipark.org.tr/tr/download/article-file/1216061
+read: 2026-09-25
+note: the Turkish abstract (Öz), p. 294; a copyrighted article, held at most 150 words
+
+Osmanlı Ermenileri, I. Dünya Savaşı’nın başlarında iç güvenlik problemi nedeniyle tehcire tabi tutulmuşlardır. Tehcir olayı günümüze kadar devam eden tartışmaları da beraberinde getirmiştir.

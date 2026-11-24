@@ -1,0 +1,7 @@
+source: src-robespierre-bienvenu-1970
+locator: secorder
+url: https://revolution.chnm.org/d/413
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+
+We seek an order of things in which all the base and cruel passions are enchained, all the beneficent and generous passions are awakened by the laws; where ambition becomes the desire to merit glory and to serve our country; where distinctions are born only of equality itself; where the citizen is subject to the magistrate, the magistrate to the people, and the people to justice; where our country assures the well-being of each individual, and where each individual proudly enjoys our country's prosperity and glory; where every soul grows greater through the continual flow of republican sentiments, and by the need of deserving the esteem of a great people; where the arts are the adornments of the liberty which ennobles them and commerce the source of public wealth rather than solely the monstrous opulence of a few families.

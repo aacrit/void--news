@@ -1,0 +1,8 @@
+source: src-nl-wht-19730321
+locator: p5
+url: https://www.nixonlibrary.gov/sites/default/files/forresearchers/find/tapes/watergate/trial/exhibit_12.pdf
+read: 2026-10-09
+note: the Nixon Library's electronic copy of the typewritten transcript prepared for the Watergate trials, line breaks folded to spaces; speaker labels, ellipses, the dashes and the hyphens the copy prints at a line end ('investi- gation') are kept as printed; the Library warns that the electronic versions 'may not be identical in every respect to the original typewritten transcripts'
+note: printed page 5 of the transcript of the meeting among the President, John Dean and H.R. Haldeman, Oval Office, 21 March 1973, 10:12 to 11:55 a.m.
+
+DEAN: I think, I think that, uh, there's no doubt about the seriousness of the problem we're, we've got. We have a cancer--within, close to the Presidency, that's growing. It's growing daily. It's compounding, it grows geometrically now because it compounds itself.

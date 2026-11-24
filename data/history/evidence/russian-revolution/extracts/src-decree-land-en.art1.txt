@@ -1,0 +1,7 @@
+source: src-decree-land-en
+locator: art1
+url: https://www.marxists.org/archive/lenin/works/1917/oct/25-26/26d.htm
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+
+(1) Landed proprietorship is abolished forthwith without any compensation.

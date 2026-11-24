@@ -1,0 +1,8 @@
+source: src-lii-nyt-v-us-1971
+locator: para85
+url: https://www.law.cornell.edu/supremecourt/text/403/713
+read: 2026-10-09
+note: the Legal Information Institute's web text of the opinion; the locator is LII's own paragraph number, printed at the head of each paragraph, not a U.S. Reports page
+note: Chief Justice Burger, dissenting; two sentences from the middle of the paragraph
+
+That duty, I had thought perhaps naively—was to report forthwith, to responsible public officers. This duty rests on taxi drivers, Justices, and the New York Times.

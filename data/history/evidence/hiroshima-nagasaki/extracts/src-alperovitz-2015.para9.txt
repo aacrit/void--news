@@ -1,0 +1,7 @@
+source: src-alperovitz-2015
+locator: para9
+url: https://www.thenation.com/article/world/us-hiroshima-nuclear-bomb-anniversary/
+read: 2026-10-07
+note: paragraph 9, cut before its quotation of Szilard's recollection, which is secondhand and not held
+
+Historians still do not have a definitive answer to why the bombs were used. Given that US intelligence advised that the war would likely end if Japan were given assurances regarding the emperor—and given that the US military knew it would have to keep the emperor to help control occupied Japan in any event—something else clearly seems to have been important. We know that some of Truman’s closest advisers viewed the bomb as a diplomatic and not simply a military weapon. Secretary of State James Byrnes, for instance, believed that the use of atomic weapons would help the United States more strongly dominate the postwar era.

@@ -1,0 +1,74 @@
+[
+ {
+  "newsroom": "Euronews",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 27,
+  "a": {
+   "title": "Celine Dion surprises Paris Fashion Week with performance at L'Oréal show",
+   "summary": "Canadian singer Celine Dion made a surprise appearance at L'Oréal's fashion show in Paris, performing on stage with the Eiffel Tower in the background alongside a star-studded line-up of celebrities and models.",
+   "link": "https://www.euronews.com/video/2026/09/29/celine-dion-surprises-paris-fashion-week-with-performance-at-loreal-show",
+   "published": "Tue, 29 Sep 2026 14:26:25 +0200"
+  },
+  "b": {
+   "title": "Celine Dion surprend la Fashion Week de Paris lors du défilé L'Oréal",
+   "summary": "La chanteuse canadienne Céline Dion a fait une apparition surprise au défilé de mode de L'Oréal à Paris, chantant sur scène avec la tour Eiffel en toile de fond aux côtés d'un parterre de célébrités et de mannequins.",
+   "link": "https://fr.euronews.com/video/2026/09/29/celine-dion-surprend-la-fashion-week-de-paris-lors-du-defile-loreal",
+   "published": "Tue, 29 Sep 2026 14:27:33 +0200"
+  }
+ },
+ {
+  "newsroom": "Euronews",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 26,
+  "a": {
+   "title": "Bradley Whitford receives Hollywood Walk of Fame star",
+   "summary": "Bradley Whitford receives the 2,858th star on the Hollywood Walk of Fame, celebrating with family and West Wing co-stars in Los Angeles.",
+   "link": "https://www.euronews.com/video/2026/10/01/bradley-whitford-receives-hollywood-walk-of-fame-star",
+   "published": "Thu, 01 Oct 2026 12:19:55 +0200"
+  },
+  "b": {
+   "title": "Bradley Whitford reçoit son étoile sur le Walk of Fame",
+   "summary": "Bradley Whitford reçoit la 2 858e étoile sur le Walk of Fame à Hollywood, avec sa famille et ses anciens partenaires de la série À la Maison-Blanche à Los Angeles.",
+   "link": "https://fr.euronews.com/video/2026/10/01/bradley-whitford-recoit-son-etoile-sur-le-walk-of-fame",
+   "published": "Thu, 01 Oct 2026 12:20:59 +0200"
+  }
+ },
+ {
+  "newsroom": "Euronews",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 18,
+  "a": {
+   "title": "‘Let workers have a say’: Protesters target OpenAI conference",
+   "summary": "Dozens of activists protested outside OpenAI's developer conference in San Francisco, calling on the company to end its contracts with the US military and Immigration and Customs Enforcement and demanding greater regulation of AI.",
+   "link": "https://www.euronews.com/video/2026/09/30/let-workers-have-a-say-protesters-target-openai-conference",
+   "published": "Wed, 30 Sep 2026 16:06:29 +0200"
+  },
+  "b": {
+   "title": "Des manifestants visent la conférence d'OpenAI: &quot;Laisser les travailleurs s'exprimer&quot;",
+   "summary": "Des dizaines de militants ont manifesté devant la conférence développeurs d'OpenAI à San Francisco, réclamant la fin des contrats avec l'armée américaine et l'agence Immigration and Customs Enforcement, ainsi qu'une régulation renforcée de l'IA.",
+   "link": "https://fr.euronews.com/video/2026/09/30/des-manifestants-visent-la-conference-dopenai-laisser-les-travailleurs-sexprimer",
+   "published": "Wed, 30 Sep 2026 16:07:34 +0200"
+  }
+ },
+ {
+  "newsroom": "Euronews",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 18,
+  "a": {
+   "title": "Elon Musk returns to Trump administration to co-lead Pentagon war study",
+   "summary": "Musk, who in 2024 threw his support behind Trump and helped his return to the White House, served as head of the Department of Government Efficiency (DOGE), where he spearheaded sweeping job cuts across the US federal government.",
+   "link": "https://www.euronews.com/2026/10/01/elon-musk-returns-to-trump-administration-to-co-lead-pentagon-war-study",
+   "published": "Thu, 01 Oct 2026 18:57:25 +0200"
+  },
+  "b": {
+   "title": "Elon Musk revient dans l'administration Trump pour codiriger une étude du Pentagone sur la guerre",
+   "summary": "Musk, soutien de Trump en 2024, prend la tête du Département de l'efficacité gouvernementale (DOGE) et pilote des coupes massives dans l'administration fédérale.",
+   "link": "https://fr.euronews.com/2026/10/01/elon-musk-revient-dans-ladministration-trump-pour-codiriger-une-etude-du-pentagone-sur-la-",
+   "published": "Thu, 01 Oct 2026 19:28:41 +0200"
+  }
+ }
+]

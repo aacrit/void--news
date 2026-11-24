@@ -1,0 +1,8 @@
+source: src-hatano-scholarship
+locator: seckasahara
+url: https://www.jiia.or.jp/eng/upload/eng/ResourceLibrary_History_Hatano_181222.pdf
+read: 2026-10-09
+note: the text is the PDF's own text layer, whitespace collapsed to single spaces; line-end hyphenation is kept as the layer prints it
+note: page 22; the words inside the quotation marks are Kasahara and Yoshida's (2006) as Hatano renders them
+
+In their co-edited volume, Kasahara and Yoshida Yutaka 吉田裕 [2006] revisit the contemporary significance of research into the Nanjing Massacre by noting that “in Japanese academic circles, deep-rooted nega- tive reactions and aversion to debate about the issue of the Nanjing Mas- sacre continue to persist.”

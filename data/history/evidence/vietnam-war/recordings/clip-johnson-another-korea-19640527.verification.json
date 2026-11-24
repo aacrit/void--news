@@ -1,0 +1,56 @@
+{
+ "clip_id": "clip-johnson-another-korea-19640527",
+ "slug": "vietnam-war",
+ "tool": "faster-whisper",
+ "tool_version": "1.2.1",
+ "model": "base.en",
+ "compute_type": "int8",
+ "beam_size": 5,
+ "source": {
+  "file": "https://lbj-prod-staticfiles-4pgcba8v8q69.s3.amazonaws.com/artifacts/audio/2018-08/clip_lbj_wh6405_10_3522_Bundy.wav",
+  "md5": "79cf8308b368ff7962d701599a80c7c1",
+  "md5_expected": "79cf8308b368ff7962d701599a80c7c1",
+  "rate": 44100
+ },
+ "window": {
+  "in": 5.86,
+  "out": 13.56,
+  "seconds": 7.7
+ },
+ "excerpt_sha256": "ab62c459dc00e6e751107c95ec5af2a33bdcb16925d880b8f362a55df03a5dc4",
+ "excerpt_pcm": "s16le mono at the source rate, ffmpeg atrim, -bitexact",
+ "reference": "I don’t know what in the hell, it looks like to me that we’re getting into another Korea. It just worries the hell out of me.",
+ "hypothesis": "I don't know what in the hell it would look like me we're getting into another Korea it just worries the hell out of me",
+ "wer": 0.1429,
+ "coverage": 0.8571,
+ "counts": {
+  "ref_words": 28,
+  "hyp_words": 27,
+  "substitutions": 3,
+  "deletions": 1,
+  "insertions": 0,
+  "first_matched_ref": 0,
+  "last_matched_ref": 27,
+  "lead_insertions": 0,
+  "trail_insertions": 0
+ },
+ "diff": [
+  "i don t know what in the hell it",
+  "[looks -> would]",
+  "[like -> look]",
+  "[to -> like]",
+  "me",
+  "[-that]",
+  "we re getting into another korea it just worries the hell out of me"
+ ],
+ "thresholds": {
+  "coverage_min": 0.7,
+  "edge_slack_words": 1,
+  "edge_insert_max": 2
+ },
+ "pass": true,
+ "why": [],
+ "verified_at": "2026-10-10T06:15:49Z",
+ "signed": false,
+ "note": "a pass verifies the words in this window against the stored transcript. It does not verify the occasion, the date or the rights, and it signs nothing."
+}

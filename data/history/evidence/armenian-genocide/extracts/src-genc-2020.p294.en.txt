@@ -1,0 +1,7 @@
+rendering: official-parallel
+of: src-genc-2020.p294
+names: Osmanlı Ermenileri=Ottoman Armenians; I. Dünya Savaşı=First World War
+url: https://dergipark.org.tr/tr/download/article-file/1216061
+read: 2026-09-25
+
+Ottoman Armenians were subjected to relocation due to the internal security problem at the beginning of the First World War. The relocation event, brought along the discussions that has continued until today.

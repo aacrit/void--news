@@ -1,0 +1,7 @@
+source: src-frank-2005
+locator: para3
+url: https://www.washingtonexaminer.com/weekly-standard/why-truman-dropped-the-bomb
+read: 2026-10-07
+note: paragraph 3 of the article as the page prints it (the publisher's interleaved promotion lines are not counted)
+
+The critics share three fundamental premises. The first is that Japan’s situation in 1945 was catastrophically hopeless. The second is that Japan’s leaders recognized that fact and were seeking to surrender in the summer of 1945. The third is that thanks to decoded Japanese diplomatic messages, American leaders knew that Japan was about to surrender when they unleashed needless nuclear devastation. The critics divide over what prompted the decision to drop the bombs in spite of the impending surrender, with the most provocative arguments focusing on Washington’s desire to intimidate the Kremlin. Among an important stratum of American society–and still more perhaps abroad–the critics’ interpretation displaced the traditionalist view.

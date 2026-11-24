@@ -1,0 +1,7 @@
+source: src-schofield-2022
+locator: p31
+url: https://strategicstudies.org.pk/index.php/strategic_studies/article/download/138/103
+read: 2026-09-25
+note: page 31, on the Simla agreement of 1972; the PDF's line breaks are joined and its closing quotation glyph ‟ is kept
+
+another clause 4. (ii) affirmed that the ceasefire line (renamed the line of control (LoC)) would be respected „without prejudice to the respective positions of each side‟ and that neither side would seek to alter it „unilaterally, irrespective of mutual differences and legal interpretations.‟

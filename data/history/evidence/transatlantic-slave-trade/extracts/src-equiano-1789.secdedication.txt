@@ -1,0 +1,7 @@
+source: src-equiano-1789
+locator: secdedication
+url: https://www.gutenberg.org/cache/epub/15399/pg15399.txt
+read: 2026-10-09
+note: the dedication to the Lords and Commons, dated March 24, 1789, as the Project Gutenberg text prints it; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+Permit me, with the greatest deference and respect, to lay at your feet the following genuine Narrative; the chief design of which is to excite in your august assemblies a sense of compassion for the miseries which the Slave-Trade has entailed on my unfortunate countrymen.

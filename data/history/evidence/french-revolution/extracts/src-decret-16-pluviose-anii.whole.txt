@@ -1,0 +1,7 @@
+source: src-decret-16-pluviose-anii
+locator: whole
+url: https://www.persee.fr/doc/arcpa_0000-0000_1962_num_84_1_34717_t1_0284_0000_5
+read: 2026-10-09
+note: Persée's text layer of the Archives parlementaires, held as it prints it, the ¬ at a printed line-break hyphen included; line breaks collapsed to spaces, nothing else changed
+
+Il s’élève quelques débats relatifs à la rédac¬ tion du décret. DELACROIX en propose une (1). Après quelques discussions sur les différentes rédactions, celle-ci est enfin définitivement ar¬ rêtée au milieu des acclamations et des applau¬ dissemens universels. « La Convention nationale déclare aboli l’es¬ clavage des nègres dans toutes les colonies ; en conséquence, elle décrète que tous les hommes, sans distinction de couleur, domiciliés dans les colonies, sont citoyens français, et jouiront de tous les droits assurés par la constitution. « Renvoie au comité de salut public pour lui faire incessamment un rapport sur les mesures à prendre pour l’exécution du présent dé¬ cret » (2).

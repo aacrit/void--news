@@ -1,0 +1,8 @@
+source: src-frus-poole-19180915
+locator: whole
+url: https://history.state.gov/historicaldocuments/frus1918Russiav01/d630
+read: 2026-10-09
+note: the Office of the Historian's text of FRUS as served, tags removed; whitespace collapsed, nothing else changed
+note: the figure 2 after 'supplementary treaty' is FRUS's note mark; '[Page 687]' and '[made?]' are FRUS's own page mark and editorial insertion, held as served
+
+7. Most violent elements of Bolsheviki in control here. Drawing assurance from immunity granted Petrograd by Germany in Article 5 of supplementary treaty, 2 they are now carrying out a cold-blooded terror which has thrown a palpable stillness over the whole life of the [Page 687] city. Arrests [made?] en masse and unknown numbers are shot daily at Kronstadt alone. Unknown number, reported 1,700, mostly former officers, are held as hostages for lives of commissars, though no commissars killed since Uritski . Recent storm washed many bodies of officers ashore on adjacent mainland where they were eaten by dogs, Bolsheviki refusing burial. Population utterly cowed and no prospect of change.

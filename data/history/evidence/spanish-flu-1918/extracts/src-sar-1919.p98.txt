@@ -1,0 +1,7 @@
+source: src-sar-1919
+locator: p98
+url: https://archive.org/download/sar-influenza-epidemic-of-1918-gmar-1919/Influenza%20Epidemic%20of%201918_GMAR1919_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+
+The death-roll amongst members of the staff was regrettably heavy— 769 European and 1,357 coloured and native employees succumbed, 2126 in all.

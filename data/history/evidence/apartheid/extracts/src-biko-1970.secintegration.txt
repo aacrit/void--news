@@ -1,0 +1,7 @@
+source: src-biko-1970
+locator: secintegration
+url: https://www.saha.org.za/nonracialism/black_man_youre_on_your_own.htm
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+
+Does this mean that I am against integration? If by integration you understand a breakthrough into white society by blacks, an assimilation and acceptance of blacks into an already established set of norms and code of behaviour set up by and maintained by whites, then yes, I am against it. I am against the superior-inferior white-black stratification that makes the white a perpetual teacher and the black a perpetual pupil

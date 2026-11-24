@@ -1,0 +1,8 @@
+source: src-macarthur-19510419
+locator: secvictory
+url: https://www.govinfo.gov/content/pkg/SERIALSET-11511_00_00-019-0036-0000/pdf/SERIALSET-11511_00_00-019-0036-0000.pdf
+read: 2026-10-09
+note: Senate Document No. 36, 82d Congress, 1st Session, the address as printed by the Government Printing Office
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+But once war is forced upon us, there is no other alternative than to apply every available means to bring it to a swift end. War's very object is victory—not prolonged indecision. In war, indeed, there can be no substitute for victory.

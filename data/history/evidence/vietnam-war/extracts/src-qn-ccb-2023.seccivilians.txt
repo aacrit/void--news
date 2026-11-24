@@ -1,0 +1,7 @@
+source: src-qn-ccb-2023
+locator: seccivilians
+url: https://www.quangninh.gov.vn/bannganh/hoicuuchienbinh/Trang/ChiTietTinTuc.aspx?nid=395
+read: 2026-10-09
+note: the same page; Unicode NFC; no translation is held
+
+Ngoài ra, trong kháng chiến chống Pháp, chống Mỹ, chiến tranh bảo vệ Tổ quốc, có khoảng hơn 4 triệu dân thường Việt Nam ở hai miền (miền Bắc và miền Nam) đã chết và bị thương tật suốt đời do bom đạn, do kẻ thù giết hại…

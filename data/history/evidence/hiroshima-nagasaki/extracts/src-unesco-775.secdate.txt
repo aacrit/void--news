@@ -1,0 +1,6 @@
+source: src-unesco-775
+locator: secdate
+url: https://whc.unesco.org/en/list/775/
+read: 2026-10-05
+
+Date of Inscription: 1996

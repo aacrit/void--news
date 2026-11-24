@@ -1,0 +1,8 @@
+source: src-fr-duclert-2021
+locator: p985
+url: https://www.vie-publique.fr/files/rapport/pdf/279186.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+note: the report's own English text
+
+Thus, the human tragedy in Bisesero and the profound failure that it represents for France was not only the result of responsibilities on the ground but also largely a result of the desire to maintain a balance between parties. The French forces feared finding themselves confronted with the RPF and a violent reaction on its behalf.

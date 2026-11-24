@@ -1,0 +1,8 @@
+source: src-mau-2024
+locator: p5
+url: https://www.litrix.de/apps/litrix_publications/data/pdf2/lp_mau_ungleich_en.pdf
+read: 2026-10-09
+note: p. 5
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Now that the long transformation process is over, we can see more clearly than ever that East and West are still unequal, and that it is likely to stay that way for a while.

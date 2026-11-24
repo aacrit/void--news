@@ -1,0 +1,7 @@
+source: src-dccam-mapping
+locator: whole
+url: https://d.dccam.org/Projects/Maps/MappingKillingField.htm
+read: 2026-09-25
+note: the page's text as served, with a mis-encoded dash character between phrases stored as the page prints it
+
+MAPPING THE KILLING FIELDS F rom 1995 to 2007, the Documentation Center of Cambodia has set about the difficult � and often disheartening � task of mapping the Cambodian killing fields. Through interviews and physical exploration, DC-Cam identified 19,733 mass burial pits, 196 prisons that operated during the Democratic Kampuchea (DK) period, and 81 memorials constructed by survivors of the DK regime. Many of those sites contain � or once contained � the remains of thousands of victims, and they are located throughout 170 Cambodian districts and almost all of Cambodia's provinces. The killing fields.

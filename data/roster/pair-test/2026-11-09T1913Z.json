@@ -1,0 +1,87 @@
+{
+ "collected_at": "2026-11-09T19:13:17Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 32,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16278783/Meghan-pulls-planned-child-safety-speech-Brussels.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Meghan pulls out of planned child safety speech in Brussels because she's 'not emotionally strong enough' after her father's arrest",
+      "published": "Mon, 09 Nov 2026 18:56:37 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/royals/meghan-markle-speech-dad-arrest-37859681",
+      "title": "Meghan 'not strong enough' to give speech with Harry on child safety after dad’s arrest",
+      "published": "Mon, 9 Nov 2026 16:31:51 +0000"
+     }
+    },
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16277691/west-ham-wipe-russell-brand-history.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "West Ham wipe Russell Brand from their history after years of getting VIP treatment and kissing their managers in post-match interviews - as he's jailed for 10 years and six months for rape and sexual assault",
+      "published": "Mon, 09 Nov 2026 17:38:45 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/3am/celebrity-news/russell-brand-laura-gallacher-prison-37859455",
+      "title": "Russell Brand convictions have ‘devastated’ wife Laura and they haven't told their kids",
+      "published": "Mon, 9 Nov 2026 17:22:09 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 156,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 24,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/diplomacy/brothers-in-arms-erdogan-receives-warm-welcome-in-azerbaijan",
+      "title": "Brothers in arms: Erdoğan receives warm welcome in Azerbaijan",
+      "published": "Sun, 08 Nov 2026 13:10:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/erdogans-family-business-ties-complicate-azerbaijan-dispute/",
+      "title": "Erdogan’s family business ties complicate Azerbaijan dispute",
+      "published": "Mon, 26 Oct 2026 23:01:29 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 314,
+    "left": 10
+   }
+  }
+ }
+}

@@ -1,0 +1,7 @@
+source: src-azapo-1996
+locator: para17
+url: https://www.justice.gov.za/trc/legal/azapo.htm
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+
+Every decent human being must feel grave discomfort in living with a consequence which might allow the perpetrators of evil acts to walk the streets of this land with impunity, protected in their freedom by an amnesty immune from constitutional attack, but the circumstances in support of this course require carefully to be appreciated. Most of the acts of brutality and torture which have taken place have occurred during an era in which neither the laws which permitted the incarceration of persons or the investigation of crimes, nor the methods and the culture which informed such investigations, were easily open to public investigation, verification and correction. Much of what transpired in this shameful period is shrouded in secrecy and not easily capable of objective demonstration and proof.

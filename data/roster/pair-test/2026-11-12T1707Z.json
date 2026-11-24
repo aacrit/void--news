@@ -1,0 +1,60 @@
+{
+ "collected_at": "2026-11-12T17:07:46Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 26,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16229277/michael-carrick-sacked-man-united.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Michael Carrick is SACKED by Man United: Manager leaves training ground just 2½ hours after arriving - and now Mauricio Pochettino is ready to take over",
+      "published": "Thu, 12 Nov 2026 12:34:25 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/harry-maguire-michael-carrick-sacked-37871505",
+      "title": "Harry Maguire first Man Utd star to comment after Michael Carrick sacked for Mauricio Pochettino",
+      "published": "Thu, 12 Nov 2026 15:51:33 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 194,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 306,
+    "left": 10
+   }
+  }
+ }
+}

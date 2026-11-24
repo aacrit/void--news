@@ -1,0 +1,9 @@
+source: src-gust-19150707-en
+locator: para6
+url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs-en/1915-07-07-DE-001
+read: 2026-09-25
+note: paragraphs counted from the first line after the dateline of the document as the page prints it, enclosure headings included
+note: the translation is the online edition's own (sponsored by the Zoryan Institute), held here as the edition prints it, at most 150 words
+note: the paragraph from its sentence beginning Besides, the opening sentences left out
+
+Besides this, the route for the deportees led through the Kurd district of Dersim, and the Vali of Trebizond made an open declaration to the Consul, who had pointed such observations out to him at my instructions, that he could only guarantee the safety of the transport as far as Erzindjan. From that point onwards, they are letting the deportees practically run the gauntlet through bands of Kurds and other highwaymen. For example, the Armenians who had been expelled from the plain of Erzurum were ambushed on the way to Harput whereby the men and children were butchered and the women carried away. The Imperial Consul in Erzurum claims the number of Armenians killed there to be 3,000.

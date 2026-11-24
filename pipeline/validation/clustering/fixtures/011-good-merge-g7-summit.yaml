@@ -1,0 +1,98 @@
+id: g7-summit-good-merge-2026-04
+name: "G7 summit Hiroshima — known-good merge across 6 sources"
+failure_date: "2026-04-22"
+failure_kind: known-good-merge
+articles:
+  - id: g7-1
+    title: "G7 leaders gather in Hiroshima for AI-governance summit"
+    summary: "G7 leaders gathered in Hiroshima Monday for a two-day summit focused on artificial-intelligence governance and Indo-Pacific security."
+    full_text: >
+      G7 leaders gathered in Hiroshima on Monday for a two-day summit focused on
+      artificial-intelligence governance and Indo-Pacific security. Japanese Prime
+      Minister Shigeru Ishiba opened the proceedings at the Genbaku Dome, calling for
+      "a new global compact on responsible AI development." US President Trump arrived
+      Monday morning and held a sideline bilateral with French President Emmanuel
+      Macron. The agenda includes export-control coordination on advanced semiconductors,
+      a pooled crisis-response mechanism, and a joint statement on Ukraine. The summit
+      ends Tuesday afternoon. South Korean President Lee Jae-myung will join as observer.
+      Outgoing UK PM Keir Starmer will deliver his last G7 keynote on AI standards.
+    source: { slug: nikkei, country: JP, tier: international }
+    published_at: "2026-04-21T08:00Z"
+  - id: g7-2
+    title: "Hiroshima G7 opens: AI governance and Indo-Pacific security top agenda"
+    summary: "The Hiroshima G7 opened Monday with AI governance and Indo-Pacific security topping the agenda, Japan's PM Ishiba said."
+    full_text: >
+      The Hiroshima G7 opened Monday with AI governance and Indo-Pacific security topping
+      the agenda, Japan's Prime Minister Shigeru Ishiba said in his welcome address. The
+      Reuters delegation in Hiroshima counted nine bilateral meetings on Monday alone,
+      the most since the 2023 Hiroshima summit. Treasury Secretary Scott Bessent will
+      lead a separate finance-track session at the New Otani hotel. The summit
+      communiqué is expected late Tuesday and is being drafted by Japanese sherpa
+      Hayashi Yoshimasa.
+    source: { slug: reuters, country: JP, tier: wire }
+    published_at: "2026-04-21T08:30Z"
+  - id: g7-3
+    title: "G7 Hiroshima: Trump-Macron sideline, Ishiba opens AI talks"
+    summary: "G7 Hiroshima saw a Trump-Macron sideline meeting Monday as PM Ishiba opened AI governance talks."
+    full_text: >
+      G7 Hiroshima saw a Trump-Macron sideline meeting Monday as Prime Minister Shigeru
+      Ishiba opened the artificial-intelligence governance plenary. The Associated Press
+      reports the bilateral focused on Mediterranean migration policy and a tariff-truce
+      proposal. Macron's office said the meeting ran 38 minutes, well over the
+      protocol-allotted 20.
+    source: { slug: ap-news, country: JP, tier: wire }
+    published_at: "2026-04-21T09:00Z"
+  - id: g7-4
+    title: "AI governance front and centre at Hiroshima G7 summit"
+    summary: "AI governance is front and centre at the Hiroshima G7 summit, with PM Ishiba pushing for a global compact on responsible development."
+    full_text: >
+      AI governance is front and centre at the Hiroshima G7 summit, with Japanese Prime
+      Minister Shigeru Ishiba pushing for a global compact on responsible development. The
+      Financial Times reports the draft language would commit signatories to align
+      export controls on advanced semiconductor manufacturing equipment and to stand up
+      a joint crisis-response mechanism by year end. The German chancellor Friedrich
+      Merz expressed reservations about export-control language.
+    source: { slug: ft, country: GB, tier: international }
+    published_at: "2026-04-21T09:30Z"
+  - id: g7-5
+    title: "G7 Hiroshima summit: Ukraine joint statement also on agenda"
+    summary: "Beyond AI governance, the G7 Hiroshima summit will issue a joint statement on Ukraine, with focus on funding for reconstruction."
+    full_text: >
+      Beyond AI governance, the G7 Hiroshima summit will issue a joint statement on
+      Ukraine, with particular focus on funding for reconstruction and on a Russia
+      frozen-assets mechanism. The Guardian's correspondent at the G7 Hiroshima summit
+      reports Ukrainian President Volodymyr Zelensky will address the summit virtually
+      on Tuesday morning. The Hiroshima G7 summit opened Monday with PM Ishiba's
+      welcome speech. EU Commission President Ursula von der Leyen praised the
+      inclusion. Russia's foreign ministry called the planned statement "irrelevant
+      theatre." Trump and Macron's sideline meeting at the G7 Hiroshima summit
+      reportedly touched on the Ukraine agenda. AI governance and Indo-Pacific
+      security still lead the summit communique drafting.
+    source: { slug: guardian, country: GB, tier: international }
+    published_at: "2026-04-21T10:00Z"
+  - id: g7-6
+    title: "Trump arrives in Hiroshima for G7 summit"
+    summary: "President Trump arrived in Hiroshima Monday morning for the two-day G7 summit, his second G7 as president."
+    full_text: >
+      President Trump arrived in Hiroshima on Monday morning for the two-day G7 summit,
+      his second G7 as president. CNN's traveling press pool reports Trump's first
+      sideline was with French President Emmanuel Macron. The president's full bilateral
+      schedule includes meetings with Japan's Ishiba, Germany's Merz, the UK's Starmer,
+      and Canada's Carney. The summit will close Tuesday afternoon with a leaders'
+      group photograph at the Hiroshima Peace Memorial Park. Trump is expected back at
+      the White House by Wednesday morning.
+    source: { slug: cnn, country: US, tier: international }
+    published_at: "2026-04-21T10:30Z"
+expectation:
+  type: should_merge
+  expected_member_ids: [g7-1, g7-2, g7-3, g7-4, g7-5, g7-6]
+  min_clusters: 1
+  max_clusters: 1
+  min_source_count: 5
+rationale: |
+  Known-good baseline. The current algorithm correctly merges this kind
+  of multi-source diplomatic-event coverage: shared entities (Ishiba,
+  Hiroshima, G7, Trump, Macron) and the head-of-state + summit-token
+  exception in Phase 2 both fire, producing a single high-source-count
+  cluster. This fixture exists to detect REGRESSIONS that would break
+  this happy path during the rewrite.

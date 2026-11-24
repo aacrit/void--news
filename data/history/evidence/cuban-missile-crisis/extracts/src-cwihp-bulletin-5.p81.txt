@@ -1,0 +1,8 @@
+source: src-cwihp-bulletin-5
+locator: p81
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHPBulletin5_p2.pdf
+read: 2026-10-04
+note: the PDF's text layer, line breaks folded to spaces; where the layer breaks a word at a line end its hyphen is kept as it prints it ('docu- ment'); nothing is corrected
+note: printed page 81: Blight and Brenner, on how Cuba learned of the Soviet decision
+
+Cuba learned about the Soviet decision at the same moment the United States did, by hearing Khrushchev’s announcement on Ra- dio Moscow on the morning of October 28. Mikoyan argued to Castro on November 3 that there had been no time to consult with the Cuban leader, especially in light of a letter Castro had sent to Khrushchev on October 27

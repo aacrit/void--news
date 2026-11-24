@@ -1,0 +1,8 @@
+source: src-latsis-1921
+locator: p9
+url: https://archive.org/download/chrezvychajnyekomissiipoborbeskontrrevo75/chrezvychajnyekomissiipoborbeskontrrevo75_djvu.txt
+read: 2026-10-09
+note: the free copy is the scan's OCR text layer, held as the layer prints it (misreadings included); line breaks collapsed to spaces, nothing else changed
+note: the layer reads the three-year total as '12. 183'; the page image of the same scan (leaf n10, printed page 9) prints '12. 733', read by eye on 2026-10-09 and recorded here, not altered in the extract. The layer's 'КВомиесий', 'ыы]', 'Ва', 'кравным', 'расетрел', 'тые.' are its misreadings of 'Комиссий', 'волна', 'На', 'красным', 'расстрел', 'тыс.'
+
+За первую половину 1918 года, за первое полугодие существо- вания Чрезвычайных КВомиесий, ими было расстреляно всего 22 человека. Это продлилось так бы и дальше, если бы не широкая ыы] заговоров и самый необузданный белый террор ео стороны контр-’ революционной буржуазии. Ва этот террор мы вынуждены были ответить кравным террором \ и чаще применять высшую меру наказания— расетрел. И вот, за второе полугодие 1918 года уже расстреляно свыше 6 тые., а за все три года—12. 183 человека. Это по’ всей России.

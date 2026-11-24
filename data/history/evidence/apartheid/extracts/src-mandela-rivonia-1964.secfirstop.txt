@@ -1,0 +1,7 @@
+source: src-mandela-rivonia-1964
+locator: secfirstop
+url: https://www.un.org/en/events/mandeladay/court_statement_1964.shtml
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+
+Umkhonto had its first operation on 16 December 1961, when Government buildings in Johannesburg, Port Elizabeth and Durban were attacked. The selection of targets is proof of the policy to which I have referred. Had we intended to attack life we would have selected targets where people congregated and not empty buildings and power stations.

@@ -1,0 +1,50 @@
+{
+ "clip_id": "clip-kennedy-congress-19610525",
+ "slug": "apollo-11-moon-landing",
+ "tool": "faster-whisper",
+ "tool_version": "1.2.1",
+ "model": "base.en",
+ "compute_type": "int8",
+ "beam_size": 5,
+ "source": {
+  "file": "https://static.jfklibrary.org/pox43o6b4t44m6wwihi7hx7kfxf33776.mp3",
+  "md5": "674385e75f3ff32a8cbac1f9ac036383",
+  "md5_expected": "674385e75f3ff32a8cbac1f9ac036383",
+  "rate": 44100
+ },
+ "window": {
+  "in": 2031.2,
+  "out": 2043.6,
+  "seconds": 12.4
+ },
+ "excerpt_sha256": "a730c2c27f70a99981ac6ecbaaf06ad6cfe9149d74f5e92250c904c85e18a8bb",
+ "excerpt_pcm": "s16le mono at the source rate, ffmpeg atrim, -bitexact",
+ "reference": "First, I believe that this nation should commit itself to achieving the goal, before this decade is out, of landing a man on the moon and returning him safely to the earth.",
+ "hypothesis": "First, I believe that this nation should commit itself to achieving the goal before this decade is out of landing a man on the moon and returning him safely to the Earth.",
+ "wer": 0.0,
+ "coverage": 1.0,
+ "counts": {
+  "ref_words": 32,
+  "hyp_words": 32,
+  "substitutions": 0,
+  "deletions": 0,
+  "insertions": 0,
+  "first_matched_ref": 0,
+  "last_matched_ref": 31,
+  "lead_insertions": 0,
+  "trail_insertions": 0
+ },
+ "diff": [
+  "first i believe that this nation should commit itself to achieving the goal before this decade is out of landing a man on the moon and returning him safely to the earth"
+ ],
+ "thresholds": {
+  "coverage_min": 0.7,
+  "edge_slack_words": 1,
+  "edge_insert_max": 2
+ },
+ "pass": true,
+ "why": [],
+ "verified_at": "2026-10-04T05:05:51Z",
+ "signed": false,
+ "note": "a pass verifies the words in this window against the stored transcript. It does not verify the occasion, the date or the rights, and it signs nothing."
+}

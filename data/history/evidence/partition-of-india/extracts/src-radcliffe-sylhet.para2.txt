@@ -1,0 +1,11 @@
+source: src-radcliffe-sylhet
+locator: para2
+url: https://archive.org/download/dli.csl.1040/1040_djvu.txt
+read: 2026-09-25
+note: the OCR layer misspells Commission and non-Muslims in this paragraph; kept as printed
+
+2. The Bengal Boundary Commisison was constituted as stated in my report dated the 12th of August 1947 with regard to the division of the Province of Bengal into East and West Bengal. Our terms of reference were as follows: —
+
+‘ : The Boundary Commission is instructed to demarcate the boundaries of the two parts of Bengal on the basis of ascertaining the contiguous majority areas of Muslims and no-Muslims. In doing so, it will also take into account other factors.
+
+In the event of the referendum in the District of Sylhet resulting in favour of amalgamation with Eastern Bengal, the Boundary Commission will also demarcate the Muslim majority areas of Sylhet District and the contiguous Muslim majority areas of the adjoining districts of Assam.”

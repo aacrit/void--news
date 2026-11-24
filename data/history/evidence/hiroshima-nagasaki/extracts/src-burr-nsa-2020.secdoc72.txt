@@ -1,0 +1,7 @@
+source: src-burr-nsa-2020
+locator: secdoc72
+url: https://nsarchive.gwu.edu/briefing-book/nuclear-vault/2020-08-04/atomic-bomb-end-world-war-ii
+read: 2026-10-07
+note: the editor's commentary on Documents 72A to 72C (the first cables on the Nagasaki mission); the 100,000 to 200,000 range is the editor's quotation of Richard Frank
+
+The prime target for the second atomic attack was Kokura, which had a large army arsenal and ordnance works, but various problems ruled that city out; instead, the crew of the B-29 that carried “Fat Man” flew to an alternate target at Nagasaki. These cables are the earliest reports of the mission; the bombing of Nagasaki killed immediately at least 39,000 people, with more dying later. According to Frank, the “actual total of deaths due to the atomic bombs will never be known,” but the “huge number” ranges somewhere between 100,000 and 200,000 people.

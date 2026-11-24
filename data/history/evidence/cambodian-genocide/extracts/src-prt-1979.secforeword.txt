@@ -1,0 +1,7 @@
+source: src-prt-1979
+locator: secforeword
+url: https://archive.org/download/revtribunalpolpot/revtribunalpolpot_djvu.txt
+read: 2026-09-25
+note: the Internet Archive text layer is optical character recognition of a 1990 print; misreads (nealy) are stored as the layer prints them
+
+Cambodia is one of the countries of the indo-Chinese peninsula, which used to have a glorious civilization in Angkor period. People in this country are docile, loving peace and diligent in defending and constructing their motherland. But, unfortunately, more than three million of these innocent people were brutally massacred under the Pol Pot genocidal regime and social structures in all fields were nealy totally destroyed in only three years eight months and twenty days.

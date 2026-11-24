@@ -1,0 +1,7 @@
+source: src-act-1807
+locator: sec1
+url: https://statutes.org.uk/site/the-statutes/nineteenth-century/1807-47-geo-3-1-c36-slave-trade/
+read: 2026-10-09
+note: section I, in the host's transcription of the printed Act; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+That from and after the First Day of May One thousand eight hundred and seven, the African Slave Trade, and all and all manner of dealing and trading in the Purchase, Sale, Barter, or Transfer of Slaves, or of Persons intended to be sold, transferred, used, or dealt with as Slaves, practiced or carried on, in, at, to or from any Part of the Coast or Countries of Africa, shall be, and the same is hereby utterly abolished, prohibited, and declared to be unlawful

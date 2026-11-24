@@ -1,0 +1,7 @@
+source: src-de-19150617
+locator: para5
+url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs/1915-06-17-DE-003
+read: 2026-09-25
+note: paragraphs counted from the first line after the dateline of the document as the page prints it, enclosure headings included
+
+Der Armenische Patriarch äußerte einige Tage später zu demselben Beamten, daß die Maßregeln der Pforte nicht nur die zeitweilige Unschädlichmachung der armenischen Bevölkerung, sondern ihre Austreibung aus der Türkei, oder vielmehr ihre Ausrottung bezweckten. Die Deportierung sei ebenso schlimm wie ein Massakre, und es würde nicht zu verwundern sein, wenn die Armenier sich schließlich zur Wehr setzten, selbst ohne Aussicht auf Erfolg "wie ein gequältes Tier, das gegen seine Peiniger ausschlägt." Er scheint die Hoffnung aufgegeben zu haben, durch Schritte bei der türkischen Regierung eine Wendung zum Besseren herbeiführen zu können. Auf eine Verwendung unsererseits zugunsten der Armenier kam er nicht wieder zurück. Er ist nach wie vor - und wie wohl alle Armenier, soweit sie Kenntnis von den Vorgängen haben - der Ueberzeugung, daß die von der Regierung den Armeniern vorgeworfenen Ausschreitungen durch das Vorgehen der Behörden hervorgerufen worden sind.

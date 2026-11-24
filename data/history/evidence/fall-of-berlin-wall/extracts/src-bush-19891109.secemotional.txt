@@ -1,0 +1,8 @@
+source: src-bush-19891109
+locator: secemotional
+url: https://nsarchive2.gwu.edu/NSAEBB/NSAEBB490/docs/Bush%20press%20conference%2011%209%2089.pdf
+read: 2026-10-09
+note: the same document
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Q. In what you just said, that this is a sort of great victory for our side in the big East‐West battle, but you don't seem elated. And I'm wondering if you're thinking of the problems. The President. I am not an emotional kind of guy. Q. Well, how elated are you? The President. I'm very pleased.

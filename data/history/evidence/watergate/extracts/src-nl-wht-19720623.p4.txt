@@ -1,0 +1,8 @@
+source: src-nl-wht-19720623
+locator: p4
+url: https://www.nixonlibrary.gov/sites/default/files/forresearchers/find/tapes/watergate/trial/exhibit_01.pdf
+read: 2026-10-09
+note: the Nixon Library's electronic copy of the typewritten transcript prepared for the Watergate trials, line breaks folded to spaces; speaker labels, ellipses, the dashes and the hyphens the copy prints at a line end ('investi- gation') are kept as printed; the Library warns that the electronic versions 'may not be identical in every respect to the original typewritten transcripts'
+note: printed page 4: Haldeman names Mark Felt and says he 'wants to cooperate because... he's ambitious'
+
+HALDEMAN: ...and, uh, that would take care of it. PRESIDENT: What about Pat Gray, ah, you mean he doesn't want to? HALDEMAN: Pat does want to. He doesn't know how to, and he doesn't have, he doesn't have any basis for doing it. Given this, he will then have the basis. He'll call Mark Felt in, and the two of them ...and Mark Felt wants to cooperate because... PRESIDENT: Yeah. HALDEMAN: he's ambitious... PRESIDENT: Yeah. HALDEMAN: Ah, he'll call him in and say, "We've got the signal from across the river to, to put the hold on this." And that will fit rather well because the FBI agents who are working the case, at this point, feel that's what it is. This is CIA.

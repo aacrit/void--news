@@ -1,0 +1,1226 @@
+# The evidence ledger for indian-independence-movement (docs/proposals/HISTORY-THESIS-PAGE.md §3, §4c, §8).
+# Begun 2026-10-09 for the first-listener rewrite of the episode. Every entry was fetched on
+# 2026-10-09 from the URL it names; every extract under extracts/ was sliced from the fetched
+# copy by a builder script (start marker to end marker in the whitespace-collapsed text;
+# scratch out/ledger-indian-independence-movement/build.py), never retyped. Nothing here was
+# written from memory. Where a scan's OCR layer is the free copy, the extract keeps the layer's
+# glyphs and line-end hyphens and says so in a note. Where the English is a translation (the
+# Collected Works' renderings from Hindi and Gujarati), the entry and the extract say so.
+#
+# This is NOT a thesis ledger: no positions, contested claims, exhibits or analyses are
+# adjudicated here, and the event renders the Hearing. The bar of §4e is not claimed.
+# The partition-of-india ledger is not edited; its Jinnah address is re-fetched here.
+#
+# The five perspectives of the event YAML, at parity, each in its own holders' words:
+#   Gandhian / Congress       Gandhi in the Collected Works (1922 trial, Chauri Chaura, the
+#                             letter to Irwin, the Dandi message, Quit India); the Congress's
+#                             Punjab report (1920), the 26 January declaration, the AICC
+#                             resolution of 8 August 1942
+#   Revolutionary             the HSRA notice of 8 April 1929; Bhagat Singh and B. K. Dutt's
+#                             statement (1929); Bose's speeches (1942, 1944) as the
+#                             Publications Division prints them
+#   British Colonial          the Hunter Committee (majority), the Government of India's and
+#                             the Secretary of State's despatches (1920); Hansard: Churchill on
+#                             Dyer (1920), the Lords' motion, Churchill (1942), Attlee (1946);
+#                             the Famine Inquiry Commission (1945)
+#   Dalit / Ambedkarite       Ambedkar, What Congress and Gandhi Have Done to the Untouchables
+#                             (1945); his speeches in the Constituent Assembly (1948, 1949)
+#   Muslim League             Jinnah at Lucknow (1937) and Lahore (1940); his letter to Gandhi
+#                             (1944); his address of 11 August 1947
+#
+# DISAGREEMENTS the record holds (each figure with its producer; never averaged):
+#   Jallianwala Bagh dead: 'At first it was thought that about 200' (Hunter majority); 'not more
+#     than 290' (Mr. Thompson, as the Congress report quotes him); 'approximately 379' (Hunter
+#     majority, the official investigation with the Seva Samiti list); 'at least 379' (minority);
+#     379 (Government of India); 500, the Sewa Samiti's figure 'practically accepted' (Congress
+#     report); 1,000, Lala Girdhari Lal's computation, which the Congress report adopts.
+#   Wounded: 'probably three times as great as the number of killed' (Hunter majority); 'about
+#     1,200' (minority); 192, an official figure the Government of India says omits the slightly
+#     wounded (its despatch of 3 May 1920). The Congress report's 'nearly 1,200 lives ... at least
+#     3,600 men wounded' is for the whole Punjab martial-law period.
+#   The crowd: 'about 6,000' (Dyer's report, per Hunter); 'about 5,000' (Montagu's despatch, as
+#     Dyer estimated it); '5,000 or 6,000' at the time and '15,000 to 20,000' (minority); '10 to 20
+#     thousand' (Hunter majority); 20,000 (Congress report).
+#   The force: 25 and 25 troops firing (Hunter); '50 Indian Infantry armed with rifles, 40 ...
+#     armed only with Kukris' (Montagu); 'his 90 soldiers' (Congress report). The YAML's 'fifty
+#     soldiers' is the riflemen only.
+#   'A sufficient moral effect' is Dyer's WRITTEN report (to the General Staff), quoted by the
+#     Hunter majority and in the Lords, not words he spoke to the Committee.
+#   Salt March marchers: 'seventy-two' (Gandhi, 12 March 1930) against the editors' 'Actually
+#     seventy-eight' (src-cwmg-43-sabarmati-speech.secmarchers).
+#   'I want world sympathy in this battle of Right against Might': Dandi, April 5, 1930 (CWMG);
+#     the YAML and the live script give Sabarmati, March 12, 1930.
+#   Bengal famine dead: 'A million and a half' / 'some 1*5 million deaths in excess' (Famine
+#     Inquiry Commission, 1945), which reports and rejects Professor Chattopadhyaya's 3.5 million.
+#     The YAML's 3 million is held by no source here.
+#   Quit India dead: 'Less than 500 persons have been killed' (Churchill, 10 September 1942); the
+#     YAML's 1,060 official and 10,000 Indian figures are not held.
+#   The naval mutiny: 7,000 ratings in Bombay (Attlee, 22 February 1946); the YAML says 20,000
+#     sailors and 78 ships. Bombay disturbances: 223 deaths, 1,037 injured (Attlee, 26 February).
+#   Bhagat Singh's execution: Gandhi's own letter of the same day asked the Viceroy to suspend it
+#     (src-cwmg-45-viceroy-letter); the revolutionary account says Congress made 'no serious
+#     effort'. Both are said, neither settled here.
+#   The Poona Pact: 148 reserved seats against the Award's 78 (Ambedkar, 1945), and his own
+#     reading that the double vote it took away was worth more.
+#   Ambedkar's constitution sentence: the YAML's 'if those who are implementing it are not good,
+#     it will prove to be bad' is a paraphrase of 'it is sure to turn out bad because those who
+#     are called to work it, happen to be a bad lot' (src-cad-19491125.secgood).
+#   Jinnah's 'a nation with our own distinctive culture and civilization...' is his letter of 17
+#     September 1944, and it reads 'art and architecture' and 'sense of value' where the YAML
+#     drops the first and writes 'values' (src-cwmg-78-jinnah-letter.secnation).
+#   'Himalayan': Gandhi called his own 1919 error 'a Himalayan mis- calculation'
+#     (src-cwmg-22-chauri-chaura.sechimalayan); the YAML gives 'the Himalayan blunder' to Bose,
+#     which is not held.
+slug: indian-independence-movement
+bootstrapped: '2026-10-09'
+entries:
+- id: src-cwmg-43-dandi-message
+  tier: A
+  kind: primary-document
+  author: M. K. Gandhi
+  title: A Message, Dandi, April 5, 1930 (item 167)
+  container: The Collected Works of Mahatma Gandhi, Vol. XLIII (electronic edition)
+  publisher: Publications Division, Government of India; electronic edition as uploaded to the Internet Archive (item HindSwaraj-CWMG-043, licence CC BY 4.0 as the item states)
+  place: New Delhi
+  year: 1930
+  edition: 'the editors print it ''From a photostat: Mahatma Gandhi (Album), p. 87''; a handwritten one-line message'
+  volume: XLIII
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: HindSwaraj-CWMG-043
+    hathitrust: null
+    url: https://archive.org/details/HindSwaraj-CWMG-043
+  access:
+    free_copy: https://archive.org/download/HindSwaraj-CWMG-043/CWMG-v043-XLIII-MC-BETA_djvu.txt
+    verified_at: '2026-10-09'
+    verified_by: archive-item-fetch
+    verified_title: CWMG, Vol. 043
+  language: en
+  region_of_authorship: south-asia
+  producer: gandhi
+  position: null
+  rights: public
+  does_not_show: 'where Gandhi was on 12 March 1930 or what he said at Sabarmati that morning: the message is dated at Dandi, 5 April 1930, the day before the salt was taken'
+- id: src-cwmg-43-ap-statement
+  tier: A
+  kind: primary-document
+  author: M. K. Gandhi
+  title: Statement to Associated Press, Dandi, April 5, 1930 (item 166)
+  container: The Collected Works of Mahatma Gandhi, Vol. XLIII (electronic edition)
+  publisher: Publications Division, Government of India; electronic edition as uploaded to the Internet Archive (item HindSwaraj-CWMG-043, licence CC BY 4.0 as the item states)
+  place: New Delhi
+  year: 1930
+  edition: the statement as the volume prints it from Speeches and Writings of Mahatma Gandhi
+  volume: XLIII
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: HindSwaraj-CWMG-043
+    hathitrust: null
+    url: https://archive.org/details/HindSwaraj-CWMG-043
+  access:
+    free_copy: https://archive.org/download/HindSwaraj-CWMG-043/CWMG-v043-XLIII-MC-BETA_djvu.txt
+    verified_at: '2026-10-09'
+    verified_by: archive-item-fetch
+    verified_title: CWMG, Vol. 043
+  language: en
+  region_of_authorship: south-asia
+  producer: gandhi
+  position: null
+  rights: public
+  does_not_show: 'that the salt was taken on 6 April: it announces the intention for ''tomorrow morning'''
+- id: src-cwmg-43-irwin-letter
+  tier: A
+  kind: primary-document
+  author: M. K. Gandhi
+  title: Letter to Lord Irwin, Satyagraha Ashram, Sabarmati, March 2, 1930 (item 3)
+  container: The Collected Works of Mahatma Gandhi, Vol. XLIII (electronic edition)
+  publisher: Publications Division, Government of India; electronic edition as uploaded to the Internet Archive (item HindSwaraj-CWMG-043, licence CC BY 4.0 as the item states)
+  place: New Delhi
+  year: 1930
+  edition: the letter's English text as the volume prints it
+  volume: XLIII
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: HindSwaraj-CWMG-043
+    hathitrust: null
+    url: https://archive.org/details/HindSwaraj-CWMG-043
+  access:
+    free_copy: https://archive.org/download/HindSwaraj-CWMG-043/CWMG-v043-XLIII-MC-BETA_djvu.txt
+    verified_at: '2026-10-09'
+    verified_by: archive-item-fetch
+    verified_title: CWMG, Vol. 043
+  language: en
+  region_of_authorship: south-asia
+  producer: gandhi
+  position: null
+  rights: public
+  does_not_show: the Viceroy's answer; how many marched (the letter says only 'such co-workers of the Ashram as I can take'); the editors' note that the march began on 12 March, not
+    the 11th the letter names
+- id: src-cwmg-43-sabarmati-speech
+  tier: A
+  kind: primary-document
+  author: M. K. Gandhi
+  title: Speech at Prayer Meeting, Sabarmati Ashram, [March 12, 1930] (item 54)
+  container: The Collected Works of Mahatma Gandhi, Vol. XLIII (electronic edition)
+  publisher: Publications Division, Government of India; electronic edition as uploaded to the Internet Archive (item HindSwaraj-CWMG-043, licence CC BY 4.0 as the item states)
+  place: New Delhi
+  year: 1930
+  edition: the editors date it from internal evidence ('The source does not mention the date'); their note corrects his 'seventy-two' to 'Actually seventy-eight' and points to a list
+    in Appendix II, which was not read
+  volume: XLIII
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: HindSwaraj-CWMG-043
+    hathitrust: null
+    url: https://archive.org/details/HindSwaraj-CWMG-043
+  access:
+    free_copy: https://archive.org/download/HindSwaraj-CWMG-043/CWMG-v043-XLIII-MC-BETA_djvu.txt
+    verified_at: '2026-10-09'
+    verified_by: archive-item-fetch
+    verified_title: CWMG, Vol. 043
+  language: en
+  region_of_authorship: south-asia
+  producer: gandhi
+  position: null
+  rights: public
+  does_not_show: the list of marchers (Appendix II, not read); the words 'I want world sympathy' (they are not in this speech)
+- id: src-cwmg-22-chauri-chaura
+  tier: A
+  kind: primary-document
+  author: M. K. Gandhi
+  title: The Crime of Chauri Chaura, Young India, 16-2-1922 (item 174)
+  container: The Collected Works of Mahatma Gandhi, Vol. XXII (electronic edition)
+  publisher: Publications Division, Government of India; electronic edition as uploaded to the Internet Archive (item HindSwaraj-CWMG-022, licence CC BY 4.0 as the item states)
+  place: New Delhi
+  year: 1922
+  edition: the article as the volume prints it from Young India
+  volume: XXII
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: HindSwaraj-CWMG-022
+    hathitrust: null
+    url: https://archive.org/details/HindSwaraj-CWMG-022
+  access:
+    free_copy: https://archive.org/download/HindSwaraj-CWMG-022/CWMG-v022-XXII-MC-BETA_djvu.txt
+    verified_at: '2026-10-09'
+    verified_by: archive-item-fetch
+    verified_title: CWMG, Vol. 022
+  language: en
+  region_of_authorship: south-asia
+  producer: gandhi
+  position: null
+  rights: public
+  does_not_show: 'how many policemen died: the article gives no count; the date of the attack; who was later tried for it'
+- id: src-cwmg-23-great-trial
+  tier: A
+  kind: primary-document
+  author: M. K. Gandhi; Justice R. S. Broomfield
+  title: The Great Trial, Ahmedabad, 18-3-1922 (item 57)
+  container: The Collected Works of Mahatma Gandhi, Vol. XXIII (electronic edition)
+  publisher: Publications Division, Government of India; electronic edition as uploaded to the Internet Archive (item HindSwaraj-CWMG-023, licence CC BY 4.0 as the item states)
+  place: New Delhi
+  year: 1922
+  edition: the report from Young India, 23-3-1922, with the editors' notes on where it differs from the official transcript (Trial of Gandhiji)
+  volume: XXIII
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: HindSwaraj-CWMG-023
+    hathitrust: null
+    url: https://archive.org/details/HindSwaraj-CWMG-023
+  access:
+    free_copy: https://archive.org/download/HindSwaraj-CWMG-023/CWMG-v023-XXIII-MC-BETA_djvu.txt
+    verified_at: '2026-10-09'
+    verified_by: archive-item-fetch
+    verified_title: CWMG, Vol. 023
+  language: en
+  region_of_authorship: south-asia
+  producer: gandhi
+  position: null
+  rights: public
+  does_not_show: the official shorthand transcript itself (Trial of Gandhiji, not read); the editors mark some oral sentences as absent from it
+- id: src-cwmg-42-january-26
+  tier: A
+  kind: primary-document
+  author: Indian National Congress (the declaration as Gandhi printed it)
+  title: Things to Remember for 26th, Hindi Navajivan, 23-1-1930 (item 404)
+  container: The Collected Works of Mahatma Gandhi, Vol. XLII (electronic edition)
+  publisher: Publications Division, Government of India; electronic edition as uploaded to the Internet Archive (item HindSwaraj-CWMG-042, licence CC BY 4.0 as the item states)
+  place: New Delhi
+  year: 1930
+  edition: the item is marked '[From Hindi]', so the surrounding article is the editors' translation; the volume does not say whether the declaration's English is the Congress's own
+    text or a rendering. The draft of 10-1-1930 (item 368) differs in its figures and is not used
+  volume: XLII
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: HindSwaraj-CWMG-042
+    hathitrust: null
+    url: https://archive.org/details/HindSwaraj-CWMG-042
+  access:
+    free_copy: https://archive.org/download/HindSwaraj-CWMG-042/CWMG-v042-XLII-MC-BETA_djvu.txt
+    verified_at: '2026-10-09'
+    verified_by: archive-item-fetch
+    verified_title: CWMG, Vol. 042
+  language: en
+  region_of_authorship: south-asia
+  producer: indian-national-congress
+  position: null
+  rights: public
+  does_not_show: the Lahore resolution of December 1929 in its adopted form (the volume holds only Gandhi's draft resolutions, item 334); how many attended on 26 January 1930
+- id: src-cwmg-76-aicc-resolution
+  tier: A
+  kind: primary-document
+  author: All-India Congress Committee
+  title: Resolution passed by All-India Congress Committee, [August 8, 1942] (Appendix X)
+  container: The Collected Works of Mahatma Gandhi, Vol. LXXVI (electronic edition)
+  publisher: Publications Division, Government of India; electronic edition as uploaded to the Internet Archive (item HindSwaraj-CWMG-076, licence CC BY 4.0 as the item states)
+  place: New Delhi
+  year: 1942
+  edition: Appendix X; the editors' sources are The Indian Annual Register, 1942, Vol. II, Harijan, 9-8-1942 and The Transfer of Power, Vol. II
+  volume: LXXVI
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: HindSwaraj-CWMG-076
+    hathitrust: null
+    url: https://archive.org/details/HindSwaraj-CWMG-076
+  access:
+    free_copy: https://archive.org/download/HindSwaraj-CWMG-076/CWMG-v076-LXXVI-MC-BETA_djvu.txt
+    verified_at: '2026-10-09'
+    verified_by: archive-item-fetch
+    verified_title: CWMG, Vol. 076
+  language: en
+  region_of_authorship: south-asia
+  producer: indian-national-congress
+  position: null
+  rights: public
+  does_not_show: the words 'Quit India' or 'Do or Die' (neither is in the resolution); the vote count, which only Gandhi's speech mentions ('thirteen friends who voted against')
+- id: src-cwmg-76-aicc-speech-hindi
+  tier: A
+  kind: primary-document
+  author: M. K. Gandhi (English translation by the editors)
+  title: Speech at A.I.C.C. Meeting, Bombay, August 8, 1942 (item 426)
+  container: The Collected Works of Mahatma Gandhi, Vol. LXXVI (electronic edition)
+  publisher: Publications Division, Government of India; electronic edition as uploaded to the Internet Archive (item HindSwaraj-CWMG-076, licence CC BY 4.0 as the item states)
+  place: New Delhi
+  year: 1942
+  edition: 'the editors: ''Gandhiji spoke first in Hindi and then in English. This is a translation of his Hindi speech.'' A translation, not his words'
+  volume: LXXVI
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: HindSwaraj-CWMG-076
+    hathitrust: null
+    url: https://archive.org/details/HindSwaraj-CWMG-076
+  access:
+    free_copy: https://archive.org/download/HindSwaraj-CWMG-076/CWMG-v076-LXXVI-MC-BETA_djvu.txt
+    verified_at: '2026-10-09'
+    verified_by: archive-item-fetch
+    verified_title: CWMG, Vol. 076
+  language: en
+  region_of_authorship: south-asia
+  producer: gandhi
+  position: null
+  rights: public
+  does_not_show: his Hindi; the arrests of the next morning
+- id: src-cwmg-76-aicc-speech-english
+  tier: A
+  kind: primary-document
+  author: M. K. Gandhi
+  title: Speech at A.I.C.C. Meeting, Bombay, August 8, 1942 (item 427, the English speech)
+  container: The Collected Works of Mahatma Gandhi, Vol. LXXVI (electronic edition)
+  publisher: Publications Division, Government of India; electronic edition as uploaded to the Internet Archive (item HindSwaraj-CWMG-076, licence CC BY 4.0 as the item states)
+  place: New Delhi
+  year: 1942
+  edition: from a typed office copy (Nehru Memorial Museum and Library), as the editors say
+  volume: LXXVI
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: HindSwaraj-CWMG-076
+    hathitrust: null
+    url: https://archive.org/details/HindSwaraj-CWMG-076
+  access:
+    free_copy: https://archive.org/download/HindSwaraj-CWMG-076/CWMG-v076-LXXVI-MC-BETA_djvu.txt
+    verified_at: '2026-10-09'
+    verified_by: archive-item-fetch
+    verified_title: CWMG, Vol. 076
+  language: en
+  region_of_authorship: south-asia
+  producer: gandhi
+  position: null
+  rights: public
+  does_not_show: the arrests that followed or any count of them
+- id: src-cwmg-17-congress-punjab-report
+  tier: A
+  kind: primary-document
+  author: Commissioners of the Punjab Sub-Committee of the Indian National Congress
+  title: Congress Report on the Punjab Disorders, March 25, 1920 (item 83)
+  container: The Collected Works of Mahatma Gandhi, Vol. XVII (electronic edition)
+  publisher: Publications Division, Government of India; electronic edition as uploaded to the Internet Archive (item HindSwaraj-CWMG-017, licence CC BY 4.0 as the item states)
+  place: New Delhi
+  year: 1920
+  edition: the report as the Collected Works prints it; the volume includes it because Gandhi was one of its authors. The separately printed report of the commissioners was not read
+  volume: XVII
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: HindSwaraj-CWMG-017
+    hathitrust: null
+    url: https://archive.org/details/HindSwaraj-CWMG-017
+  access:
+    free_copy: https://archive.org/download/HindSwaraj-CWMG-017/CWMG-v017-XVII-MC-BETA_djvu.txt
+    verified_at: '2026-10-09'
+    verified_by: archive-item-fetch
+    verified_title: CWMG, Vol. 017
+  language: en
+  region_of_authorship: south-asia
+  producer: indian-national-congress
+  position: null
+  rights: public
+  does_not_show: the names of the 1,000 dead (it adopts Lala Girdhari Lal's computation and says 'The exact figure will never be known'); its 'nearly 1,200 lives' is for the whole martial-law
+    period in the Punjab, not for the Bagh
+- id: src-cwmg-19-tilak-fund
+  tier: A
+  kind: primary-document
+  author: M. K. Gandhi
+  title: Speech on Tilak Memorial Swaraj Fund, Nagpur, December 31, 1920 (item 101)
+  container: The Collected Works of Mahatma Gandhi, Vol. XIX (electronic edition)
+  publisher: Publications Division, Government of India; electronic edition as uploaded to the Internet Archive (item HindSwaraj-CWMG-019, licence CC BY 4.0 as the item states)
+  place: New Delhi
+  year: 1920
+  edition: the speech as the volume prints it; the editors' note says the words were displayed over Tilak's picture in the Congress pandal
+  volume: XIX
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: HindSwaraj-CWMG-019
+    hathitrust: null
+    url: https://archive.org/details/HindSwaraj-CWMG-019
+  access:
+    free_copy: https://archive.org/download/HindSwaraj-CWMG-019/CWMG-v019-XIX-MC-BETA_djvu.txt
+    verified_at: '2026-10-09'
+    verified_by: archive-item-fetch
+    verified_title: CWMG, Vol. 019
+  language: en
+  region_of_authorship: south-asia
+  producer: gandhi
+  position: null
+  rights: public
+  does_not_show: Tilak saying the words, where or when; the second clause 'and I shall have it'
+- id: src-cwmg-45-viceroy-letter
+  tier: A
+  kind: primary-document
+  author: M. K. Gandhi
+  title: Letter to Viceroy, 1 Daryaganj, Delhi, March 23, 1931 (item 390)
+  container: The Collected Works of Mahatma Gandhi, Vol. XLV (electronic edition)
+  publisher: Publications Division, Government of India; electronic edition as uploaded to the Internet Archive (item HindSwaraj-CWMG-045, licence CC BY 4.0 as the item states)
+  place: New Delhi
+  year: 1931
+  edition: from a photostat, C.W. 9343, courtesy India Office Library, as the editors say
+  volume: XLV
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: HindSwaraj-CWMG-045
+    hathitrust: null
+    url: https://archive.org/details/HindSwaraj-CWMG-045
+  access:
+    free_copy: https://archive.org/download/HindSwaraj-CWMG-045/CWMG-v045-XLV-MC-BETA_djvu.txt
+    verified_at: '2026-10-09'
+    verified_by: archive-item-fetch
+    verified_title: CWMG, Vol. 045
+  language: en
+  region_of_authorship: south-asia
+  producer: gandhi
+  position: null
+  rights: public
+  does_not_show: what Irwin answered, or at what hour the letter was delivered relative to the execution
+- id: src-cwmg-45-bhagat-singh-statement
+  tier: A
+  kind: primary-document
+  author: M. K. Gandhi (English translation by the editors)
+  title: Statement on Execution of Bhagat Singh and Comrades, New Delhi, March 23, 1931 (item 393)
+  container: The Collected Works of Mahatma Gandhi, Vol. XLV (electronic edition)
+  publisher: Publications Division, Government of India; electronic edition as uploaded to the Internet Archive (item HindSwaraj-CWMG-045, licence CC BY 4.0 as the item states)
+  place: New Delhi
+  year: 1931
+  edition: 'marked ''[From Gujarati]'': the English is the editors'' translation'
+  volume: XLV
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: HindSwaraj-CWMG-045
+    hathitrust: null
+    url: https://archive.org/details/HindSwaraj-CWMG-045
+  access:
+    free_copy: https://archive.org/download/HindSwaraj-CWMG-045/CWMG-v045-XLV-MC-BETA_djvu.txt
+    verified_at: '2026-10-09'
+    verified_by: archive-item-fetch
+    verified_title: CWMG, Vol. 045
+  language: en
+  region_of_authorship: south-asia
+  producer: gandhi
+  position: null
+  rights: public
+  does_not_show: Bhagat Singh's age; the trial; the date of execution beyond the statement's own date
+- id: src-cwmg-78-jinnah-letter
+  tier: A
+  kind: primary-document
+  author: M. A. Jinnah
+  title: Letter from M. A. Jinnah to Gandhi, September 17, 1944 (Appendix VI)
+  container: The Collected Works of Mahatma Gandhi, Vol. LXXVIII (electronic edition)
+  publisher: Publications Division, Government of India; electronic edition as uploaded to the Internet Archive (item HindSwaraj-CWMG-078, licence CC BY 4.0 as the item states)
+  place: New Delhi
+  year: 1944
+  edition: Appendix VI of the volume, the Gandhi-Jinnah talks of September 1944
+  volume: LXXVIII
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: HindSwaraj-CWMG-078
+    hathitrust: null
+    url: https://archive.org/details/HindSwaraj-CWMG-078
+  access:
+    free_copy: https://archive.org/download/HindSwaraj-CWMG-078/CWMG-v078-LXXVIII-MC-BETA_djvu.txt
+    verified_at: '2026-10-09'
+    verified_by: archive-item-fetch
+    verified_title: CWMG, Vol. 078
+  language: en
+  region_of_authorship: south-asia
+  producer: muslim-league
+  position: null
+  rights: public
+  does_not_show: 'anything said at Lahore in March 1940: this is a letter of 17 September 1944'
+- id: src-hunter-1920
+  tier: A
+  kind: report
+  author: Disorders Inquiry Committee (Lord Hunter, chairman), majority report
+  title: 'Disorders Inquiry Committee 1919-1920: Report (majority report, chapter on Amritsar)'
+  container: 'Disorders Inquiry Committee 1919-1920, Report (Calcutta: Superintendent Government Printing, India, 1920)'
+  publisher: Superintendent Government Printing, India; scan in the Internet Archive (item disordersinquiry00unse)
+  place: Calcutta
+  year: 1920
+  edition: the Calcutta edition, which prints the Government of India's despatch of 3 May 1920 and the Secretary of State's reply of 26 May 1920 before the report; OCR layer. The London
+    edition (Cmd. 681, item report-disturbances-punjab) was also read and agrees on the figures sliced
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: disordersinquiry00unse
+    hathitrust: null
+    url: https://archive.org/details/disordersinquiry00unse
+  access:
+    free_copy: https://archive.org/download/disordersinquiry00unse/disordersinquiry00unse_djvu.txt
+    verified_at: '2026-10-09'
+    verified_by: archive-item-fetch
+    verified_title: Disorders Inquiry Committee Report 1919-1920
+  language: en
+  region_of_authorship: south-asia
+  producer: government-of-india
+  position: null
+  rights: public
+  does_not_show: the dead by name; any count of the wounded ('No figure was given'); Dyer's spoken words to the Committee in full (his written report is what it quotes)
+- id: src-hunter-minority-1920
+  tier: A
+  kind: report
+  author: Disorders Inquiry Committee, minority report (the three Indian members)
+  title: 'Disorders Inquiry Committee 1919-1920: Report (minority report)'
+  container: 'Disorders Inquiry Committee 1919-1920, Report (Calcutta: Superintendent Government Printing, India, 1920)'
+  publisher: Superintendent Government Printing, India; scan in the Internet Archive (item disordersinquiry00unse)
+  place: Calcutta
+  year: 1920
+  edition: the Calcutta edition, which prints the Government of India's despatch of 3 May 1920 and the Secretary of State's reply of 26 May 1920 before the report; OCR layer. The London
+    edition (Cmd. 681, item report-disturbances-punjab) was also read and agrees on the figures sliced
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: disordersinquiry00unse
+    hathitrust: null
+    url: https://archive.org/details/disordersinquiry00unse
+  access:
+    free_copy: https://archive.org/download/disordersinquiry00unse/disordersinquiry00unse_djvu.txt
+    verified_at: '2026-10-09'
+    verified_by: archive-item-fetch
+    verified_title: Disorders Inquiry Committee Report 1919-1920
+  language: en
+  region_of_authorship: south-asia
+  producer: government-of-india
+  position: null
+  rights: public
+  does_not_show: where its 'about 1,200 wounded' comes from; the members' names are not on the sliced passage
+- id: src-goi-despatch-1920
+  tier: A
+  kind: report
+  author: Government of India, Home Department (Political), to the Secretary of State for India
+  title: Despatch dated Simla, the 3rd May 1920, printed with the Disorders Inquiry Committee Report
+  container: 'Disorders Inquiry Committee 1919-1920, Report (Calcutta: Superintendent Government Printing, India, 1920)'
+  publisher: Superintendent Government Printing, India; scan in the Internet Archive (item disordersinquiry00unse)
+  place: Calcutta
+  year: 1920
+  edition: the Calcutta edition, which prints the Government of India's despatch of 3 May 1920 and the Secretary of State's reply of 26 May 1920 before the report; OCR layer. The London
+    edition (Cmd. 681, item report-disturbances-punjab) was also read and agrees on the figures sliced
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: disordersinquiry00unse
+    hathitrust: null
+    url: https://archive.org/details/disordersinquiry00unse
+  access:
+    free_copy: https://archive.org/download/disordersinquiry00unse/disordersinquiry00unse_djvu.txt
+    verified_at: '2026-10-09'
+    verified_by: archive-item-fetch
+    verified_title: Disorders Inquiry Committee Report 1919-1920
+  language: en
+  region_of_authorship: south-asia
+  producer: government-of-india
+  position: null
+  rights: public
+  does_not_show: the Sewa Samiti's own list; how many of the 192 wounded died later
+- id: src-montagu-despatch-1920
+  tier: A
+  kind: report
+  author: Edwin Montagu, Secretary of State for India
+  title: Despatch No. 108-Public, India Office, London, 26 May 1920, printed with the Disorders Inquiry Committee Report
+  container: 'Disorders Inquiry Committee 1919-1920, Report (Calcutta: Superintendent Government Printing, India, 1920)'
+  publisher: Superintendent Government Printing, India; scan in the Internet Archive (item disordersinquiry00unse)
+  place: Calcutta
+  year: 1920
+  edition: the Calcutta edition, which prints the Government of India's despatch of 3 May 1920 and the Secretary of State's reply of 26 May 1920 before the report; OCR layer. The London
+    edition (Cmd. 681, item report-disturbances-punjab) was also read and agrees on the figures sliced
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: disordersinquiry00unse
+    hathitrust: null
+    url: https://archive.org/details/disordersinquiry00unse
+  access:
+    free_copy: https://archive.org/download/disordersinquiry00unse/disordersinquiry00unse_djvu.txt
+    verified_at: '2026-10-09'
+    verified_by: archive-item-fetch
+    verified_title: Disorders Inquiry Committee Report 1919-1920
+  language: en
+  region_of_authorship: europe
+  producer: uk-government
+  position: null
+  rights: public
+  does_not_show: the Army Council's decision on Dyer; it recapitulates facts 'in their baldest form'
+- id: src-hansard-19200708
+  tier: A
+  kind: primary-document
+  author: House of Commons
+  title: ARMY COUNCIL AND GENERAL DYER., HC Deb 8 July 1920, vol 131 cc1705-819
+  container: Hansard (historic Hansard, UK Parliament)
+  publisher: UK Parliament
+  place: London
+  year: 1920
+  edition: the historic Hansard web text, read whole; Mr. Churchill spoke as Secretary of State for War
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://api.parliament.uk/historic-hansard/commons/1920/jul/08/army-council-and-general-dyer
+  access:
+    free_copy: https://api.parliament.uk/historic-hansard/commons/1920/jul/08/army-council-and-general-dyer
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: ARMY COUNCIL AND GENERAL DYER. (Hansard, 8 July 1920)
+  language: en
+  region_of_authorship: europe
+  producer: uk-government
+  position: null
+  rights: official
+  does_not_show: the word 'massacre' in Churchill's mouth; how the 247 and 37 divided by party
+- id: src-hansard-lords-19200720
+  tier: A
+  kind: primary-document
+  author: House of Lords
+  title: 'PUNJAB DISTURBANCES: THE CASE OF GENERAL DYER., HL Deb 20 July 1920, vol 41 cc311-77'
+  container: Hansard (historic Hansard, UK Parliament)
+  publisher: UK Parliament
+  place: London
+  year: 1920
+  edition: the historic Hansard web text, read whole; Viscount Finlay's motion and the division
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://api.parliament.uk/historic-hansard/lords/1920/jul/20/punjab-disturbances-the-case-of-general
+  access:
+    free_copy: https://api.parliament.uk/historic-hansard/lords/1920/jul/20/punjab-disturbances-the-case-of-general
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: 'PUNJAB DISTURBANCES: THE CASE OF GENERAL DYER. (Hansard, 20 July 1920)'
+  language: en
+  region_of_authorship: europe
+  producer: uk-parliament
+  position: null
+  rights: official
+  does_not_show: any fund raised for Dyer (the Morning Post's is not in this debate as sliced); what followed from the vote
+- id: src-hansard-19420910
+  tier: A
+  kind: primary-document
+  author: House of Commons
+  title: INDIA (SITUATION), HC Deb 10 September 1942, vol 383 cc302-10
+  container: Hansard (historic Hansard, UK Parliament)
+  publisher: UK Parliament
+  place: London
+  year: 1942
+  edition: the historic Hansard web text, read whole; the Prime Minister (Mr. Churchill), statement
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://api.parliament.uk/historic-hansard/commons/1942/sep/10/india-situation
+  access:
+    free_copy: https://api.parliament.uk/historic-hansard/commons/1942/sep/10/india-situation
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: INDIA (SITUATION) (Hansard, 10 September 1942)
+  language: en
+  region_of_authorship: europe
+  producer: uk-government
+  position: null
+  rights: official
+  does_not_show: how many were arrested; any later official count of the dead (this is a count 'over this mighty area' one month in)
+- id: src-hansard-19460222
+  tier: A
+  kind: primary-document
+  author: House of Commons
+  title: ROYAL INDIAN NAVY (MUTINY), HC Deb 22 February 1946, vol 419 cc1441-3
+  container: Hansard (historic Hansard, UK Parliament)
+  publisher: UK Parliament
+  place: London
+  year: 1946
+  edition: the historic Hansard web text, read whole; the Prime Minister (Mr. Attlee), statement
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://api.parliament.uk/historic-hansard/commons/1946/feb/22/royal-indian-navy-mutiny
+  access:
+    free_copy: https://api.parliament.uk/historic-hansard/commons/1946/feb/22/royal-indian-navy-mutiny
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: ROYAL INDIAN NAVY (MUTINY) (Hansard, 22 February 1946)
+  language: en
+  region_of_authorship: europe
+  producer: uk-government
+  position: null
+  rights: official
+  does_not_show: how many ships; any link to the INA trials (the statement does not mention them)
+- id: src-hansard-19460226
+  tier: A
+  kind: primary-document
+  author: House of Commons
+  title: INDIA (NAVAL MUTINY AND CIVIL DISTURBANCES), HC Deb 26 February 1946, vol 419 cc1750-3
+  container: Hansard (historic Hansard, UK Parliament)
+  publisher: UK Parliament
+  place: London
+  year: 1946
+  edition: the historic Hansard web text, read whole; the Prime Minister (Mr. Attlee), statement
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://api.parliament.uk/historic-hansard/commons/1946/feb/26/india-naval-mutiny-and-civil-disturbances
+  access:
+    free_copy: https://api.parliament.uk/historic-hansard/commons/1946/feb/26/india-naval-mutiny-and-civil-disturbances
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: INDIA (NAVAL MUTINY AND CIVIL DISTURBANCES) (Hansard, 26 February 1946)
+  language: en
+  region_of_authorship: europe
+  producer: uk-government
+  position: null
+  rights: official
+  does_not_show: who killed the 223 in Bombay, or how many were mutineers
+- id: src-hansard-19460226-sterling
+  tier: A
+  kind: primary-document
+  author: House of Commons
+  title: RESERVE BANK OF INDIA (STERLING BALANCES), HC Deb 26 February 1946, vol 419 cc1746-7
+  container: Hansard (historic Hansard, UK Parliament)
+  publisher: UK Parliament
+  place: London
+  year: 1946
+  edition: the historic Hansard web text, read whole; the Chancellor of the Exchequer (Mr. Dalton), written answer in the chamber
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://api.parliament.uk/historic-hansard/commons/1946/feb/26/reserve-bank-of-india-sterling-balances
+  access:
+    free_copy: https://api.parliament.uk/historic-hansard/commons/1946/feb/26/reserve-bank-of-india-sterling-balances
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: RESERVE BANK OF INDIA (STERLING BALANCES) (Hansard, 26 February 1946)
+  language: en
+  region_of_authorship: europe
+  producer: uk-government
+  position: null
+  rights: official
+  does_not_show: the total of the sterling balances (the YAML's 1.3 billion pounds is not in it)
+- id: src-hansard-19460315
+  tier: A
+  kind: primary-document
+  author: House of Commons
+  title: INDIA (CABINET MISSION), HC Deb 15 March 1946, vol 420 cc1413-76
+  container: Hansard (historic Hansard, UK Parliament)
+  publisher: UK Parliament
+  place: London
+  year: 1946
+  edition: the historic Hansard web text, read whole; the Prime Minister (Mr. Attlee) in debate
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://api.parliament.uk/historic-hansard/commons/1946/mar/15/india-cabinet-mission
+  access:
+    free_copy: https://api.parliament.uk/historic-hansard/commons/1946/mar/15/india-cabinet-mission
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: INDIA (CABINET MISSION) (Hansard, 15 March 1946)
+  language: en
+  region_of_authorship: europe
+  producer: uk-government
+  position: null
+  rights: official
+  does_not_show: a date for withdrawal (that came on 20 February 1947, not held here)
+- id: src-famine-commission-1945
+  tier: A
+  kind: report
+  author: The Famine Inquiry Commission (Sir John Woodhead, chairman)
+  title: 'Famine Inquiry Commission: Report on Bengal'
+  container: null
+  publisher: the Famine Inquiry Commission, appointed by the Government of India in 1944; scan in the Internet Archive (Digital Library of India, item in.ernet.dli.2015.206311)
+  place: null
+  year: 1945
+  edition: the DLI scan's OCR layer, a President's Secretariat (Library) copy; the scan's imprint is not in its text layer, and 1945 is the year the Internet Archive catalogues for other
+    copies of the report (dli.ministry.12773, dli.ernet.26318)
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: in.ernet.dli.2015.206311
+    hathitrust: null
+    url: https://archive.org/details/in.ernet.dli.2015.206311
+  access:
+    free_copy: https://archive.org/download/in.ernet.dli.2015.206311/2015.206311.Famine-Inquiry_djvu.txt
+    verified_at: '2026-10-09'
+    verified_by: archive-item-fetch
+    verified_title: Famine Inquiry Commission Report On Bengal
+  language: en
+  region_of_authorship: south-asia
+  producer: government-of-india
+  position: null
+  rights: public
+  does_not_show: 'any decision of the War Cabinet or of Churchill: the sliced passages name neither; the 3 million of the YAML (it gives 1.5 million and rejects 3.5 million)'
+- id: src-miller-1936
+  tier: A
+  kind: memoir
+  author: Webb Miller
+  title: 'I Found No Peace: The Journal of a Foreign Correspondent'
+  container: null
+  publisher: The Literary Guild, New York (scan in the Internet Archive, Digital Library of India item in.ernet.dli.2015.82149)
+  place: New York
+  year: 1936
+  edition: the chapter 'They That Turn the Cheek', OCR layer; his 1936 retelling, not the 1930 dispatch
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: in.ernet.dli.2015.82149
+    hathitrust: null
+    url: https://archive.org/details/in.ernet.dli.2015.82149
+  access:
+    free_copy: https://archive.org/download/in.ernet.dli.2015.82149/2015.82149.I-Found-No-Peace_djvu.txt
+    verified_at: '2026-10-09'
+    verified_by: archive-item-fetch
+    verified_title: I Found No Peace
+  language: en
+  region_of_authorship: americas
+  producer: press
+  position: null
+  rights: copyright
+  does_not_show: the dispatch as filed in May 1930 (the book says it reached London and New York by air mail about ten days later); 'United Press International' (the book says the United
+    Press); that 1,350 newspapers printed it (he says it 'appeared in the 1,350 newspapers served by the United Press')
+- id: src-hsra-leaflet-1929
+  tier: A
+  kind: primary-document
+  author: Hindustan Socialist Republican Army, signed 'Balraj, Commander-in-Chief'
+  title: Notice (the 'Red Pamphlet') thrown in the Central Legislative Assembly, April 8, 1929
+  container: Bhagat Singh Internet Archive, Marxists Internet Archive
+  publisher: Marxists Internet Archive (transcription from shahidbhagatsingh.org, published with the permission of the Shahid Bhagat Singh Research Committee, as the page states)
+  place: Delhi
+  year: 1929
+  edition: the web transcription, read whole; the page marks the transcription '© Shahidbhagatsingh.org'
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.marxists.org/archive/bhagat-singh/1929/04/08.htm
+  access:
+    free_copy: https://www.marxists.org/archive/bhagat-singh/1929/04/08.htm
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: The Red Pamphlet
+  language: en
+  region_of_authorship: south-asia
+  producer: hsra
+  position: null
+  rights: copyright
+  does_not_show: 'that Bhagat Singh wrote it: the transcriber''s note says it was ''primarily written by Bhagat Singh'' and that ''Balraj'' was Chandrashekhar Azad''s pen name; the leaflet
+    itself names neither. The words ''It takes a loud voice to make the deaf hear'' are, by the leaflet''s own account, Vaillant''s'
+- id: src-singh-dutt-statement-1929
+  tier: A
+  kind: primary-document
+  author: Bhagat Singh and B. K. Dutt
+  title: Statement of S. Bhagat Singh and B. K. Dutt in the Assembly Bomb Case
+  container: Bhagat Singh Internet Archive, Marxists Internet Archive
+  publisher: Marxists Internet Archive (transcription from shahidbhagatsingh.org, published with the permission of the Shahid Bhagat Singh Research Committee, as the page states)
+  place: Delhi
+  year: 1929
+  edition: the web transcription, read whole; the page marks the transcription '© Shahidbhagatsingh.org'
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.marxists.org/archive/bhagat-singh/1929/06/06.htm
+  access:
+    free_copy: https://www.marxists.org/archive/bhagat-singh/1929/06/06.htm
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Joint Statement
+  language: en
+  region_of_authorship: south-asia
+  producer: hsra
+  position: null
+  rights: copyright
+  does_not_show: the court's finding; the page dates it June 8, 1929 while the archive's index files it under June 6
+- id: src-bose-speeches-1962
+  tier: A
+  kind: edited-documents
+  author: Subhas Chandra Bose (compiled by the Publications Division; introduction by S. A. Ayer)
+  title: Selected Speeches of Subhas Chandra Bose
+  container: null
+  publisher: Publications Division, Government of India (scan in the Internet Archive, item selectedspeeches00subh, digitized with funding from Public.Resource.org)
+  place: New Delhi
+  year: 1962
+  edition: OCR layer; each speech is dated by the compilation at its foot; the compilation does not say which speeches were translated or by whom (some it marks 'retranslated from the
+    Tamil version')
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: selectedspeeches00subh
+    hathitrust: null
+    url: https://archive.org/details/selectedspeeches00subh
+  access:
+    free_copy: https://archive.org/download/selectedspeeches00subh/selectedspeeches00subh_djvu.txt
+    verified_at: '2026-10-09'
+    verified_by: archive-item-fetch
+    verified_title: Selected speeches of Subhas Chandra Bose
+  language: en
+  region_of_authorship: south-asia
+  producer: subhas-chandra-bose
+  position: null
+  rights: copyright
+  does_not_show: '''Give me blood, and I shall give you freedom'': the compilation''s text of the speech of 4 July 1944 does not carry it (see gaps); the number of INA soldiers'
+- id: src-ambedkar-1945
+  tier: A
+  kind: monograph
+  author: B. R. Ambedkar
+  title: What Congress and Gandhi Have Done to the Untouchables
+  container: null
+  publisher: Thacker & Co., Bombay (scan in the Internet Archive, Digital Library of India item in.ernet.dli.2015.278459)
+  place: Bombay
+  year: 1945
+  edition: 'the first edition, OCR layer. The same text is in Dr. Babasaheb Ambedkar: Writings and Speeches, Vol. 9 (Government of Maharashtra), whose DLI scan (in.ernet.dli.2015.233305)
+    was also fetched; the mea.gov.in PDFs of that series answered with an HTML page'
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: in.ernet.dli.2015.278459
+    hathitrust: null
+    url: https://archive.org/details/in.ernet.dli.2015.278459
+  access:
+    free_copy: https://archive.org/download/in.ernet.dli.2015.278459/2015.278459.What-Congress_djvu.txt
+    verified_at: '2026-10-09'
+    verified_by: archive-item-fetch
+    verified_title: What Congress And Gandhi Have Done To The Untouchables
+  language: en
+  region_of_authorship: south-asia
+  producer: ambedkar
+  position: null
+  rights: public
+  does_not_show: '''Gandhi wanted to be the liberator of the Untouchables. He did not want anyone else to be their liberator'' (not in the book; see gaps); that he ''never forgave''
+    Gandhi; Yerwada (the book names no jail in the sliced passages)'
+- id: src-cad-19491125
+  tier: A
+  kind: primary-document
+  author: B. R. Ambedkar, Chairman of the Drafting Committee, in the Constituent Assembly of India
+  title: Constituent Assembly Debates, 25 November 1949
+  container: Constituent Assembly Debates (Official Report)
+  publisher: Centre for Law and Policy Research, constitutionofindia.net (text of the Lok Sabha Secretariat's Official Report)
+  place: New Delhi
+  year: 1949
+  edition: the site's web text of the day's debates, read whole; the site numbers paragraphs (e.g. 11.165.326) and its text has some run-together sentences
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.constitutionofindia.net/debates/25-nov-1949/
+  access:
+    free_copy: https://www.constitutionofindia.net/debates/25-nov-1949/
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: 25 Nov 1949 Archives - Constitution of India
+  language: en
+  region_of_authorship: south-asia
+  producer: constituent-assembly-of-india
+  position: null
+  rights: official
+  does_not_show: '''if those who are implementing it are not good, it will prove to be bad'' (the YAML''s wording; he said ''it is sure to turn out bad because those who are called to
+    work it, happen to be a bad lot'')'
+- id: src-cad-19481104
+  tier: A
+  kind: primary-document
+  author: B. R. Ambedkar, Chairman of the Drafting Committee, in the Constituent Assembly of India
+  title: Constituent Assembly Debates, 4 November 1948
+  container: Constituent Assembly Debates (Official Report)
+  publisher: Centre for Law and Policy Research, constitutionofindia.net (text of the Lok Sabha Secretariat's Official Report)
+  place: New Delhi
+  year: 1948
+  edition: the site's web text of the day's debates, read whole; the site numbers paragraphs (e.g. 11.165.326) and its text has some run-together sentences
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.constitutionofindia.net/debates/04-nov-1948/
+  access:
+    free_copy: https://www.constitutionofindia.net/debates/04-nov-1948/
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: 04 Nov 1948 Archives - Constitution of India
+  language: en
+  region_of_authorship: south-asia
+  producer: constituent-assembly-of-india
+  position: null
+  rights: official
+  does_not_show: who answered him on the village in the debate
+- id: src-jinnah-speeches-1942
+  tier: A
+  kind: edited-documents
+  author: M. A. Jinnah (compiled by Jamil-ud-Din Ahmad)
+  title: Some Recent Speeches and Writings of Mr. Jinnah
+  container: null
+  publisher: Sh. Muhammad Ashraf, Kashmiri Bazar, Lahore (scan in the Internet Archive, Digital Library of India item in.ernet.dli.2015.189842)
+  place: Lahore
+  year: 1942
+  edition: OCR layer; the layer prints '*' for some full stops
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: in.ernet.dli.2015.189842
+    hathitrust: null
+    url: https://archive.org/details/in.ernet.dli.2015.189842
+  access:
+    free_copy: https://archive.org/download/in.ernet.dli.2015.189842/2015.189842.Some-Recent-Speeches-And-Writings-Of-Mr-Jinnah_djvu.txt
+    verified_at: '2026-10-09'
+    verified_by: archive-item-fetch
+    verified_title: Some Recent Speeches And Writings Of Mr. Jinnah
+  language: en
+  region_of_authorship: south-asia
+  producer: muslim-league
+  position: null
+  rights: copyright
+  does_not_show: the sentence 'We are a nation with our own distinctive culture...' (it is in his letter of 17 September 1944, src-cwmg-78-jinnah-letter, not in the Lahore address as
+    sliced); the text of the Lahore resolution; any election figure
+- id: src-jinnah-19470811
+  tier: A
+  kind: primary-document
+  author: Muhammad Ali Jinnah, President of the Constituent Assembly of Pakistan
+  title: Address to the first Constituent Assembly of Pakistan, 11 August 1947
+  container: null
+  publisher: National Assembly of Pakistan
+  place: Karachi
+  year: 1947
+  edition: the text as the National Assembly's website publishes it; the same document the partition-of-india ledger holds as src-jinnah-19470811, re-fetched here
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://na.gov.pk/en/content.php?id=74
+  access:
+    free_copy: https://na.gov.pk/en/content.php?id=74
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: National Assembly of Pakistan
+  language: en
+  region_of_authorship: south-asia
+  producer: constituent-assembly-of-pakistan
+  position: null
+  rights: official
+  does_not_show: how the state it addressed later treated its minorities; the date of independence (the address is dated 11 August 1947 by the page)
+positions: []
+contested: []
+exhibits: []
+analyses: []
+gaps:
+- what: '''In a gentle way, you can shake the world'' (YAML notable quote and a document-voice line in the live script, ''Widely attributed''; pipeline/history/script_format.py H11_KNOWN)'
+  tried:
+  - 'https://archive.org/details/HindSwaraj-CWMG-001 (through -100: the full text of 93 of the 100 volumes of the Collected Works was searched)'
+  - https://www.gandhiheritageportal.org/cwmg_volumelist/ZW4=
+  status: NOT FOUND. The phrase does not occur in the 93 volumes whose text layer could be read (1-12, 14-55, 57-63, 65-76, 78-86, 88, 90-95, 97-100); 'in a gentle way' occurs once (Vol.
+    28, on speaking the truth gently) and 'shake the world' once (Vol. 14, 'we could shake the world', a different sentence). Volumes 13, 56, 64, 77, 87, 89 and 96 have no text layer
+    on archive.org and were not searched. The Gandhi Heritage Portal serves its volumes through a script viewer that could not be read here. Unverified; withdrawn by the quote ledger;
+    must not be read
+- what: '''First they ignore you, then they laugh at you, then they fight you, then you win'' (YAML notable quote, which itself calls it likely apocryphal)'
+  tried:
+  - https://archive.org/details/HindSwaraj-CWMG-001 (93 volumes searched, as above)
+  status: not found in the 93 volumes searched. Unverified
+- what: Bose, 'Give me blood, and I shall give you freedom' (YAML notable quote, 'Speech to the Indian National Army, 1944'; a document-voice line in the live script)
+  tried:
+  - https://archive.org/download/selectedspeeches00subh/selectedspeeches00subh_djvu.txt
+  - https://archive.org/download/dli.ministry.23708/E03216_Testament_of_Subhas_Bose_djvu.txt
+  status: NOT in the Publications Division's text of the speech of 4 July 1944 ('I.N.A. on Indian Soil'), which closes on 'the desire to die so that India may live' (src-bose-speeches-1962.secmartyr),
+    nor anywhere in that compilation or in 'Arun', Testament of Subhas Bose (1946). The nearest held words are 'Freedom can never be had by begging... Its price is blood' (June 1942,
+    secprice). The slogan may come from a Hindustani original no held text carries. Unverified; must not be read as his words
+- what: Churchill, 'The loss of India would mark and consummate the downfall of the British Empire' (YAML notable quote, 'House of Commons, 1935'; a document-voice line in the live script)
+  tried:
+  - https://api.parliament.uk/historic-hansard/commons/1931/jan/26/india-1
+  - https://api.parliament.uk/historic-hansard/commons/1931/mar/12/india
+  - https://www.ukpol.co.uk/winston-churchill-1931-duty-in-india-speech/
+  status: not found in either 1931 Commons debate or in a web text of the Albert Hall speech of 18 March 1931; secondary pages place the words in 1931 speeches outside Parliament, collected
+    in his India (1931), which is in copyright. No 1935 Commons source was found. Unverified
+- what: Churchill, 'I hate Indians. They are a beastly people with a beastly religion' (YAML notable quote, 'recorded by Leo Amery, 1942'), and 'Churchill asked why Gandhi had not yet
+    died' (YAML summary and the live script)
+  tried: []
+  status: the diaries that report them (Amery's; Wavell's journal) are in copyright and no open copy was sought. Unverified; private remarks reported second-hand
+- what: Tilak, 'Swaraj is my birthright, and I shall have it' (YAML excerpt, 'Speech during sedition trial, Bombay, 1908')
+  tried:
+  - https://archive.org/details/HindSwaraj-CWMG-019
+  status: no text of Tilak's was found. The held record is Gandhi at Nagpur on 31 December 1920 pointing to the words 'Swaraj is my birthright' over Tilak's picture in the Congress pandal
+    (src-cwmg-19-tilak-fund.secbirthright); the second clause and the 1908 occasion are not held. The YAML's attribution to the 1908 trial is unverified
+- what: Ambedkar, 'Gandhi wanted to be the liberator of the Untouchables. He did not want anyone else to be their liberator' (YAML Dalit narrative, as a quotation)
+  tried:
+  - https://archive.org/download/in.ernet.dli.2015.278459/2015.278459.What-Congress_djvu.txt
+  - https://archive.org/download/in.ernet.dli.2015.233305/2015.233305.Dr-Babasaheb_djvu.txt
+  status: not in What Congress and Gandhi Have Done to the Untouchables (1945); the book asks 'Can Mr. Gandhi be called a liberator of the Untouchables ?' (src-ambedkar-1945.secliberator).
+    Unverified as worded
+- what: Ambedkar, 'I like the religion that teaches liberty, equality, and fraternity' (YAML notable quote, 'Yeola Conference, 1935')
+  tried: []
+  status: no text of the Yeola speech was found; the 1949 speech holds 'liberty, equality and fraternity as the principles of life' (src-cad-19491125, not sliced). Unverified
+- what: Jinnah, 'Think a hundred times before you take a decision, but once that decision is taken, stand by it as one man' (YAML notable quote, 'Address to Muslim League, 1945')
+  tried: []
+  status: no 1945 address was found. Unverified
+- what: 'Election figures: 1937, Congress 707 of 1,585 seats and the League 109 of 482 Muslim seats; 1946, the League 446 of 495 Muslim seats (YAML and the live script)'
+  tried:
+  - https://archive.org/advancedsearch.php (searches for the Government of India's Return showing the results of elections, 1937 and 1945-46)
+  status: no return of the elections was found; not held
+- what: 'The YAML''s other figures with no held source: 60,000 arrested in the salt campaign; 240 miles and 24 days; 2.5 million soldiers; ''over 100,000 detained'' and ''1,060 killed''
+    in 1942 (the only held official count is Churchill''s ''Less than 500'' of 10 September 1942); 10,000 Indian estimates; 45,000 or 43,000 INA soldiers; 20,000 sailors and 78 ships
+    (Attlee said 7,000 ratings in Bombay); the 116-day hunger strike; 40,000 miles of railway, 23 universities, literacy under 5%; 1.3 billion pounds of sterling balances; 600,000 converts
+    at Deekshabhoomi; 60 million Dalits; the Morning Post''s 26,000 pounds; Aruna Asaf Ali''s 5,000 rupees; Matangini Hazra''s 73 years and 6,000 marchers'
+  tried: []
+  status: not held
+- what: The Lahore resolution of the Muslim League (23 March 1940) and the Congress's Lahore resolution of December 1929 in their adopted texts
+  tried:
+  - https://archive.org/download/HindSwaraj-CWMG-042/CWMG-v042-XLII-MC-BETA_djvu.txt
+  status: the Collected Works holds Gandhi's draft resolutions for Lahore (item 334, 'declares that swaraj in Congress creed shall mean complete independence'), not the adopted text;
+    the January 26 declaration is held (src-cwmg-42-january-26). The League's resolution text was not sliced
+- what: The Indian National Army trials record (Red Fort, November 1945 onward)
+  tried:
+  - https://archive.org/download/tdl.28475-two-historic-trials-in-red-fort-an-authentic-account-of-the-trial-by-a/TVA_BOK_0028475_Two_historic_trials_in_Red_Fort_djvu.txt
+  status: the only open copy found has an unusable text layer (Tamil OCR over an English text); nothing could be sliced. The trials are not held
+- what: Government of India Act 1919 (its preamble's 'progressive realisation of responsible government')
+  tried:
+  - https://www.legislation.gov.uk/ukpga/Geo5/9-10/101/enacted
+  status: the page serves no text of the Act as enacted; not held. The 1935 Act's text was fetched (https://www.legislation.gov.uk/ukpga/Geo5and1Edw8/26/2/enacted) and not sliced
+- what: The Collected Works of Mahatma Gandhi as the Gandhi Heritage Portal serves it
+  tried:
+  - https://www.gandhiheritageportal.org/cwmg_volumelist/ZW4=
+  - https://www.gandhiheritageportal.org/copyright-policy
+  status: the portal's content is licensed CC BY-NC-ND 4.0 (its copyright page) but its volumes are served through a script viewer that could not be fetched as text; the same electronic
+    edition was read from the Internet Archive (HindSwaraj-CWMG-0NN, CC BY 4.0 as the items state). Gandhi's own text is out of copyright in India
+- what: 'Books the event YAML names: Gandhi, Autobiography; Chandra et al. (1989); Bhagat Singh, Why I Am an Atheist; Sugata Bose (2011); Puri (1983); Mason (1953); Mukerjee (2010);
+    Menon (1957); Ambedkar, Annihilation of Caste; Jalal (1985); Talbot (1998); Wolpert (1984)'
+  tried:
+  - https://www.marxists.org/archive/bhagat-singh/1930/10/05.htm
+  status: Why I Am an Atheist was fetched and not sliced; the rest are in copyright or were not sought
+- what: Archival recordings (for example Gandhi's speech recordings or Bose's broadcasts)
+  tried: []
+  status: 'none sought; no recording is admitted (recordings: [])'
+recordings: []

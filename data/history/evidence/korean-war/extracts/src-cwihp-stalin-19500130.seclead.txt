@@ -1,0 +1,8 @@
+source: src-cwihp-stalin-19500130
+locator: seclead
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_5.pdf
+read: 2026-10-09
+note: the same telegram
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+2. I have a request for Comrade Kim Il Sung. The Soviet Union is experiencing a great insufficiency in lead. We would like to receive from Korea a yearly minimum of 25,000 tons of lead.

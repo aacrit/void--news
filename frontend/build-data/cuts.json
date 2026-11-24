@@ -1,0 +1,71 @@
+{
+  "builtAt": "2026-11-24T11:03:33.357223Z",
+  "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
+  "cards": [
+    {
+      "id": "5368bdf9-6d12-450b-b720-28eb9b5b68a2",
+      "title": "Russian Drone Violates Polish Airspace While Infrastructure Attacks Continue Across Ukraine",
+      "sentences": [
+        {
+          "text": "The incident follows the recovery of three Russian Kh-101 cruise missiles that landed in Poland on November 20, prompting NATO to deploy an AWACS early-warning aircraft to the region.",
+          "rule": "E-13",
+          "message": "summary puts 20 beside \"russian kh-101\", but no source sentence carrying 20 names it and one names another \"russian ...\": \"The incident follows the recovery of three Russian Kh-101 cruise missiles that landed in P\""
+        }
+      ],
+      "points": [],
+      "left": []
+    },
+    {
+      "id": "49cce09b-b623-4355-8205-5d356e08694e",
+      "title": "Michigan Senator-Elect Abdul El-Sayed Faces Backlash Over Remarks on Israel and Ethnostates",
+      "sentences": [
+        {
+          "text": "Separately, El-Sayed drew criticism for a social media post targeting Senator John Kennedy following a discussion on healthcare.",
+          "rule": "E-16",
+          "message": "sentence opens on \"Separately\", announcing another story: \"Separately, El-Sayed drew criticism for a social media post targeting Senator John Kennedy\""
+        }
+      ],
+      "points": [],
+      "left": []
+    },
+    {
+      "id": "f9caf058-04d0-4052-bb7b-6c3e01ab3d44",
+      "title": "Russia Allocates Funds to Build Rail Ferries for Kaliningrad Exclave",
+      "sentences": [
+        {
+          "text": "Prime Minister Mikhail Mishustin announced that the Russian government will allocate between 47 billion and 50 billion rubles, amounting to roughly $576 million, to build two railway ferries to supply the Kaliningrad exclave.",
+          "rule": "E-13",
+          "message": "summary puts 50 beside \"prime minister mikhail mishustin\", but no source sentence carrying 50 names it and one names another \"prime ...\": \"Prime Minister Mikhail Mishustin announced that the Russian government will allocate betwe\""
+        }
+      ],
+      "points": [],
+      "left": []
+    },
+    {
+      "id": "73c5a1a9-d8d8-4af0-864c-13b33dbfc27d",
+      "title": "Six Killed in Attack on Political Campaign Convoy in Delta State",
+      "sentences": [
+        {
+          "text": "The incident occurred during a campaign tour by former Deputy Senate President Ovie Omo-Agege, who is the Nigeria Democratic Congress candidate for Delta Central Senatorial District in the 2027 general elections.",
+          "rule": "E-13",
+          "message": "summary puts 2027 beside \"deputy senate president ovie omo-agege\", but no source sentence carrying 2027 names it and one names another \"deputy ...\": \"The incident occurred during a campaign tour by former Deputy Senate President Ovie Omo-Ag\""
+        }
+      ],
+      "points": [],
+      "left": []
+    },
+    {
+      "id": "bfad5097-99c3-493e-bc71-0325c8f07178",
+      "title": "Army Seeks Federal Approval to Resume Helicopter Training Flights Near Washington",
+      "sentences": [
+        {
+          "text": "The proposed resumption follows a January 2025 midair collision over the Potomac River when an Army Black Hawk helicopter collided with an American Airlines passenger jet, killing 67 people.",
+          "rule": "E-13",
+          "message": "summary puts 67 beside \"army black hawk\", but no source sentence carrying 67 names it and one names another \"army ...\": \"The proposed resumption follows a January 2025 midair collision over the Potomac River whe\""
+        }
+      ],
+      "points": [],
+      "left": []
+    }
+  ]
+}

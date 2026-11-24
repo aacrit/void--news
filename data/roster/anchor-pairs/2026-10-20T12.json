@@ -1,0 +1,56 @@
+[
+ {
+  "newsroom": "Deutsche Welle",
+  "lang_a": "en",
+  "lang_b": "de",
+  "score": 20,
+  "a": {
+   "title": "Wagner brothers separated - new starts for German NBA stars",
+   "summary": "After five years, brothers Franz and Moritz Wagner are no longer playing together for the Orlando Magic. In the new NBA season, they have very different roles. Their new &apos;German&apos; team is the Charlotte Hornets.",
+   "link": "https://www.dw.com/en/wagner-brothers-separated-new-starts-for-german-nba-stars/a-79712668?maca=en-rss-en-all-1573-rdf",
+   "published": ""
+  },
+  "b": {
+   "title": "Das Ende der Wagners - auf getrennten Wegen in die neue NBA-Saison",
+   "summary": "Nach fünf Jahren spielen die Brüder Franz und Moritz Wagner nicht mehr gemeinsam für die Orlando Magic. In der neuen NBA-Saison haben sie ganz unterschiedliche Rollen. Neuer &quot;deutscher Klub&quot; sind die Charlotte Hornets.",
+   "link": "https://www.dw.com/de/das-ende-der-wagners-auf-getrennten-wegen-in-die-neue-nba-saison/a-79709596?maca=de-rss-de-all-1119-rdf",
+   "published": ""
+  }
+ },
+ {
+  "newsroom": "France 24",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 20,
+  "a": {
+   "title": "Macron secures diesel deals on Gulf visit as fuel prices stoke unrest in France",
+   "summary": "French President Emmanuel Macron has obtained commitments to deliver an additional 200,000 tonnes of diesel per month from the United Arab Emirates and Bahrain during a tour of the Gulf, his office said Tuesday as the French government scrambles to address a cost-of-living crisis that has fuelled unrest in the country.",
+   "link": "https://www.france24.com/en/middle-east/20261020-macron-secures-diesel-deals-on-gulf-visit-as-fuel-prices-stoke-unrest-in-france",
+   "published": "Tue, 20 Oct 2026 09:44:49 GMT"
+  },
+  "b": {
+   "title": "Emmanuel Macron maintient sa tournée dans les pays du Golfe malgré la crise en France",
+   "summary": "Emmanuel Macron continue sa tournée dans les pays du Golfe malgré la crise en France. Le président français a convenu la livraison de 200 000 tonnes complémentaires de diesel par mois auprès des Émirats arabes unis et de Bahreïn, a annoncé mardi 20 octobre l'Élysée. Les précisions de Tarek Kaï envoyé spécial France 24 à Abou Dhabi et Anne Corpet, chroniqueuse internationale à France 24.",
+   "link": "https://www.france24.com/fr/vid%C3%A9o/20261020-emmanuel-macron-maintient-sa-tourn%C3%A9e-dans-les-pays-du-golfe-malgr%C3%A9-la-crise-en-france",
+   "published": "Tue, 20 Oct 2026 09:52:20 GMT"
+  }
+ },
+ {
+  "newsroom": "France 24",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 18,
+  "a": {
+   "title": "Football: Ronaldo suspended for 30 days by Portugal for walkout",
+   "summary": "Cristiano Ronaldo has been suspended for 30 days by the Portuguese Football Federation. This suspension is accompanied by a fine of €255.",
+   "link": "https://www.france24.com/en/tv-shows/sports/20261020-football-cristiano-ronaldo-suspended-for-30-days-by-portugal",
+   "published": "Tue, 20 Oct 2026 08:11:15 GMT"
+  },
+  "b": {
+   "title": "Cristiano Ronaldo suspendu 30 jours par la Fédération portugaise de football",
+   "summary": "Cristiano Ronaldo a été suspendu pour 30 jours par la Fédération portugaise de football. Cette suspension est assortie d'une amende de 255 euros.",
+   "link": "https://www.france24.com/fr/%C3%A9missions/sports/20261020-cristiano-ronaldo-suspendu-30-jours-f%C3%A9d%C3%A9ration-portugaise-football",
+   "published": "Tue, 20 Oct 2026 07:13:43 GMT"
+  }
+ }
+]

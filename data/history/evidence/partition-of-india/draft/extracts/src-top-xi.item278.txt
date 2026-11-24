@@ -1,0 +1,8 @@
+source: src-top-xi
+locator: item278
+url: https://archive.org/download/constitutionalre06nich/constitutionalre06nich_djvu.txt
+read: 2026-09-25
+note: item n is the document number in the volume
+note: No. 278, Sir F. Burrows (Bengal) to Mountbatten, telegram of 20 June 1947, 4.40 pm; the layer reads the East Bengal minority as '3  5' and the line-break hyphen in 'Con¬stituent' is rejoined; its doubled spaces are single
+
+No. 979-S. Continuation my telegram No. 978-S.1 Separate meetings of members West repeat West Bengal Legislative Assembly this afternoon decided under paragraph six of H.M.G.’s statement2 by 58 votes to 21 votes that Province should be partitioned; and under paragraph eight of statement by 58 votes to 21 votes again that West Bengal should join existing Constituent Assembly. Separate meeting of members East repeat East Bengal Legislative Assembly this afternoon decided under paragraph six of statement by 106 votes to 3 5 votes that Province should not repeat not be partitioned ; under paragraph eight of statement by 107 votes to 34 that East Bengal should join new Constituent Assembly; and under paragraph thirteen of statement by 105 votes to 34 votes that East Bengal would agree to amalgamation of Sylhet.

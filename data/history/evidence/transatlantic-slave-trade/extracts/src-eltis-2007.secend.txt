@@ -1,0 +1,7 @@
+source: src-eltis-2007
+locator: secend
+url: https://legacy.slavevoyages.org/blog/brief-overview-trans-atlantic-slave-trade
+read: 2026-10-09
+note: the same essay; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+When Brazilian authorities began arresting slavers at the end of 1850, the volume of the traffic slipped back to levels not seen for two centuries, and the last trans-Atlantic slave expedition - to Cuba and probably from the Congo River - completed its voyage in 1867. For the last two decades of the traffic, only the Bight of Benin and the Congo region were heavily engaged in the trade. Nevertheless, over the whole period of the trade, some 12.5 million slaves had been shipped from Africa, and 10.7 million had arrived in the Americas, likely the most costly in human life of all of long-distance global migrations.

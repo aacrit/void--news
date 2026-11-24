@@ -1,0 +1,869 @@
+{
+ "uk-tabloids": {
+  "scored": 105,
+  "matched": 107,
+  "skipped": {
+   "short": 2
+  },
+  "hand": {
+   "n": 105,
+   "auc": 0.476,
+   "ci95": [
+    0.429,
+    0.529
+   ],
+   "ties": 76,
+   "verdict": "stop"
+  },
+  "raw100:net": {
+   "n": 105,
+   "auc": 0.614,
+   "ci95": [
+    0.519,
+    0.705
+   ],
+   "ties": 5,
+   "verdict": "stop"
+  },
+  "raw100:bal": {
+   "n": 105,
+   "auc": 0.605,
+   "ci95": [
+    0.519,
+    0.69
+   ],
+   "ties": 17,
+   "verdict": "stop"
+  },
+  "furn100:net": {
+   "n": 105,
+   "auc": 0.505,
+   "ci95": [
+    0.41,
+    0.6
+   ],
+   "ties": 4,
+   "verdict": "stop"
+  },
+  "furn100:bal": {
+   "n": 105,
+   "auc": 0.505,
+   "ci95": [
+    0.429,
+    0.586
+   ],
+   "ties": 36,
+   "verdict": "stop"
+  },
+  "furnbroad100:net": {
+   "n": 105,
+   "auc": 0.529,
+   "ci95": [
+    0.438,
+    0.624
+   ],
+   "ties": 1,
+   "verdict": "stop"
+  },
+  "furnbroad100:bal": {
+   "n": 105,
+   "auc": 0.576,
+   "ci95": [
+    0.5,
+    0.657
+   ],
+   "ties": 33,
+   "verdict": "stop"
+  },
+  "raw300:net": {
+   "n": 105,
+   "auc": 0.486,
+   "ci95": [
+    0.39,
+    0.581
+   ],
+   "ties": 0,
+   "verdict": "stop"
+  },
+  "raw300:bal": {
+   "n": 105,
+   "auc": 0.414,
+   "ci95": [
+    0.329,
+    0.505
+   ],
+   "ties": 5,
+   "verdict": "stop"
+  },
+  "furn300:net": {
+   "n": 105,
+   "auc": 0.514,
+   "ci95": [
+    0.419,
+    0.61
+   ],
+   "ties": 0,
+   "verdict": "stop"
+  },
+  "furn300:bal": {
+   "n": 105,
+   "auc": 0.533,
+   "ci95": [
+    0.438,
+    0.624
+   ],
+   "ties": 10,
+   "verdict": "stop"
+  },
+  "furnbroad300:net": {
+   "n": 105,
+   "auc": 0.514,
+   "ci95": [
+    0.419,
+    0.61
+   ],
+   "ties": 0,
+   "verdict": "stop"
+  },
+  "furnbroad300:bal": {
+   "n": 105,
+   "auc": 0.557,
+   "ci95": [
+    0.467,
+    0.648
+   ],
+   "ties": 11,
+   "verdict": "stop"
+  },
+  "raw1000:net": {
+   "n": 105,
+   "auc": 0.457,
+   "ci95": [
+    0.362,
+    0.552
+   ],
+   "ties": 0,
+   "verdict": "stop"
+  },
+  "raw1000:bal": {
+   "n": 105,
+   "auc": 0.357,
+   "ci95": [
+    0.267,
+    0.448
+   ],
+   "ties": 1,
+   "verdict": "stop"
+  },
+  "furn1000:net": {
+   "n": 105,
+   "auc": 0.495,
+   "ci95": [
+    0.4,
+    0.59
+   ],
+   "ties": 0,
+   "verdict": "stop"
+  },
+  "furn1000:bal": {
+   "n": 105,
+   "auc": 0.529,
+   "ci95": [
+    0.438,
+    0.624
+   ],
+   "ties": 1,
+   "verdict": "stop"
+  },
+  "furnbroad1000:net": {
+   "n": 105,
+   "auc": 0.514,
+   "ci95": [
+    0.419,
+    0.61
+   ],
+   "ties": 0,
+   "verdict": "stop"
+  },
+  "furnbroad1000:bal": {
+   "n": 105,
+   "auc": 0.562,
+   "ci95": [
+    0.467,
+    0.657
+   ],
+   "ties": 2,
+   "verdict": "stop"
+  }
+ },
+ "israel": {
+  "scored": 0,
+  "matched": 39,
+  "skipped": {
+   "robots": 39
+  },
+  "hand": {
+   "n": 0,
+   "auc": null,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "raw100:net": {
+   "n": 0,
+   "auc": null,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "raw100:bal": {
+   "n": 0,
+   "auc": null,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furn100:net": {
+   "n": 0,
+   "auc": null,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furn100:bal": {
+   "n": 0,
+   "auc": null,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furnbroad100:net": {
+   "n": 0,
+   "auc": null,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furnbroad100:bal": {
+   "n": 0,
+   "auc": null,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "raw300:net": {
+   "n": 0,
+   "auc": null,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "raw300:bal": {
+   "n": 0,
+   "auc": null,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furn300:net": {
+   "n": 0,
+   "auc": null,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furn300:bal": {
+   "n": 0,
+   "auc": null,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furnbroad300:net": {
+   "n": 0,
+   "auc": null,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furnbroad300:bal": {
+   "n": 0,
+   "auc": null,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "raw1000:net": {
+   "n": 0,
+   "auc": null,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "raw1000:bal": {
+   "n": 0,
+   "auc": null,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furn1000:net": {
+   "n": 0,
+   "auc": null,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furn1000:bal": {
+   "n": 0,
+   "auc": null,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furnbroad1000:net": {
+   "n": 0,
+   "auc": null,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furnbroad1000:bal": {
+   "n": 0,
+   "auc": null,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  }
+ },
+ "india": {
+  "scored": 9,
+  "matched": 11,
+  "skipped": {
+   "short": 2
+  },
+  "hand": {
+   "n": 9,
+   "auc": 0.389,
+   "ci95": [
+    0.222,
+    0.5
+   ],
+   "ties": 7,
+   "verdict": "insufficient pairs"
+  },
+  "raw100:net": {
+   "n": 9,
+   "auc": 0.333,
+   "ci95": [
+    0.0,
+    0.667
+   ],
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "raw100:bal": {
+   "n": 9,
+   "auc": 0.333,
+   "ci95": [
+    0.0,
+    0.667
+   ],
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furn100:net": {
+   "n": 9,
+   "auc": 0.222,
+   "ci95": [
+    0.0,
+    0.556
+   ],
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furn100:bal": {
+   "n": 9,
+   "auc": 0.333,
+   "ci95": [
+    0.111,
+    0.611
+   ],
+   "ties": 2,
+   "verdict": "insufficient pairs"
+  },
+  "furnbroad100:net": {
+   "n": 9,
+   "auc": 0.333,
+   "ci95": [
+    0.0,
+    0.667
+   ],
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furnbroad100:bal": {
+   "n": 9,
+   "auc": 0.278,
+   "ci95": [
+    0.056,
+    0.5
+   ],
+   "ties": 3,
+   "verdict": "insufficient pairs"
+  },
+  "raw300:net": {
+   "n": 9,
+   "auc": 0.333,
+   "ci95": [
+    0.0,
+    0.667
+   ],
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "raw300:bal": {
+   "n": 9,
+   "auc": 0.222,
+   "ci95": [
+    0.0,
+    0.556
+   ],
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furn300:net": {
+   "n": 9,
+   "auc": 0.333,
+   "ci95": [
+    0.0,
+    0.667
+   ],
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furn300:bal": {
+   "n": 9,
+   "auc": 0.5,
+   "ci95": [
+    0.222,
+    0.778
+   ],
+   "ties": 3,
+   "verdict": "insufficient pairs"
+  },
+  "furnbroad300:net": {
+   "n": 9,
+   "auc": 0.444,
+   "ci95": [
+    0.111,
+    0.778
+   ],
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furnbroad300:bal": {
+   "n": 9,
+   "auc": 0.389,
+   "ci95": [
+    0.167,
+    0.667
+   ],
+   "ties": 3,
+   "verdict": "insufficient pairs"
+  },
+  "raw1000:net": {
+   "n": 9,
+   "auc": 0.556,
+   "ci95": [
+    0.222,
+    0.889
+   ],
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "raw1000:bal": {
+   "n": 9,
+   "auc": 0.111,
+   "ci95": [
+    0.0,
+    0.333
+   ],
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furn1000:net": {
+   "n": 9,
+   "auc": 0.556,
+   "ci95": [
+    0.222,
+    0.889
+   ],
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furn1000:bal": {
+   "n": 9,
+   "auc": 0.389,
+   "ci95": [
+    0.111,
+    0.722
+   ],
+   "ties": 1,
+   "verdict": "insufficient pairs"
+  },
+  "furnbroad1000:net": {
+   "n": 9,
+   "auc": 0.333,
+   "ci95": [
+    0.0,
+    0.667
+   ],
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furnbroad1000:bal": {
+   "n": 9,
+   "auc": 0.278,
+   "ci95": [
+    0.0,
+    0.556
+   ],
+   "ties": 1,
+   "verdict": "insufficient pairs"
+  }
+ },
+ "turkey": {
+  "scored": 1,
+  "matched": 6,
+  "skipped": {
+   "short": 5
+  },
+  "hand": {
+   "n": 1,
+   "auc": 0.5,
+   "ci95": null,
+   "ties": 1,
+   "verdict": "insufficient pairs"
+  },
+  "raw100:net": {
+   "n": 1,
+   "auc": 0.0,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "raw100:bal": {
+   "n": 1,
+   "auc": 0.0,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furn100:net": {
+   "n": 1,
+   "auc": 0.0,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furn100:bal": {
+   "n": 1,
+   "auc": 0.0,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furnbroad100:net": {
+   "n": 1,
+   "auc": 0.0,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furnbroad100:bal": {
+   "n": 1,
+   "auc": 0.0,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "raw300:net": {
+   "n": 1,
+   "auc": 0.0,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "raw300:bal": {
+   "n": 1,
+   "auc": 1.0,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furn300:net": {
+   "n": 1,
+   "auc": 0.0,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furn300:bal": {
+   "n": 1,
+   "auc": 0.0,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furnbroad300:net": {
+   "n": 1,
+   "auc": 1.0,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furnbroad300:bal": {
+   "n": 1,
+   "auc": 1.0,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "raw1000:net": {
+   "n": 1,
+   "auc": 1.0,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "raw1000:bal": {
+   "n": 1,
+   "auc": 1.0,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furn1000:net": {
+   "n": 1,
+   "auc": 1.0,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furn1000:bal": {
+   "n": 1,
+   "auc": 1.0,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furnbroad1000:net": {
+   "n": 1,
+   "auc": 0.0,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  },
+  "furnbroad1000:bal": {
+   "n": 1,
+   "auc": 1.0,
+   "ci95": null,
+   "ties": 0,
+   "verdict": "insufficient pairs"
+  }
+ },
+ "POOLED": {
+  "hand": {
+   "n": 115,
+   "auc": 0.47,
+   "ci95": [
+    0.422,
+    0.517
+   ],
+   "ties": 84,
+   "verdict": "stop"
+  },
+  "raw100:net": {
+   "n": 115,
+   "auc": 0.587,
+   "ci95": [
+    0.496,
+    0.674
+   ],
+   "ties": 5,
+   "verdict": "stop"
+  },
+  "raw100:bal": {
+   "n": 115,
+   "auc": 0.578,
+   "ci95": [
+    0.496,
+    0.661
+   ],
+   "ties": 17,
+   "verdict": "stop"
+  },
+  "furn100:net": {
+   "n": 115,
+   "auc": 0.478,
+   "ci95": [
+    0.391,
+    0.57
+   ],
+   "ties": 4,
+   "verdict": "stop"
+  },
+  "furn100:bal": {
+   "n": 115,
+   "auc": 0.487,
+   "ci95": [
+    0.409,
+    0.561
+   ],
+   "ties": 38,
+   "verdict": "stop"
+  },
+  "furnbroad100:net": {
+   "n": 115,
+   "auc": 0.509,
+   "ci95": [
+    0.422,
+    0.6
+   ],
+   "ties": 1,
+   "verdict": "stop"
+  },
+  "furnbroad100:bal": {
+   "n": 115,
+   "auc": 0.548,
+   "ci95": [
+    0.474,
+    0.626
+   ],
+   "ties": 36,
+   "verdict": "stop"
+  },
+  "raw300:net": {
+   "n": 115,
+   "auc": 0.47,
+   "ci95": [
+    0.374,
+    0.565
+   ],
+   "ties": 0,
+   "verdict": "stop"
+  },
+  "raw300:bal": {
+   "n": 115,
+   "auc": 0.404,
+   "ci95": [
+    0.317,
+    0.491
+   ],
+   "ties": 5,
+   "verdict": "stop"
+  },
+  "furn300:net": {
+   "n": 115,
+   "auc": 0.496,
+   "ci95": [
+    0.4,
+    0.583
+   ],
+   "ties": 0,
+   "verdict": "stop"
+  },
+  "furn300:bal": {
+   "n": 115,
+   "auc": 0.526,
+   "ci95": [
+    0.435,
+    0.617
+   ],
+   "ties": 13,
+   "verdict": "stop"
+  },
+  "furnbroad300:net": {
+   "n": 115,
+   "auc": 0.513,
+   "ci95": [
+    0.426,
+    0.609
+   ],
+   "ties": 0,
+   "verdict": "stop"
+  },
+  "furnbroad300:bal": {
+   "n": 115,
+   "auc": 0.548,
+   "ci95": [
+    0.461,
+    0.635
+   ],
+   "ties": 14,
+   "verdict": "stop"
+  },
+  "raw1000:net": {
+   "n": 115,
+   "auc": 0.47,
+   "ci95": [
+    0.383,
+    0.565
+   ],
+   "ties": 0,
+   "verdict": "stop"
+  },
+  "raw1000:bal": {
+   "n": 115,
+   "auc": 0.343,
+   "ci95": [
+    0.261,
+    0.426
+   ],
+   "ties": 1,
+   "verdict": "stop"
+  },
+  "furn1000:net": {
+   "n": 115,
+   "auc": 0.504,
+   "ci95": [
+    0.409,
+    0.591
+   ],
+   "ties": 0,
+   "verdict": "stop"
+  },
+  "furn1000:bal": {
+   "n": 115,
+   "auc": 0.522,
+   "ci95": [
+    0.435,
+    0.609
+   ],
+   "ties": 2,
+   "verdict": "stop"
+  },
+  "furnbroad1000:net": {
+   "n": 115,
+   "auc": 0.496,
+   "ci95": [
+    0.409,
+    0.583
+   ],
+   "ties": 0,
+   "verdict": "stop"
+  },
+  "furnbroad1000:bal": {
+   "n": 115,
+   "auc": 0.543,
+   "ci95": [
+    0.457,
+    0.63
+   ],
+   "ties": 3,
+   "verdict": "stop"
+  },
+  "scored": 115
+ }
+}

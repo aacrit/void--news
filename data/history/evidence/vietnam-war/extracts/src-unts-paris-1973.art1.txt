@@ -1,0 +1,8 @@
+source: src-unts-paris-1973
+locator: art1
+url: https://treaties.un.org/doc/Publication/UNTS/Volume%20935/volume-935-I-13295-English.pdf
+read: 2026-10-09
+note: the United Nations Treaty Series PDF for volume 935, registration I-13295, its text layer, line breaks folded to spaces; footnote numbers print inline ('Viet-Nam.2')
+note: the preamble and Article 1
+
+AGREEMENT1 ON ENDING THE WAR AND RESTORING PEACE IN VIET-NAM The Parties participating in the Paris Conference on Viet-Nam, With a view to ending the war and restoring peace in Viet-Nam on the basis of respect for the Vietnamese people's fundamental national rights and the South Vietnamese people's right to self-determination, and to contributing to the consolidation of peace in Asia and the world, Have agreed on the following provisions and undertake to respect and to implement them : Chapter I THE VIETNAMESE PEOPLE'S FUNDAMENTAL NATIONAL RIGHTS Article 1 The United States and all other countries respect the independence, sovereignty, unity, and territorial integrity of Viet-Nam as recognized by the 1954 Geneva Agreements on Viet-Nam.2

@@ -1,0 +1,7 @@
+source: src-order1-golder
+locator: art5
+url: https://archive.org/download/documentsofrussi027937mbp/documentsofrussi027937mbp_djvu.txt
+read: 2026-10-09
+note: the free copy is the scan's OCR text layer, held as the layer prints it (misreadings included); line breaks collapsed to spaces, nothing else changed
+
+5. All kinds of arms, such as rifles, machine guns, armored auto- mobiles, and others, must be kept at the disposal and under the con- trol of the company and battalion committees, and in no case be turned over to officers, even at their demand.

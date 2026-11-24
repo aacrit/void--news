@@ -1,0 +1,50 @@
+{
+  "why": "Two roster names were worn by two rows each. The Conversation's two rows are two real editions and both were kept, one renamed. Ukrainska Pravda's two rows are one outlet: the removed row was Google-fed (median 11 words, unscoreable on its text) and `unrated` (dropped from the lean aggregate), so its articles were counted as a second independent source for the same reporting.",
+  "renamed": [
+    {
+      "id": "the-conversation-global",
+      "from": "The Conversation",
+      "to": "The Conversation (Global)"
+    }
+  ],
+  "removed": [
+    {
+      "id": "pravda-ukraine",
+      "name": "Ukrainska Pravda (English)",
+      "url": "https://www.pravda.com.ua/eng/",
+      "rss_url": "https://news.google.com/rss/search?q=site:pravda.com.ua+when:24h&ceid=US:en&hl=en-US&gl=US",
+      "tier": "international",
+      "country": "UA",
+      "type": "digital",
+      "political_lean_baseline": "unrated",
+      "credibility_notes": "Major Ukrainian news site, founded 2000. Independent. Key source for Ukraine conflict coverage."
+    }
+  ],
+  "removed_duplicate_feeds": {
+    "why": "Found by the no-two-rows-share-a-feed check the day it was written. Each pair is one paper entered twice with two ids and the same Google News feed, so every article it published was drawn twice on the Bench as two independent sources. The surviving row carries the other's notes.",
+    "rows": [
+      {
+        "id": "little-rock-democrat-gazette",
+        "name": "Arkansas Democrat-Gazette (Little Rock)",
+        "url": "https://www.arkansasonline.com/news/",
+        "rss_url": "https://news.google.com/rss/search?q=site:arkansasonline.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+        "tier": "independent",
+        "country": "US",
+        "type": "broadsheet",
+        "political_lean_baseline": "center-right",
+        "credibility_notes": "Arkansas capital and largest newspaper. WEHCO Media. Strong Southern politics coverage."
+      },
+      {
+        "id": "columbia-state",
+        "name": "The State (Columbia SC)",
+        "url": "https://www.thestate.com/news/",
+        "rss_url": "https://news.google.com/rss/search?q=site:thestate.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+        "tier": "independent",
+        "country": "US",
+        "type": "broadsheet",
+        "political_lean_baseline": "center",
+        "credibility_notes": "South Carolina capital newspaper. McClatchy. Covers Deep South politics. Founded 1891."
+      }
+    ]
+  }
+}

@@ -1,0 +1,6 @@
+source: src-honigsbaum-2013
+locator: para15
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3867839/fullTextXML
+read: 2026-09-25
+
+Growing concern about the impact the flu was having on army sickness rates also failed to make it past the military censors. The American Expeditionary Force (AEF) first began to note a resurgence of influenza in northern France in early September. The outbreaks were most extensive at Le Mans and Brest and by the end of the month the AEF had recorded some 11,000 new cases. This time, however, the influenza was frequently accompanied by severe pneumonia and sometimes proved fatal.

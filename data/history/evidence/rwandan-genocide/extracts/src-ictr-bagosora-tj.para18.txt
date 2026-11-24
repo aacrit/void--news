@@ -1,0 +1,7 @@
+source: src-ictr-bagosora-tj
+locator: para18
+url: https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-98-41/trial-judgements/en/081218.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+
+18. During the night, General Dallaire ordered that an UNAMIR escort be provided to the Prime Minister so that she could address the nation on Radio Rwanda in the morning. Around 5.00 a.m. on 7 April 1994, 10 Belgian peacekeepers were dispatched to her residence. In the preceding hours, elements of the Reconnaissance Battalion and the Presidential Guard had surrounded the compound and at times fired on the gendarmes and Ghanaian peacekeepers guarding the Prime Minister. After the Belgian peacekeepers arrived, the compound came under attack. The Prime Minister fled her home and hid at a neighbouring compound. She was found, killed and then sexually assaulted.

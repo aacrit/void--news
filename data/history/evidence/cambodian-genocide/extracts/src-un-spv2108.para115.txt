@@ -1,0 +1,7 @@
+source: src-un-spv2108
+locator: para115
+url: https://documents.un.org/doc/undoc/gen/nl7/900/05/pdf/nl790005.pdf
+read: 2026-09-25
+note: the ODS scan's text layer is optical character recognition of a 1979 print; misreads are stored as the layer prints them
+
+115. In order to draw a clear picture of the problem of Kampuchea, it is appropriate to make a clear distinction between two wars: one, the border war started by the Pol Pot-Ieng Sary clique against Viet Nam, which the Vietnamese people have been forced to deal with, the other, the revolutionary war of the Kampuchean people against the dictatorial rule of the Pol Pot-Ieng Sary clique, which is an instrument in the hands of the reactionary ruling circles of Peking.

@@ -1,0 +1,10 @@
+source: src-franck-19450611
+locator: secsummary
+url: https://archive.org/download/TheFranckReport/ELS012-036_djvu.txt
+read: 2026-10-05
+note: the summary section; OCR layer, 'toTelease' for 'to release' kept
+
+If the United States would be the first toTelease this new means of 
+indiscriminate destruction upon mankind, she would sacrifice public support throughout the world, 
+precipitate the race of armaments, and prejudice the possibility of reaching an international agreement 
+on the future control of such weapons.

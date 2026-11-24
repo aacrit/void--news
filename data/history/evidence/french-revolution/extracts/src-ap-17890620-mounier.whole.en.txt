@@ -1,0 +1,5 @@
+rendering: void-translation
+of: src-ap-17890620-mounier.whole
+names: Target=Target; Chapelier=Chapelier; Barnave=Barnave; Brézé=Brézé; Jeu de Paume=Tennis Court; rue du Vieux-Versailles=rue du Vieux-Versailles
+
+M. Mounier presents an opinion, supported by MM. Target, Chapelier and Barnave. He represents how strange it is that the hall of the Estates General should be occupied by armed men; that no other place should be offered to the National Assembly; that its president should be informed only by letters from the marquis de Brézé, and the representatives of the nation only by posted notices; that, in short, they should be obliged to meet at the Tennis Court, rue du Vieux-Versailles, so as not to interrupt their work; and that, wounded in their rights and their dignity, and warned of all the energy of the intrigue and of the persistence with which the King is being pushed toward disastrous measures, the representatives of the nation must bind themselves to the public safety and the interests of the country by a solemn oath.

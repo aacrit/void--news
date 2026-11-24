@@ -1,0 +1,7 @@
+source: src-un-sres47
+locator: pre3
+url: https://documents.un.org/doc/resolution/gen/nr0/047/72/pdf/nr004772.pdf
+read: 2026-09-25
+note: the preambular paragraphs 3 to 5 of resolution 47 (1948), which the PDF text layer prints after a footnote and a column of the French text; the layer's soft hyphens are rejoined and its Jam.mu is kept
+
+Being strongly of the opinion that the early restoration of peace and order in Jam.mu and Kashmir is essential and that India and Pakistan should do their utmost to bring about a cessation of aU fighting, Noting with satisfaction that both India and Pakistan desire that the question of the accession of Jam.mu and Kashmir to India or Pakistan should be decided through the democratic method of a free and impartial plebiscite, Considering that the continuation of the dispute is likely to endanger international peace and security,

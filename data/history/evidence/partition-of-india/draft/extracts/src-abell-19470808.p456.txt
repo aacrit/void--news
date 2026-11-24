@@ -1,0 +1,8 @@
+source: src-abell-19470808
+locator: p456
+url: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+read: 2026-09-25
+note: p is the page of Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947 (2nd ed., 2005), read from the Internet Archive text layer; line breaks are joined and the layer's soft hyphens rejoined
+note: Document 139, Sir G. Abell to S. E. Abbott, 8 August 1947, from I.O.R. R/3/1/157 f 255; the map and Beaumont's note it encloses are not reproduced in the collection; 'Ienclose' is the layer's
+
+8 August 1947 My dear Abbott, Ienclose a map showing roughly the boundary which Sir Cyril Radcliffe proposes to demarcate in his award, and a note by Christopher Beaumont describing it.* There will not be any great changes from this boundary, but it will have to be accurately defined with reference to village and zail boundaries in Lahore district.

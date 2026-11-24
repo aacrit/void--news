@@ -1,0 +1,8 @@
+source: src-madiou-1848-t3
+locator: p472
+url: https://archive.org/download/histoiredhaiti03madi/histoiredhaiti03madi_djvu.txt
+read: 2026-09-25
+note: tome III, page 472: articles 12 to 14 of the Constitution of 1805 as Madiou prints it; the page header removed; the layer prints 14 as A4
+note: the free copy is the scan's OCR text layer, held as the layer prints it, long s read as f and other misreadings included
+
+12 Aucun blanc, quelle que soit sa nation, ne mettra le pied sur ce territoire à titre de maître ou de propriétaire, et ne pourra à. l'avenir acquérir aucune propriété. 13. L'article précédent ne pourra produire aucun effet) {ant ra" l'égard des femmes blanches qui sont naturalisées haïtiennes, par lergou: xernement, qu'à l'égard des enfants nés ou à naitre d'elles. Sont aussi compris dans les dispositions du présent artiele les allemands et polonais naturalisés par le gouvernement. * | A4. Toute acception de couleur parmi les enfans d’une seule et même famille dont le chef de l'Etat est le père, devant nécessaires ment.cesser, les haïtiens ne seront désormais connus que sous le _nom générique de noirs. s |

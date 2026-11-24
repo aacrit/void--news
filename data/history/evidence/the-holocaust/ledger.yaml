@@ -1,0 +1,1048 @@
+# The evidence ledger for the-holocaust (docs/proposals/HISTORY-THESIS-PAGE.md §3, §4c, §8).
+# Begun 2026-10-07: the sources a fifteen-minute documentary with five perspectives at parity
+# can read from (the victims and survivors; the perpetrators' own record; the Allies and
+# bystanders, what was known when; resistance; historians and the death-toll methods), and
+# the record the live script and event YAML are checked against. Every entry was fetched on
+# 2026-10-07 from the URL it names; every extract under extracts/ was sliced from the fetched
+# copy by a builder script (start marker to end marker, scratch out/ledger-holocaust/build.py),
+# never retyped. Nothing here was written from memory. A work the free record could not reach
+# is listed under `gaps`, by name, with what was tried.
+#
+# This is NOT a thesis ledger: no positions, contested claims, exhibits or analyses are
+# adjudicated here, and the event renders the Hearing. The bar of §4e is not claimed.
+#
+# Each entry carries `perspective` (which of the five it serves; several serve two),
+# `translation` (who made the English, where the record says), `shows` and `does_not_show`.
+# Numbers: every figure below is the PRODUCER's, with its method and date where the record
+# gives them. They are listed side by side and never averaged.
+#
+# None of the three `primary_source_excerpts` the event YAML carries is held: Levi's poem is a
+# copyrighted translation with no lawful free copy and the YAML's wording is not the published
+# one; the Wiesel line is not in the Nobel speech the YAML names (both 1986 Oslo texts were
+# read whole); the Karski line has no document behind it here. See gaps.
+slug: the-holocaust
+bootstrapped: 2026-10-07
+
+entries:
+  # ================================================================ the perpetrators' own record
+  - id: src-wannsee-avalon
+    tier: A
+    kind: primary-document
+    author: Reich Main Security Office (minutes of the meeting chaired by Reinhard Heydrich)
+    title: "Wannsee Protocol, January 20, 1942"
+    container: "The Avalon Project, International Military Tribunal for Germany, Key Documents Related to the Proceedings"
+    publisher: Lillian Goldman Law Library, Yale Law School
+    place: New Haven
+    year: 1942
+    edition: "Avalon's English text. Avalon does not name its translator; the page heads the document 'Stamp: Top Secret / 30 copies / 16th copy'. The German original is held by the Politisches Archiv des Auswärtigen Amtes, Berlin, R 100857, Bl. 166-188 (as the House of the Wannsee Conference states, src-ghwk-conference)"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://avalon.law.yale.edu/imt/wannsee.asp"}
+    access:
+      free_copy: "https://avalon.law.yale.edu/imt/wannsee.asp"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "The Avalon Project : Wannsee Protocol, January 20, 1942"
+    language: en
+    region_of_authorship: europe
+    producer: german-state
+    position: null
+    rights: unknown
+    perspective: [perpetrators]
+    translation: "English by an unnamed translator (Avalon states none). Its wording differs from the House of the Wannsee Conference translation: 'eliminated by natural causes' / 'treated accordingly' here, 'drop out through natural reduction' / 'given suitable treatment' there. The phrase 'natural diminution' is in neither"
+    shows: "the participants and offices as the minutes list them (fifteen names including Heydrich; eight printed with 'Dr.' in this translation, among them 'Dr. Luther'); the figure of 'approximately 11 million Jews' and the country table, including England 330,000, Ireland 4,000, Switzerland 18,000; the labour-column sentence and 'treated accordingly'"
+    does_not_show: "the meeting's length or lunch; how many of the thirty copies were destroyed; when or where the surviving copy was found; any word for killing. Held as five extracts under the cap for a work whose translation rights are not stated"
+
+  - id: src-wannsee-ghwk
+    tier: A
+    kind: primary-document
+    author: Reich Main Security Office (minutes); translation published by the House of the Wannsee Conference
+    title: "Transcript of the Protocol (English translation of the Wannsee Conference protocol)"
+    container: null
+    publisher: Gedenk- und Bildungsstätte Haus der Wannsee-Konferenz
+    place: Berlin
+    year: 1942
+    edition: "English translation 'published by the House of the Wannsee Conference, Berlin 2020' (the memorial's documents page); PDF 240305_Protokoll_Englisch.pdf, which prints the original's archive page stamps (166, 167 ...) beside the text"
+    volume: null
+    document_number: "Politisches Archiv des Auswärtigen Amtes, R 100857, Bl. 166-188 (original)"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.ghwk.de/fileadmin/Redaktion/PDF/Konferenz/Protokolle/240305_Protokoll_Englisch.pdf"}
+    access:
+      free_copy: "https://www.ghwk.de/fileadmin/Redaktion/PDF/Konferenz/Protokolle/240305_Protokoll_Englisch.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "TRANSCRIPT OF THE PROTOCOL"
+    language: en
+    region_of_authorship: europe
+    producer: german-state
+    position: null
+    rights: copyright
+    perspective: [perpetrators]
+    translation: "the memorial's own English translation, 2020"
+    shows: "the same protocol in a second, independent English rendering: 'roughly eleven million Jews', 'drop out through natural reduction', 'given suitable treatment'; 'Secret Reich Matter! 30 copies 16th copy'; Luther listed as 'Undersecretary of State Luther' with no 'Dr' (seven participants carry 'Dr' in this rendering, against eight in Avalon's)"
+    does_not_show: "anything Avalon's text does not; how many participants held doctorates as a matter of fact (the minutes print titles, and the two translations disagree on one of them)"
+
+  - id: src-imt-19451213
+    tier: A
+    kind: testimony
+    author: International Military Tribunal (the prosecution's presentation)
+    title: "Trial of the Major War Criminals before the International Military Tribunal, Volume 3, Nineteenth Day, Thursday, 13 December 1945"
+    container: "Trial of the Major War Criminals before the International Military Tribunal (the 'Blue Series'), as published by the Avalon Project"
+    publisher: International Military Tribunal, Nuremberg; web edition Lillian Goldman Law Library, Yale Law School
+    place: Nuremberg
+    year: 1945
+    edition: "Avalon web text of the official English record"
+    volume: "3"
+    document_number: "Document 1919-PS, Exhibit USA-170 (Himmler's speech at Posen, 4 October 1943), read into the record"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://avalon.law.yale.edu/imt/12-13-45.asp"}
+    access:
+      free_copy: "https://avalon.law.yale.edu/imt/12-13-45.asp"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "The Avalon Project : Nuremberg Trial Proceedings Vol. 3 - Nineteenth Day"
+    language: en
+    region_of_authorship: europe
+    producer: international-military-tribunal
+    position: null
+    rights: public
+    perspective: [perpetrators]
+    translation: "the passage of the speech is read from 'the English translation' of Document 1919-PS before the Court (the record's words: 'Page I, Paragraph 3, of the English translation'), i.e. the prosecution's translation of a German stenographic text. The German original and the audio are not held; the speaker reading it into the record is not named in the extract"
+    shows: "the record's own identification of the document (a speech 'at the meeting of the SS major generals at Posen on 4 October 1943'), and two passages of it in the prosecution's English: 'the extermination of the Jewish race', 'a page of glory in our history which has never been written and is never to be written'"
+    does_not_show: "the German wording, the full speech, or any audio. Under the brief (never hold perpetrator speech audio as a clip) no recording is sought"
+
+  - id: src-imt-19460415
+    tier: A
+    kind: testimony
+    author: International Military Tribunal (testimony of Rudolf Hoess; affidavit 3868-PS)
+    title: "Trial of the Major War Criminals before the International Military Tribunal, Volume 11, Monday, 15 April 1946"
+    container: "Trial of the Major War Criminals before the International Military Tribunal, as published by the Avalon Project"
+    publisher: International Military Tribunal, Nuremberg; web edition Lillian Goldman Law Library, Yale Law School
+    place: Nuremberg
+    year: 1946
+    edition: "Avalon web text of the official English record"
+    volume: "11"
+    document_number: "Document 3868-PS, Exhibit USA-819 (affidavit of Rudolf Hoess), read into the record"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://avalon.law.yale.edu/imt/04-15-46.asp"}
+    access:
+      free_copy: "https://avalon.law.yale.edu/imt/04-15-46.asp"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "The Avalon Project : Nuremberg Trial Proceedings Volume 11"
+    language: en
+    region_of_authorship: europe
+    producer: international-military-tribunal
+    position: null
+    rights: public
+    perspective: [perpetrators, historians]
+    translation: "Hoess testified in German, rendered in the official English record by the Tribunal's interpretation; the affidavit is read in English by Col. Amen, who says the prosecution had it 'in four languages'"
+    shows: "Hoess's own figures and their basis: 'at least 2,500,000 victims were executed and exterminated there by gassing and burning, and at least another half million succumbed to starvation and disease making a total dead of about 3,000,000' (affidavit para. 2); that he kept no figures and that Eichmann told him 'more than 2 million Jews' (the Kauffmann exchange); the summer 1941 order from Himmler; Treblinka, Zyklon B, gas chambers for 2,000 against Treblinka's ten for 200; the selection"
+    does_not_show: "a figure of 10,000 a day (the event YAML's summary says he testified to it; neither the testimony extracts nor the affidavit paragraphs held carry it); the later scholarly figure for Auschwitz (src-aus-piper), which is less than half of his"
+
+  - id: src-imt-19460103
+    tier: A
+    kind: testimony
+    author: International Military Tribunal (testimony of Otto Ohlendorf and Dieter Wisliceny)
+    title: "Trial of the Major War Criminals before the International Military Tribunal, Volume 4, Twenty-Sixth Day, Thursday, 3 January 1946"
+    container: "Trial of the Major War Criminals before the International Military Tribunal, as published by the Avalon Project"
+    publisher: International Military Tribunal, Nuremberg; web edition Lillian Goldman Law Library, Yale Law School
+    place: Nuremberg
+    year: 1946
+    edition: "Avalon web text of the official English record"
+    volume: "4"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://avalon.law.yale.edu/imt/01-03-46.asp"}
+    access:
+      free_copy: "https://avalon.law.yale.edu/imt/01-03-46.asp"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "The Avalon Project : Nuremberg Trial Proceedings Vol. 4 - Twenty-Sixth Day"
+    language: en
+    region_of_authorship: europe
+    producer: international-military-tribunal
+    position: null
+    rights: public
+    perspective: [perpetrators]
+    translation: "both witnesses testified in German; the official English record"
+    shows: "Ohlendorf: 'In the year between June 1941 to June 1942 the Einsatzkommandos reported 90,000 people liquidated' (Einsatzgruppe D), men, women and children. Wisliceny: Eichmann 'always talked about at least 4 million Jews. Sometimes he even mentioned 5 million', and in February 1945 said 'he would leap laughing into the grave because the feeling that he had 5 million people on his conscience would be for him a source of extraordinary satisfaction'"
+    does_not_show: "Eichmann's own words: Wisliceny reports them secondhand, and any use must say so"
+
+  - id: src-imt-judgment
+    tier: A
+    kind: judgment
+    author: International Military Tribunal
+    title: "Judgment of the International Military Tribunal: War Crimes and Crimes Against Humanity, Persecution of the Jews"
+    container: "Judgment of the International Military Tribunal for the Trial of German Major War Criminals, as published by the Avalon Project"
+    publisher: International Military Tribunal, Nuremberg; web edition Lillian Goldman Law Library, Yale Law School
+    place: Nuremberg
+    year: 1946
+    edition: "Avalon web text"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://avalon.law.yale.edu/imt/judwarcr.asp"}
+    access:
+      free_copy: "https://avalon.law.yale.edu/imt/judwarcr.asp"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "The Avalon Project : Judgment : War Crimes and Crimes Against Humanity"
+    language: en
+    region_of_authorship: europe
+    producer: international-military-tribunal
+    position: null
+    rights: public
+    perspective: [perpetrators, historians]
+    translation: null
+    shows: "what the Tribunal found: plans made 'in the summer of 1941' for the final solution, which 'meant the extermination of the Jews'; Hoess's estimate as the Tribunal recorded it (2,500,000 exterminated, a further 500,000 dead of disease and starvation); 'Adolf Eichmann ... has estimated that the policy pursued resulted in the killing of 6,000,000 Jews, of which 4.000.000 were killed in the extermination institutions'; Stroop's 'proved total of 56,065'"
+    does_not_show: "how Eichmann's estimate reached the Tribunal (it reports the estimate, not its channel); the Roma, who the Judgment's persecution section does not treat"
+
+  - id: src-stroop-1061ps
+    tier: A
+    kind: report
+    author: "Stroop (signed 'Stroop'), the SS officer the IMT Judgment names as 'in charge of the destruction of the ghetto in Warsaw' (Document 1061-PS)"
+    title: "The Stroop Report: The Warsaw Ghetto is No More"
+    container: "Nazi Conspiracy and Aggression, Volume 3, as published by the Avalon Project"
+    publisher: Office of United States Chief of Counsel for Prosecution of Axis Criminality (translation); web edition Lillian Goldman Law Library, Yale Law School
+    place: Washington
+    year: 1943
+    edition: "the prosecution's English translation of 1061-PS, Avalon web text"
+    volume: "3"
+    document_number: "1061-PS"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://avalon.law.yale.edu/imt/1061-ps.asp"}
+    access:
+      free_copy: "https://avalon.law.yale.edu/imt/1061-ps.asp"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "The Avalon Project : Nazi Conspriracy and Aggression Volume 3 - The Stroop Report"
+    language: en
+    region_of_authorship: europe
+    producer: german-state
+    position: null
+    rights: public
+    perspective: [perpetrators, resistance]
+    translation: "the United States prosecution's English translation in Nazi Conspiracy and Aggression; the German original is not held"
+    shows: "the resistance as its suppressor recorded it: the first attack repelled 'by a well-prepared concentration of fire'; women of the battle groups who 'fired pistols with both hands'; 'a total of 56,065 Jews whose extermination can be proved', plus those killed 'in explosions or fires but whose numbers could not be ascertained'; 'The former Jewish quarter of Warsaw is no longer in existence', the action ended 'by blowing up the Warsaw Synagogue'"
+    does_not_show: "the fighters' own account (src-eichmann-s025); Stroop's words are the perpetrator's, including 'bandits' and 'subhumans'"
+
+  # ================================================================ the victims and survivors
+  - id: src-imt-19460227
+    tier: A
+    kind: testimony
+    author: International Military Tribunal (testimony of Abram Gerzevitch Suzkever)
+    title: "Trial of the Major War Criminals before the International Military Tribunal, Volume 8, Wednesday, 27 February 1946"
+    container: "Trial of the Major War Criminals before the International Military Tribunal, as published by the Avalon Project"
+    publisher: International Military Tribunal, Nuremberg; web edition Lillian Goldman Law Library, Yale Law School
+    place: Nuremberg
+    year: 1946
+    edition: "Avalon web text of the official English record"
+    volume: "8"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://avalon.law.yale.edu/imt/02-27-46.asp"}
+    access:
+      free_copy: "https://avalon.law.yale.edu/imt/02-27-46.asp"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "The Avalon Project : Nuremberg Trial Proceedings Vol. 8"
+    language: en
+    region_of_authorship: europe
+    producer: international-military-tribunal
+    position: null
+    rights: public
+    perspective: [victims]
+    translation: "the witness was called by the Soviet prosecution; the official English record (the language he spoke is not stated in the extracts)"
+    shows: "a survivor's figures for his own city under oath: about 80,000 Jews in Vilna when the Germans came, 'about 600' after; the men taken toward Ponari, 'From there hardly one returned'"
+    does_not_show: "the camps: his testimony held is of Vilna and Ponari. Suzkever is the record's spelling"
+
+  - id: src-eichmann-s030
+    tier: A
+    kind: testimony
+    author: District Court of Jerusalem (testimony of Rivka Yoselewska)
+    title: "The Trial of Adolf Eichmann, Session No. 30, 22 Iyar 5721 (8 May 1961)"
+    container: "The Trial of Adolf Eichmann: Record of Proceedings in the District Court of Jerusalem (English transcript), as republished by the Nizkor Project"
+    publisher: District Court of Jerusalem (record); web edition The Nizkor Project
+    place: Jerusalem
+    year: 1961
+    edition: "Nizkor web text, parts 030-03 and 030-04"
+    volume: null
+    document_number: "Session 30"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.nizkor.org/session-030-04-eichmann-adolf/"}
+    access:
+      free_copy: "https://www.nizkor.org/session-030-04-eichmann-adolf/"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Session 030-04, Eichmann Adolf - Nizkor"
+    language: en
+    region_of_authorship: middle-east
+    producer: israeli-court
+    position: null
+    rights: copyright
+    perspective: [victims]
+    translation: "the witness testified in Yiddish (the record: 'Do you speak Hebrew? Witness: Yiddish.'); the English is the official transcript's"
+    shows: "a survivor of a mass shooting in her own words: born in Powost-Zagorodski, Pinsk district, a townlet of 'about five hundred families'; the shooting at the ditch, her daughter taken from her arms ('He tore the child away from me. I heard her last cry and he shot her.'); climbing out of the pit"
+    does_not_show: "the date of the shooting or the unit that carried it out; her home townlet is held from the session's part 030-03 (src-eichmann-s030p3)"
+
+  - id: src-eichmann-s030p3
+    tier: A
+    kind: testimony
+    author: District Court of Jerusalem (testimony of Rivka Yoselewska)
+    title: "The Trial of Adolf Eichmann, Session No. 30, 22 Iyar 5721 (8 May 1961), part 030-03"
+    container: "The Trial of Adolf Eichmann: Record of Proceedings in the District Court of Jerusalem (English transcript), as republished by the Nizkor Project"
+    publisher: District Court of Jerusalem (record); web edition The Nizkor Project
+    place: Jerusalem
+    year: 1961
+    edition: "Nizkor web text, part 030-03 (the opening of her testimony)"
+    volume: null
+    document_number: "Session 30"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.nizkor.org/session-030-03-eichmann-adolf/"}
+    access:
+      free_copy: "https://www.nizkor.org/session-030-03-eichmann-adolf/"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Session 030-03, Eichmann Adolf - Nizkor"
+    language: en
+    region_of_authorship: middle-east
+    producer: israeli-court
+    position: null
+    rights: copyright
+    perspective: [victims]
+    translation: "the witness testified in Yiddish; the English is the official transcript's"
+    shows: "who she was: Ramat Gan; born in Powost-Zagorodski in the Pinsk district, a townlet of 'about five hundred families'"
+    does_not_show: "the shooting, held from part 030-04 (src-eichmann-s030)"
+
+  - id: src-eichmann-s068
+    tier: A
+    kind: testimony
+    author: District Court of Jerusalem (testimony of Yehiel Dinur, K. Zetnik)
+    title: "The Trial of Adolf Eichmann, Session No. 68, 23 Sivan 5721 (7 June 1961)"
+    container: "The Trial of Adolf Eichmann: Record of Proceedings in the District Court of Jerusalem (English transcript), as republished by the Nizkor Project"
+    publisher: District Court of Jerusalem (record); web edition The Nizkor Project
+    place: Jerusalem
+    year: 1961
+    edition: "Nizkor web text, part 068-01"
+    volume: null
+    document_number: "Session 68"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.nizkor.org/session-068-01-eichmann-adolf/"}
+    access:
+      free_copy: "https://www.nizkor.org/session-068-01-eichmann-adolf/"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Session 068-01, Eichmann Adolf - Nizkor"
+    language: en
+    region_of_authorship: middle-east
+    producer: israeli-court
+    position: null
+    rights: copyright
+    perspective: [victims]
+    translation: "the record asks 'Do you speak Hebrew?' and he answers 'Yes'; the English is the official transcript's"
+    shows: "the limit of testimony, in the record itself: 'This is a chronicle of the planet of Auschwitz. I was there for about two years. Time there was not like it is here on earth', and the witness collapsing on the stand"
+    does_not_show: "anything he would have gone on to say; the session was adjourned"
+
+  - id: src-nobel-wiesel-1986
+    tier: A
+    kind: primary-document
+    author: Elie Wiesel
+    title: "Elie Wiesel, Acceptance Speech, Oslo, 10 December 1986"
+    container: "The Nobel Peace Prize 1986, NobelPrize.org"
+    publisher: Nobel Prize Outreach
+    place: Oslo
+    year: 1986
+    edition: "the web text, which the page sources to Les Prix Nobel. The Nobel Prizes 1986 (Stockholm, 1987) and dates 'on the occasion of the award of the Nobel Peace Prize in Oslo, December 10, 1986'; 'Copyright © The Nobel Foundation 1986'"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.nobelprize.org/prizes/peace/1986/wiesel/acceptance-speech/"}
+    access:
+      free_copy: "https://www.nobelprize.org/prizes/peace/1986/wiesel/acceptance-speech/"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Elie Wiesel – Acceptance Speech - NobelPrize.org"
+    language: en
+    region_of_authorship: americas
+    producer: elie-wiesel
+    position: null
+    rights: copyright
+    perspective: [victims]
+    translation: null
+    shows: "what Wiesel did say on accepting the prize: 'the world did know and remain silent', 'Neutrality helps the oppressor, never the victim. Silence encourages the tormentor, never the tormented'; the boy, the sealed cattle car"
+    does_not_show: "the sentence the event YAML and the live script attribute to this speech, 'For the dead and the living, we must bear witness': it is not in the acceptance speech, and his Nobel lecture (https://www.nobelprize.org/prizes/peace/1986/wiesel/lecture/, read whole) does not carry it either"
+
+  - id: src-fdr-vrba
+    tier: B
+    kind: report
+    author: Franklin D. Roosevelt Presidential Library and Museum (National Archives and Records Administration)
+    title: "Vrba-Wetzler Report"
+    container: null
+    publisher: Franklin D. Roosevelt Presidential Library and Museum
+    place: null
+    year: 2026
+    edition: "the Library's web page on the Auschwitz Protocols in the Records of the War Refugee Board"
+    volume: null
+    document_number: "Records of the War Refugee Board, Box 7, Folder 'German Extermination Camps'"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.fdrlibrary.org/vrba-wetzler-report"}
+    access:
+      free_copy: "https://www.fdrlibrary.org/vrba-wetzler-report"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Vrba-Wetzler Report - FDR Presidential Library & Museum"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+    perspective: [victims, resistance, bystanders]
+    translation: "the Library states the report was written in Slovak, translated into German by the Slovak Jewish Council, and that Roswell McClelland sent 'his own English translations' to the War Refugee Board in October 1944"
+    shows: "two prisoners' escape (April 1944) and their purpose ('to prevent further deportations of Hungarian Jews to Auschwitz'); a clean text of the report's passage on the inauguration of the first crematorium in March 1943 ('the gassing and burning of 8,000 Cracow Jews'), cited by the Library to the report's p. 13; when the American government had the full reports (October 1944) and published them (18 November 1944 to journalists)"
+    does_not_show: "the report itself, which is held separately (src-wrb-19441126) in an OCR layer too damaged to quote; whether the reports' figures are right (the War Refugee Board itself called them 'no more than reliable approximations')"
+
+  # ================================================================ the Allies and bystanders: what was known when
+  - id: src-polish-note-19421210
+    tier: A
+    kind: primary-document
+    author: Republic of Poland, Ministry of Foreign Affairs (Edward Raczyński, Acting Minister)
+    title: "The Mass Extermination of Jews in German Occupied Poland: Note addressed to the Governments of the United Nations on December 10th, 1942, and other documents"
+    container: null
+    publisher: Hutchinson & Co. on behalf of the Polish Ministry of Foreign Affairs
+    place: London
+    year: 1942
+    edition: "the 1942 pamphlet as digitised by the Internet Archive; the text read is the item's OCR layer (_djvu.txt)"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "the_mass_extermination_of_jews_in_german_occupied_poland", hathitrust: null, url: "https://archive.org/details/the_mass_extermination_of_jews_in_german_occupied_poland"}
+    access:
+      free_copy: "https://archive.org/details/the_mass_extermination_of_jews_in_german_occupied_poland"
+      verified_at: 2026-10-07
+      verified_by: archive-item-fetch
+      verified_title: "The Mass Extermination of Jews in German Occupied Poland"
+    language: en
+    region_of_authorship: europe
+    producer: polish-government-in-exile
+    position: null
+    rights: official
+    perspective: [bystanders]
+    translation: "published in English by the Polish government in London"
+    shows: "what an Allied government told the others on 10 December 1942: deportations from the Warsaw ghetto in sealed trucks, '120 in each truck, which had room for forty', to 'Tremblinka, Belzec and Sobibor ... Extermination camps'; of the 250,000 deported to 1 September 1942, only about 4,000 known to have been sent elsewhere; its own estimate: 'of the 3,130,000 Jews in Poland before the outbreak of war, over a third have perished during the last three years'"
+    does_not_show: "Karski as its source (the note names no courier); the means of killing as later established ('poison gas and electrocution' is the note's 1942 report, and electrocution is not borne out by any later source held here)"
+
+  - id: src-hansard-19421217
+    tier: A
+    kind: primary-document
+    author: House of Commons (Anthony Eden, Secretary of State for Foreign Affairs)
+    title: "Jews (German Barbarities): United Nations Declaration, HC Deb 17 December 1942 vol 385 cc2082-7"
+    container: "Hansard, House of Commons Debates, Fifth Series"
+    publisher: UK Parliament (historic Hansard web edition)
+    place: London
+    year: 1942
+    edition: "historic Hansard web text, which prints the column numbers 2082 to 2087"
+    volume: "385"
+    document_number: "cc2082-7"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://api.parliament.uk/historic-hansard/commons/1942/dec/17/united-nations-declaration"}
+    access:
+      free_copy: "https://api.parliament.uk/historic-hansard/commons/1942/dec/17/united-nations-declaration"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "United Nations Declaration (Hansard, 17 December 1942)"
+    language: en
+    region_of_authorship: europe
+    producer: uk-government
+    position: null
+    rights: official
+    perspective: [bystanders]
+    translation: null
+    shows: "the joint declaration in full as Eden read it, 'made public to-day at this hour in London, Moscow and Washington': Hitler's 'oft repeated intention to exterminate the Jewish people in Europe', 'None of those taken away are ever heard of again', the victims 'reckoned in many hundreds of thousands', 'this bestial policy of cold-blooded extermination'; Eden: 'what we can do at this stage must inevitably be slight'; the House standing in silence"
+    does_not_show: "any measure of rescue; the declaration promises retribution, not action"
+
+  - id: src-wrb-19441126
+    tier: A
+    kind: report
+    author: Executive Office of the President, War Refugee Board (transmitting the Vrba-Wetzler report and the Polish major's report)
+    title: "German Extermination Camps: Auschwitz and Birkenau"
+    container: null
+    publisher: War Refugee Board
+    place: Washington
+    year: 1944
+    edition: "the press release copy 'For release Sunday, November 26, 1944', scanned by the Franklin D. Roosevelt Presidential Library (hol00522.pdf); the text read is the PDF's OCR layer"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "http://www.fdrlibrary.marist.edu/_resources/images/hol/hol00522.pdf"}
+    access:
+      free_copy: "https://web.archive.org/web/20250102070403/http://www.fdrlibrary.marist.edu/_resources/images/hol/hol00522.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "GERMAN EXTERMINATION CAMPS - AUSCHWITZ AND BIRKENAU"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+    perspective: [bystanders, victims, historians]
+    translation: "the English the Board received (McClelland's, per src-fdr-vrba)"
+    shows: "what the United States government published, and when: 'It is a fact beyond denial that the Germans have deliberateq and systematically murdered millions' (the OCR layer's 'deliberateq' for 'deliberately'); the Board's caveat that the figures are 'no more than reliable approximations'; the escapees' 'careful estimate' of Jews gassed in Birkenau between April 1942 and April 1944, 'approximately 1,765,000'"
+    does_not_show: "a legible country-by-country table (the OCR layer separates and garbles it); the Hungarian deportations of May to July 1944 (after the period)"
+
+  - id: src-imt-19451129
+    tier: A
+    kind: testimony
+    author: International Military Tribunal (Commander James Britt Donovan, for the United States prosecution)
+    title: "Trial of the Major War Criminals before the International Military Tribunal, Volume 2, Eighth Day, Thursday, 29 November 1945"
+    container: "Trial of the Major War Criminals before the International Military Tribunal, as published by the Avalon Project"
+    publisher: International Military Tribunal, Nuremberg; web edition Lillian Goldman Law Library, Yale Law School
+    place: Nuremberg
+    year: 1945
+    edition: "Avalon web text of the official English record"
+    volume: "2"
+    document_number: "Document 2430-PS, Exhibit USA-79 ('Nazi Concentration Camps')"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://avalon.law.yale.edu/imt/11-29-45.asp"}
+    access:
+      free_copy: "https://avalon.law.yale.edu/imt/11-29-45.asp"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "The Avalon Project : Nuremberg Trial Proceedings Vol. 2 - Eighth Day"
+    language: en
+    region_of_authorship: europe
+    producer: international-military-tribunal
+    position: null
+    rights: public
+    perspective: [bystanders]
+    translation: null
+    shows: "how the liberators' film entered the record: 'an official documentary motion picture report', compiled from film 'taken by Allied military photographers as the Allied armies in the West liberated the areas', its narration 'taken directly from the reports of the military photographers'"
+    does_not_show: "the film itself, or Eisenhower's words that the event YAML's media record quotes"
+
+  - id: src-ushmm-riegner
+    tier: C
+    kind: reference
+    author: United States Holocaust Memorial Museum
+    title: "The Riegner Telegram"
+    container: Holocaust Encyclopedia
+    publisher: United States Holocaust Memorial Museum
+    place: Washington
+    year: 2026
+    edition: "web article as served 2026-10-07"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://encyclopedia.ushmm.org/content/en/article/the-riegner-telegram"}
+    access:
+      free_copy: "https://encyclopedia.ushmm.org/content/en/article/the-riegner-telegram"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "The Riegner Telegram | Holocaust Encyclopedia"
+    language: en
+    region_of_authorship: americas
+    producer: ushmm
+    position: null
+    rights: copyright
+    perspective: [bystanders]
+    translation: null
+    shows: "8 August 1942, Geneva: the telegram's words as the Museum quotes them ('should after deportation and concentration in east [be] at one blow exterminated'), 'between three and a half and four million Jews'; Minister Harrison's 'war rumor inspired by fear'; Welles confirming to Wise on 24 November 1942 'according to Wise'; the declaration of 17 December 'did not promise Allied rescue'"
+    does_not_show: "the telegram itself: the Museum's quotation is the only text held, a secondary citation of the State Department copy"
+
+  - id: src-ushmm-bombing
+    tier: C
+    kind: reference
+    author: United States Holocaust Memorial Museum
+    title: "The United States and the Holocaust: Why Auschwitz was not Bombed"
+    container: Holocaust Encyclopedia
+    publisher: United States Holocaust Memorial Museum
+    place: Washington
+    year: 2026
+    edition: "web article as served 2026-10-07"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://encyclopedia.ushmm.org/content/en/article/the-united-states-and-the-holocaust-why-auschwitz-was-not-bombed"}
+    access:
+      free_copy: "https://encyclopedia.ushmm.org/content/en/article/the-united-states-and-the-holocaust-why-auschwitz-was-not-bombed"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "The United States and the Holocaust: Why Auschwitz was not Bombed | Holocaust Encyclopedia"
+    language: en
+    region_of_authorship: americas
+    producer: ushmm
+    position: null
+    rights: copyright
+    perspective: [bystanders, historians]
+    translation: null
+    shows: "McCloy, 14 August 1944, as the Museum quotes him ('the diversion of considerable air support…now engaged in decisive operations elsewhere', 'such doubtful efficacy'), with an ellipsis the Museum prints; the Buna works bombed 'within a week'; the stated reasons (accuracy; military targets only); that bombing in mid-July 'would not have saved the approximately 310,000 Hungarian Jews' killed on arrival between 15 May and 11 July 1944"
+    does_not_show: "McCloy's letter itself; the event YAML's 437,000 Hungarian Jews deported between 15 May and 9 July 1944 (a count of deportees, not of the killed; no source held carries it)"
+
+  - id: src-ushmm-karski
+    tier: C
+    kind: reference
+    author: United States Holocaust Memorial Museum
+    title: "Jan Karski"
+    container: Holocaust Encyclopedia
+    publisher: United States Holocaust Memorial Museum
+    place: Washington
+    year: 2026
+    edition: "web article as served 2026-10-07"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://encyclopedia.ushmm.org/content/en/article/jan-karski"}
+    access:
+      free_copy: "https://encyclopedia.ushmm.org/content/en/article/jan-karski"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Jan Karski | Holocaust Encyclopedia"
+    language: en
+    region_of_authorship: americas
+    producer: ushmm
+    position: null
+    rights: copyright
+    perspective: [bystanders, resistance]
+    translation: null
+    shows: "late 1942: smuggled into the Warsaw ghetto and Izbica, 'a transit ghetto for Jews being sent to the Belzec killing center', 'disguised as a guard'; reported in London (including to Eden) and, in July 1943, to Roosevelt; 'Allied leaders, however, insisted that Germany’s military defeat must be their first priority'"
+    does_not_show: "what Roosevelt said or did not say; the Frankfurter exchange; a Ukrainian uniform; any line of Karski's own"
+
+  # ================================================================ resistance
+  - id: src-eichmann-s025
+    tier: A
+    kind: testimony
+    author: District Court of Jerusalem (testimony of Zivia Lubetkin-Zuckerman)
+    title: "The Trial of Adolf Eichmann, Session No. 25, 17 Iyar 5721 (3 May 1961)"
+    container: "The Trial of Adolf Eichmann: Record of Proceedings in the District Court of Jerusalem (English transcript), as republished by the Nizkor Project"
+    publisher: District Court of Jerusalem (record); web edition The Nizkor Project
+    place: Jerusalem
+    year: 1961
+    edition: "Nizkor web text, part 025-04"
+    volume: null
+    document_number: "Session 25"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.nizkor.org/session-025-04-eichmann-adolf/"}
+    access:
+      free_copy: "https://www.nizkor.org/session-025-04-eichmann-adolf/"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Session 025-04, Eichmann Adolf - Nizkor"
+    language: en
+    region_of_authorship: middle-east
+    producer: israeli-court
+    position: null
+    rights: copyright
+    perspective: [resistance, victims]
+    translation: "the official English transcript (the language she testified in is not stated in the extracts held)"
+    shows: "the Warsaw ghetto fighters' weapons in a fighter's words ('Each one had a revolver, each one had a hand-grenade; the entire unit had two rifles', home-made bombs, Molotov cocktails), and the fighters' 'great rejoicing' when German soldiers were hit"
+    does_not_show: "numbers of fighters or of German casualties"
+
+  - id: src-eichmann-s027
+    tier: A
+    kind: testimony
+    author: District Court of Jerusalem (testimony of Abba Kovner)
+    title: "The Trial of Adolf Eichmann, Session No. 27, 18 Iyar 5721 (4 May 1961)"
+    container: "The Trial of Adolf Eichmann: Record of Proceedings in the District Court of Jerusalem (English transcript), as republished by the Nizkor Project"
+    publisher: District Court of Jerusalem (record); web edition The Nizkor Project
+    place: Jerusalem
+    year: 1961
+    edition: "Nizkor web text, part 027-08"
+    volume: null
+    document_number: "Session 27; the manifesto is exhibit T/289"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.nizkor.org/session-027-08-eichmann-adolf/"}
+    access:
+      free_copy: "https://www.nizkor.org/session-027-08-eichmann-adolf/"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Session 027-08, Eichmann Adolf - Nizkor"
+    language: en
+    region_of_authorship: middle-east
+    producer: israeli-court
+    position: null
+    rights: copyright
+    perspective: [resistance]
+    translation: "Kovner says he wrote the manifesto in Hebrew, translated it into Yiddish, and that it was published in Yiddish; in court he read it aloud in Hebrew; the English is the trial record's. Three languages stand between the page and this English"
+    shows: "the Vilna call to revolt, dated by the witness 1 January 1942: 'Let us not go like sheep to the slaughter', 'All roads of the ghetto lead to Ponar, and Ponar means death', 'the only reply to a murderer is resistance'; its own figures, 'Out of 80,000 Jews of the Jerusalem of Lithuania, only 20,000 remain'"
+    does_not_show: "the Yiddish text; the sentences between the two extracts, which are not held (cap)"
+
+  - id: src-aus-resistance
+    tier: C
+    kind: reference
+    author: Auschwitz-Birkenau State Museum
+    title: "Resistance"
+    container: "History, Auschwitz-Birkenau Memorial and Museum"
+    publisher: Auschwitz-Birkenau State Museum
+    place: null
+    year: 2026
+    edition: "web page as served 2026-10-07"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.auschwitz.org/en/history/resistance/"}
+    access:
+      free_copy: "https://www.auschwitz.org/en/history/resistance/"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Resistance / History / Auschwitz-Birkenau"
+    language: en
+    region_of_authorship: europe
+    producer: auschwitz-museum
+    position: null
+    rights: copyright
+    perspective: [resistance]
+    translation: null
+    shows: "Witold Pilecki, 'the so-called “volunteer for Auschwitz”', captured deliberately in a Warsaw roundup in September 1940 to found the camp's clandestine organisation"
+    does_not_show: "Pilecki's own reports (a gap); the Sonderkommando revolt"
+
+  - id: src-ushmm-treblinka
+    tier: C
+    kind: reference
+    author: United States Holocaust Memorial Museum
+    title: "Treblinka"
+    container: Holocaust Encyclopedia
+    publisher: United States Holocaust Memorial Museum
+    place: Washington
+    year: 2026
+    edition: "web article as served 2026-10-07"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://encyclopedia.ushmm.org/content/en/article/treblinka"}
+    access:
+      free_copy: "https://encyclopedia.ushmm.org/content/en/article/treblinka"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Treblinka | Holocaust Encyclopedia"
+    language: en
+    region_of_authorship: americas
+    producer: ushmm
+    position: null
+    rights: copyright
+    perspective: [historians, resistance]
+    translation: null
+    shows: "the Museum's figure, 'an estimated 925,000 Jews' at Treblinka II; the site, 'a trapezoid covering an area of 1,312 by 1,968 feet'; a staff of 'between 25 and 35 German SS and police officials' and a guard unit of 'between 90 and 150 men', former Soviet POWs or Ukrainian civilians trained at Trawniki; bodies burned on 'open-air “ovens” made from rail track'"
+    does_not_show: "why the guards joined (the live script's 'volunteered rather than starve' is not here); the uprising beyond a photograph caption dated 2 August 1943"
+
+  # ================================================================ historians: the numbers and the debate
+  - id: src-ushmm-numbers
+    tier: C
+    kind: reference
+    author: United States Holocaust Memorial Museum
+    title: "How Many People did the Nazis Murder? (article address: documenting-numbers-of-victims-of-the-holocaust-and-nazi-persecution)"
+    container: Holocaust Encyclopedia
+    publisher: United States Holocaust Memorial Museum
+    place: Washington
+    year: 2026
+    edition: "web article as served 2026-10-07"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://encyclopedia.ushmm.org/content/en/article/documenting-numbers-of-victims-of-the-holocaust-and-nazi-persecution"}
+    access:
+      free_copy: "https://encyclopedia.ushmm.org/content/en/article/documenting-numbers-of-victims-of-the-holocaust-and-nazi-persecution"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "How Many People did the Nazis Murder? | Holocaust Encyclopedia"
+    language: en
+    region_of_authorship: americas
+    producer: ushmm
+    position: null
+    rights: copyright
+    perspective: [historians]
+    translation: null
+    shows: "the Museum's figures and method: six million, 'calculated based on Nazi German documents and prewar and postwar demographic data'; by site (about 2.7 million at killing centres, about 2 million in shootings, 800,000 to 1,000,000 in ghettos and camps, at least 250,000 elsewhere); by killing centre (Chełmno at least 152,000, Belzec about 435,000, Sobibor at least 167,000, Treblinka II about 925,000, Auschwitz about 1,000,000); non-Jewish victims (Soviet POWs around 3.3 million; Roma at least 250,000, possibly 500,000; people with disabilities 250,000 to 300,000)"
+    does_not_show: "an '11 million' total, which the Museum does not give; the figures of other producers (Yad Vashem, Piper, Hoess)"
+
+  - id: src-yv-faq
+    tier: C
+    kind: reference
+    author: Yad Vashem, The World Holocaust Remembrance Center
+    title: "FAQ (The Holocaust Resource Center)"
+    container: null
+    publisher: Yad Vashem
+    place: Jerusalem
+    year: 2026
+    edition: "web page as served 2026-10-07; parts of it are dated in its own text ('As of early June 1999')"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.yadvashem.org/holocaust/faqs.html"}
+    access:
+      free_copy: "https://www.yadvashem.org/holocaust/faqs.html"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "FAQ | The Holocaust Resource Center"
+    language: en
+    region_of_authorship: middle-east
+    producer: yad-vashem
+    position: null
+    rights: copyright
+    perspective: [historians]
+    translation: null
+    shows: "each producer's total, named: Hilberg 5.1 million, Leschinsky 5.95 million, Gutman and Rozett 5.59 to 5.86 million, Benz 5.29 to 6 million; 'the six million quoted by Adolf Eichmann'; the method (prewar and postwar censuses, partial Nazi documentation); on the decision, 'No written order from Hitler to this effect has been found' and a 'consensus' that there was no definite plan before the war; Hitler's meeting of 12 December 1941 (the page gives 'December 12' in the 1941 sequence); Roma 'Estimates range from 200,000 to over 500,000'"
+    does_not_show: "a single agreed figure, which it says does not exist"
+
+  - id: src-yv-names
+    tier: C
+    kind: reference
+    author: Yad Vashem, The World Holocaust Remembrance Center
+    title: "About the Central Database of Holocaust Victims’ Names"
+    container: null
+    publisher: Yad Vashem
+    place: Jerusalem
+    year: 2026
+    edition: "web page as served 2026-10-07"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.yadvashem.org/archive/hall-of-names/database.html"}
+    access:
+      free_copy: "https://www.yadvashem.org/archive/hall-of-names/database.html"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "About the Central Database of Holocaust Victims’ Names"
+    language: en
+    region_of_authorship: middle-east
+    producer: yad-vashem
+    position: null
+    rights: copyright
+    perspective: [historians, victims]
+    translation: null
+    shows: "the names method: 'an estimated four and a half million Jews murdered in the Shoah have been commemorated in the database' (the FAQ page, src-yv-faq, gives 'somewhat more than 4.7 million names' in a passage dated to 1999; the two pages disagree and both are the institution's)"
+    does_not_show: "a death toll: a names count is a floor that changes with time, and is not to be spoken as a total"
+
+  - id: src-aus-piper
+    tier: B
+    kind: dataset
+    author: Franciszek Piper (as published by the Auschwitz-Birkenau State Museum)
+    title: "The number of victims: Overall numbers by ethnicity or category of deportee"
+    container: "History, Auschwitz-Birkenau Memorial and Museum"
+    publisher: Auschwitz-Birkenau State Museum
+    place: Oświęcim
+    year: 1992
+    edition: "the Museum's web table, citing 'Franciszek Piper, Ilu ludzi zginęło w KL Auschwitz. Liczba ofiar w świetle źródeł i badań, Oświęcim 1992'"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.auschwitz.org/en/history/the-number-of-victims/overall-numbers-by-ethnicity-or-category-of-deportee"}
+    access:
+      free_copy: "https://www.auschwitz.org/en/history/the-number-of-victims/overall-numbers-by-ethnicity-or-category-of-deportee"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Overall numbers by ethnicity or category of deportee / The number of victims / History / Auschwitz-Birkenau"
+    language: en
+    region_of_authorship: europe
+    producer: auschwitz-museum
+    position: null
+    rights: copyright
+    perspective: [historians]
+    translation: null
+    shows: "the Museum's figure for Auschwitz dead, approx. 1.1 million (Jews 1 million; Poles 70-75 thousand; Roma and Sinti 21 thousand; Soviet POWs 15 thousand; others 10-15 thousand), from Piper 1992"
+    does_not_show: "the event YAML's '1.1 and 1.5 million' range, which no source held carries; Piper's method, which the page does not describe"
+
+  - id: src-aus-deportees
+    tier: B
+    kind: dataset
+    author: Auschwitz-Birkenau State Museum
+    title: "The number of victims"
+    container: "History, Auschwitz-Birkenau Memorial and Museum"
+    publisher: Auschwitz-Birkenau State Museum
+    place: null
+    year: 2026
+    edition: "web page as served 2026-10-07"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.auschwitz.org/en/history/the-number-of-victims/"}
+    access:
+      free_copy: "https://www.auschwitz.org/en/history/the-number-of-victims/"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "The number of victims / History / Auschwitz-Birkenau"
+    language: en
+    region_of_authorship: europe
+    producer: auschwitz-museum
+    position: null
+    rights: copyright
+    perspective: [historians]
+    translation: null
+    shows: "Jews deported to Auschwitz by year (about 197 thousand in 1942, about 270 thousand in 1943, over 600 thousand in 1944, 'for a total of almost 1.1 million'), of whom 'about 200 thousand' were registered as prisoners"
+    does_not_show: "the dead, which the Museum gives on its sub-page (src-aus-piper)"
+
+  - id: src-ushmm-roma
+    tier: C
+    kind: reference
+    author: United States Holocaust Memorial Museum
+    title: "Genocide of European Roma (Gypsies), 1939–1945"
+    container: Holocaust Encyclopedia
+    publisher: United States Holocaust Memorial Museum
+    place: Washington
+    year: 2026
+    edition: "web article as served 2026-10-07"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://encyclopedia.ushmm.org/content/en/article/genocide-of-european-roma-gypsies-1939-1945"}
+    access:
+      free_copy: "https://encyclopedia.ushmm.org/content/en/article/genocide-of-european-roma-gypsies-1939-1945"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Genocide of European Roma (Gypsies), 1939–1945 | Holocaust Encyclopedia"
+    language: en
+    region_of_authorship: americas
+    producer: ushmm
+    position: null
+    rights: copyright
+    perspective: [victims, historians]
+    translation: null
+    shows: "'at least 250,000 European Roma', possibly 'around 500,000', and why the number is uncertain; the 'Gypsy family camp' at Birkenau, 'some 23,000 Roma and Sinti' deported to Auschwitz; May 1944, the Roma 'refused, having been warned and having armed themselves with iron pipes, shovels, and other tools', and the SS withdrew; 2 August 1944, the SS 'killed between 4,200 and 4,300' in the family camp at Birkenau, after transferring as many as 3,000; 'Approximately 21,000 of the 23,000 Roma and Sinti sent to Auschwitz died there'; the 1965 compensation-law change and Chancellor Schmidt's statement of March 1982"
+    does_not_show: "the live script's '2,897' gassed on the night of 2 August 1944, or Roma fighting the SS on that night (its armed refusal is in May 1944); a 'court ruling' of 1982; the word Porajmos; Ritter or Justin"
+
+  - id: src-ushmm-babiyar
+    tier: C
+    kind: reference
+    author: United States Holocaust Memorial Museum
+    title: "Mass Shootings at Babyn Yar (Babi Yar)"
+    container: Holocaust Encyclopedia
+    publisher: United States Holocaust Memorial Museum
+    place: Washington
+    year: 2026
+    edition: "web article as served 2026-10-07"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://encyclopedia.ushmm.org/content/en/article/kiev-and-babi-yar"}
+    access:
+      free_copy: "https://encyclopedia.ushmm.org/content/en/article/kiev-and-babi-yar"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Mass Shootings at Babyn Yar (Babi Yar) | Holocaust Encyclopedia"
+    language: en
+    region_of_authorship: americas
+    producer: ushmm
+    position: null
+    rights: copyright
+    perspective: [perpetrators, historians]
+    translation: null
+    shows: "Sonderkommando 4a under Blobel; 'According to reports sent to the Einsatzgruppen headquarters in Berlin, 33,771 Jews were massacred during this two-day period' (29-30 September 1941): the perpetrators' own count, as the Museum attributes it; the Soviet 1943 figure of 'some 100,000 people, Jews and non-Jews' for the whole occupation"
+    does_not_show: "the operational report itself"
+
+  - id: src-ghwk-conference
+    tier: B
+    kind: reference
+    author: Gedenk- und Bildungsstätte Haus der Wannsee-Konferenz
+    title: "The Meeting on January 20, 1942 (The Wannsee Conference)"
+    container: null
+    publisher: Gedenk- und Bildungsstätte Haus der Wannsee-Konferenz
+    place: Berlin
+    year: 2026
+    edition: "web page as served 2026-10-07"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.ghwk.de/en/conference"}
+    access:
+      free_copy: "https://www.ghwk.de/en/conference"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Conference"
+    language: en
+    region_of_authorship: europe
+    producer: ghwk
+    position: null
+    rights: copyright
+    perspective: [historians, perpetrators]
+    translation: null
+    shows: "the memorial's reading: 'a meeting of approximately 90 minutes'; 'It would therefore be incorrect to say that the murder of European Jews was decided at the Wannsee Conference'; it 'provided the coordination necessary to extend the genocide to almost the whole of Europe'; the original's archive reference"
+    does_not_show: "a lunch; the number of doctorates; the fate of the other copies; the 1947 discovery"
+
+  - id: src-longerich-1999
+    tier: B
+    kind: chapter
+    author: Peter Longerich
+    title: "Policy of Destruction: Nazi Anti-Jewish Policy and the Genesis of the “Final Solution”"
+    container: "Joseph and Rebecca Meyerhoff Annual Lecture, 22 April 1999 (occasional paper)"
+    publisher: United States Holocaust Memorial Museum, Center for Advanced Holocaust Studies
+    place: Washington
+    year: 2001
+    edition: "second printing, January 2005; 'Copyright © 2001 by Peter Longerich, assigned to the United States Holocaust Memorial Museum'"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.ushmm.org/m/pdfs/20050726-longerich.pdf"}
+    access:
+      free_copy: "https://www.ushmm.org/m/pdfs/20050726-longerich.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Policy of Destruction: Nazi Anti-Jewish Policy and the Genesis of the “Final Solution”"
+    language: en
+    region_of_authorship: europe
+    producer: peter-longerich
+    position: null
+    rights: copyright
+    perspective: [historians]
+    translation: null
+    shows: "the intentionalist/functionalist debate as a historian states it ('the “intentionalists” present the murder of European Jewry as the product of the ideology and long-term planning of Hitler and the Nazi leadership, the “functionalists” stress the role of the bureaucratic apparatus and the “cumulative radicalization”'), and that 'this debate has largely come to an impasse'; where the dating stands: most researchers place a decision 'at some point in the second half of 1941', Breitman 'in early 1941', Longerich holds the process 'was not fully concluded until the spring/summer of 1942'"
+    does_not_show: "the argument of his book in full; the PDF text layer splits some words, kept as printed"
+
+  - id: src-yv-lacapra-1998
+    tier: B
+    kind: testimony
+    author: Dominick LaCapra, interviewed by Amos Goldberg
+    title: "Functionalism, Intentionalism, And The Concept Of Scapegoating (excerpt from interview with Professor Dominick LaCapra, Cornell University, June 9, 1998, Jerusalem)"
+    container: "Shoah Resource Center, The International School for Holocaust Studies"
+    publisher: Yad Vashem
+    place: Jerusalem
+    year: 1998
+    edition: "PDF as served 2026-10-07"
+    volume: null
+    document_number: "3647"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://wwv.yadvashem.org/odot_pdf/microsoft%20word%20-%203647.pdf"}
+    access:
+      free_copy: "https://wwv.yadvashem.org/odot_pdf/microsoft%20word%20-%203647.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Functionalism, Intentionalism, And The Concept Of Scapegoating"
+    language: en
+    region_of_authorship: americas
+    producer: dominick-lacapra
+    position: null
+    rights: copyright
+    perspective: [historians]
+    translation: null
+    shows: "a historian on where the debate stood in 1998: 'Most people at the present time (for example, Christopher Browning or Friedlander) are neither functionalist nor intentionalist'"
+    does_not_show: "Browning's or Friedländer's own words (gaps)"
+
+# The bar of §4e is not claimed; nothing here is adjudicated.
+positions: []
+contested: []
+exhibits: []
+analyses: []
+
+# ------------------------------------------------------------------ gaps
+# RULE B: a source the free record could not reach, or a claim it could not
+# carry, is published here by name, with what was tried.
+gaps:
+  - what: "Primo Levi, If This Is a Man (Se questo è un uomo, 1947), the poem the event YAML quotes as a primary_source_excerpt and the live script reads in the document voice ('If this is a man / Who works in the mud / Who knows no peace / Who fights for a crust of bread / Who dies at a yes or a no')"
+    tried: []
+    status: "a copyrighted work in a copyrighted English translation; no lawful free copy was sought and none is held. The YAML's wording is not checked against any translation, so it is unverified, and the quote ledger withdraws it from the served page. No extract of any Levi text is held, which also means the YAML excerpt cannot trip the divergence gate. Levi's Drowned and the Saved ('We who survived are not the true witnesses') is in the same position"
+  - what: "Elie Wiesel, 'For the dead and the living, we must bear witness', attributed by the event YAML (primary_source_excerpts) and the live script to his Nobel Prize acceptance speech, 1986"
+    tried: ["https://www.nobelprize.org/prizes/peace/1986/wiesel/acceptance-speech/", "https://www.nobelprize.org/prizes/peace/1986/wiesel/lecture/"]
+    status: "both 1986 Oslo texts were read whole; the sentence is in neither. The attribution to the Nobel speech is wrong on the record held. Where the sentence does come from was not established and must not be guessed; until a document carrying it is held, it is unverified. What the acceptance speech does say is held (src-nobel-wiesel-1986). Night (1960) and its 'Never shall I forget that night' are copyrighted and not held"
+  - what: "Jan Karski, 'I told him about the plight of the Jews. He didn't say a word', given by the event YAML (primary_source_excerpts) as 'Recounting his 1943 meeting with President Roosevelt', dated 1943, and read by the live script in the document voice"
+    tried: ["https://encyclopedia.ushmm.org/content/en/article/jan-karski"]
+    status: "no document carrying the sentence was found; the Museum's article says Karski met Roosevelt in July 1943 'to give him the same report' and pleaded for action, and quotes no reply. The YAML dates a recollection to the meeting itself. Karski's Story of a Secret State (1944) was not read (no open copy sought); the Frankfurter exchange ('I did not say that he was lying') has no document here either"
+  - what: "Gideon Hausner's opening statement at the Eichmann trial (Session 6), which the event YAML quotes ('It is not an individual that is in the dock ...') and dates April 11, 1961"
+    tried: ["https://www.nizkor.org/session-006-01-eichmann-adolf/", "https://www.nizkor.org/session-006-02-eichmann-adolf/"]
+    status: "Nizkor's part 006-01 ends at 'Mr. Attorney General, pray proceed.'; the part addresses 006-02 to 006-08 all serve the same page. The opening was not read and the quotation is unverified. The YAML's date is not checked"
+  - what: "Eichmann's own words at his trial, including 'I was just a small cog in the machinery of destruction' (event YAML notable_quotes)"
+    tried: []
+    status: "no session of his testimony was read. Wisliceny's secondhand report of Eichmann's words is held (src-imt-19460103) and must be said as secondhand"
+  - what: "Himmler's Posen speech of 4 October 1943 in German, the full English translation of 1919-PS, and any recording"
+    tried: ["https://avalon.law.yale.edu/subject_menus/nca_v4menu.asp"]
+    status: "Avalon's Nazi Conspiracy and Aggression menus do not list 1919-PS; the speech is held only as the passages read into the IMT record on 13 December 1945. Perpetrator speech audio is never held as a clip, so no recording was sought"
+  - what: "Himmler at an execution in Minsk ordering 'more humane' methods, which the event YAML and the live script state"
+    tried: ["https://avalon.law.yale.edu/imt/01-07-46.asp"]
+    status: "the IMT day searched (7 January 1946, Bach-Zelewski) carries Minsk only in other contexts. Unverified; not sourced here"
+  - what: "The Riegner telegram itself (8 August 1942) and the State Department's handling of it, in a primary text"
+    tried: ["https://encyclopedia.ushmm.org/content/en/article/the-riegner-telegram"]
+    status: "held only as the Museum quotes it (src-ushmm-riegner). FRUS was not searched"
+  - what: "McCloy's letter of 14 August 1944 in a primary text"
+    tried: ["https://encyclopedia.ushmm.org/content/en/article/the-united-states-and-the-holocaust-why-auschwitz-was-not-bombed"]
+    status: "held only as the Museum quotes it, with the Museum's ellipsis (src-ushmm-bombing)"
+  - what: "The Ringelblum Archive (Oneg Shabbat) and Witold Pilecki's reports"
+    tried: []
+    status: "not sought in this pass: no openly licensed English edition was identified. Pilecki appears only through the Auschwitz Museum's page (src-aus-resistance)"
+  - what: "The Korherr report (1943), the Höfle telegram (1943) and the Einsatzgruppen operational report that carries the 33,771 figure for Babi Yar"
+    tried: []
+    status: "not sought; the 33,771 figure is held as the Museum attributes it to the reports sent to Berlin (src-ushmm-babiyar)"
+  - what: "The Evian Conference (1938): T. W. White's sentence, the Dominican Republic's offer, the German newspaper's 'Nobody wants them', the American quota of 27,370"
+    tried: []
+    status: "no record of the conference was sought; every Evian line in the event YAML and the live script is unverified"
+  - what: "Switzerland (the 'J' stamp, refugees admitted and turned away, the Bergier Commission's figures), the Red Cross at Theresienstadt, the Vatican"
+    tried: []
+    status: "not sought; the Bergier report is named by the YAML but not read"
+  - what: "The Wannsee minutes' survival: 'Thirty copies of the Wannsee minutes were made. Twenty nine were destroyed. The one that survived was found in a Foreign Office file in nineteen forty seven' (live script)"
+    tried: ["https://www.ghwk.de/en/conference", "https://www.ghwk.de/en/conference/protocol-and-documents", "https://www.ghwk.de/en/conference/participants"]
+    status: "the protocol carries '30 copies' and '16th copy'; the memorial's pages name the archive holding the original (R 100857) but say nothing of the other copies or of the discovery; the participants page reads 'Under construction'. That twenty-nine were destroyed, and the 1947 date, are unverified"
+  - what: "Hilberg, The Destruction of the European Jews (1961); Arendt, Eichmann in Jerusalem (1963); Browning, Ordinary Men (1992); Goldhagen, Hitler's Willing Executioners (1996); Black, IBM and the Holocaust (2001); Wyman, The Abandonment of the Jews (1984); Segev, The Seventh Million (1993); Yablonka (2004); Hausner, Justice in Jerusalem (1966); Hancock (2004); Fraser (1995); Lewy (2000)"
+    tried: []
+    status: "copyrighted monographs named by the event YAML; no open copy sought. Hilberg's 5.1 million total is held only as Yad Vashem reports it (src-yv-faq). Nothing the YAML attributes to these books (Arendt's 'terribly and terrifyingly normal', Browning's 12 of 500 and 38,000, the Reichsbahn's 4 pfennigs and fares for children, Dehomag, the IG Farben life expectancy of three months, Hancock's 1.5 million) is verified here"
+  - what: "The Roma record beyond the Museum's article: Ritter and Justin, the 'Gypsy Information Service' of 1899, the 1953 compensation law and a 1982 'court ruling', 2,897 gassed on 2 August 1944, testimony of the liquidation of the family camp"
+    tried: ["https://encyclopedia.ushmm.org/content/en/article/genocide-of-european-roma-gypsies-1939-1945", "https://www.auschwitz.org/en/history/categories-of-prisoners/"]
+    status: "the Museum's article gives 4,200 to 4,300 killed on 2 August 1944 and dates West German acknowledgement to 1965 (compensation law) and March 1982 (Chancellor Schmidt), not a court; the Auschwitz Museum's category page held no figure for the night. The YAML's notable quote 'The children screamed. They knew.' is attributed to an unnamed survivor and is unverified"
+  - what: "Archival recordings"
+    tried: ["https://archive.org/metadata/nazi-concentration-camps"]
+    status: "the Internet Archive item the event YAML embeds for the Signal Corps film returns an empty metadata record (dead). No other candidate was pursued in this pass: the container has no ffmpeg to cut a window, and a clip is admitted only with a fetched file, an md5 the repository publishes, a window and a verify_clip.py record. Perpetrator speech audio is never held. recordings: is empty"
+
+# ------------------------------------------------------------- recordings
+# None examined to admission (see the last gap). `signed_by` / `signed_at` would be the CEO's.
+recordings: []

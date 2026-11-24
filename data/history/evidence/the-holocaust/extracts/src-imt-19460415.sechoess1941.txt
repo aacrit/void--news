@@ -1,0 +1,6 @@
+source: src-imt-19460415
+locator: sechoess1941
+url: https://avalon.law.yale.edu/imt/04-15-46.asp
+read: 2026-10-07
+
+DR. KAUFFMANN: Is it true that in 1941 you were ordered to Berlin to see Himmler? Please state briefly what was discussed. HOESS: Yes. In the summer of 1941 I was summoned to Berlin to Reichsfuehrer SS Himmler to receive personal orders. He told me something to the effect-I do not remember the exact words-that the Fuehrer had given the order for a final solution of the Jewish question. We, the SS, must carry out that order. If it is not carried out now then the Jews will later on destroy the German people. He had chosen Auschwitz on account of its easy access by rail and also because the extensive site offered space for measures ensuring isolation.

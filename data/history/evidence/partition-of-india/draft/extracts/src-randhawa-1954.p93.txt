@@ -1,0 +1,8 @@
+source: src-randhawa-1954
+locator: p93
+url: https://archive.org/download/dli.csl.8772/8772_djvu.txt
+read: 2026-09-25
+note: the text layer's line breaks are joined, its soft hyphens (¬) rejoined and a hyphen at a line break kept without the break; its doubled spaces are single
+note: the first page of Chapter 8, Gap in Area and the Scheme of Graded Cuts
+
+As against an area of 67 lakh acres of land, equivalent to 39,35,131 standard acres, abandoned by the Hindu-Sikh landholders in West Pakistan, only 47 lakh acres, equivalent to 24,48,830 standard acres, were available in East Punjab and Pepsu. The gap in area to the extent of 20 lakh acres, or 14,86,301 standard acres, i.e. 38 per cent of the total area abandoned, precluded possibilities of full compensation being given to the displaced landholders. The gap in area was bad enough, but the position was actually much worse when we consider factors like fertility of the soil and means of irrigation. Our land-owners left 43 lakh acres of irrigated land as against 13 lakh acres of irrigated area left by the Muslims.

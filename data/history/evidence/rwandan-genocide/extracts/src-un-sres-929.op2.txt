@@ -1,0 +1,7 @@
+source: src-un-sres-929
+locator: op2
+url: https://documents.un.org/doc/undoc/gen/n94/260/27/pdf/n9426027.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+
+2. Welcomes also the offer by Member States (S/1994/734) to cooperate with the Secretary-General in order to achieve the objectives of the United Nations in Rwanda through the establishment of a temporary operation under national command and control aimed at contributing, in an impartial way, to the security and protection of displaced persons, refugees and civilians at risk in Rwanda, on the understanding that the costs of implementing the offer will be borne by the Member States concerned;

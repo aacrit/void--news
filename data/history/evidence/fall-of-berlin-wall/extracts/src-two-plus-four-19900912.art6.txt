@@ -1,0 +1,8 @@
+source: src-two-plus-four-19900912
+locator: art6
+url: https://germanhistorydocs.org/en/a-new-germany-1990-2023/two-plus-four-treaty-on-germany-september-12-1990
+read: 2026-10-09
+note: the same text
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Article 6 The right of the united Germany to belong to alliances, with all the rights and responsibilities arising therefrom, shall not be affected by the present Treaty.

@@ -1,0 +1,19 @@
+source: src-congo-commission-1906
+locator: p117
+url: https://archive.org/download/congoreportofcom00cong/congoreportofcom00cong_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+
+All of these causes of depopulation are secondary
+in importance. The effect of all these factors
+united fades away in comparison with the ravages committed during the past few years by smallpox and the sleeping sickness. Great smallpox epidemics have decimated the population of certain
+districts, especially the eastern part of Lake Leopold.
+These epidemics have been made still more fatal by
+the habit which the natives have of abandoning in
+the forest those who are attacked by the disease.
+The patient left, most of the time, without care and
+nourishment, soon dies.
+
+The sleeping sickness, this terrible scourge, for
+which science has as yet found no remedy, has followed in its devastating march the banks of the
+great river and is now penetrating the interior.

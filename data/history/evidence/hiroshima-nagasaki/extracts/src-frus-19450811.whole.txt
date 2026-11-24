@@ -1,0 +1,52 @@
+source: src-frus-19450811
+locator: whole
+url: https://history.state.gov/historicaldocuments/frus1945v06/d412
+read: 2026-10-05
+note: the Secretary of State's reply of 11 August 1945; the page break marker '[Page 632]' is FRUS's own
+
+Sir : I have the honor to acknowledge
+receipt of your note of August 10, and in reply to inform you
+that the President of the United States has directed me to send
+to you for transmission by your Government to the Japanese
+Government the following message on behalf of the Governments of
+the United States, the United Kingdom, the Union of Soviet
+Socialist Republics, and China:
+
+“With regard to the Japanese Government’s message
+accepting the terms of the Potsdam proclamation but
+containing the statement, ‘with the understanding that
+the said declaration does not comprise any demand which
+prejudices the prerogatives of His Majesty as a
+sovereign ruler,’ our position is as follows:
+
+“From the moment of surrender the authority of the
+Emperor and the Japanese Government to rule the state
+shall be subject to the
+[Page 632]
+Supreme Commander of the Allied
+powers who will take such steps as he deems proper to
+effectuate the surrender terms.
+
+“The Emperor will be required to authorize and ensure the
+signature by the Government of Japan and the Japanese
+Imperial General Headquarters of the surrender terms
+necessary to carry out the provisions of the Potsdam
+Declaration, and shall issue his commands to all the
+Japanese military, naval and air authorities and to all
+the forces under their control wherever located to cease
+active operations and to surrender their arms, and to
+issue such other orders as the Supreme Commander may
+require to give effect to the surrender terms.
+
+“Immediately upon the surrender the Japanese Government
+shall transport prisoners of war and civilian internees
+to places of safety, as directed, where they can quickly
+be placed aboard Allied transports.
+
+“The ultimate form of government of Japan shall, in
+accordance with the Potsdam declaration, be established
+by the freely expressed will of the Japanese people.
+
+“The armed forces of the Allied Powers will remain in
+Japan until the purposes set forth in the Potsdam
+declaration are achieved.”

@@ -1,0 +1,8 @@
+source: src-icty-krstic-tj
+locator: para206
+url: https://www.icty.org/x/cases/krstic/tjug/en/krs-tj010802e.pdf
+read: 2026-09-24
+note: the ICTY PDF text layer renders some diacritics with substitute glyphs (Poto~ari for Potocari, Erdemovi} for Erdemovic, @ivanovi} for Zivanovic, ^an~ari for Cancari); the passage is stored as the text layer prints it
+note: the paragraph is cut at a page break in the text layer
+
+206. Guards surrounding the building killed prisoners who tried to escape through the windows.490 By the time the shooting stopped, the warehouse was filled with corpses. Witness J recalled that “(n)owhere could you stand on the concrete floor without stepping on a dead body. The dead bodies had covered the entire concrete.”491 Witness K, who was only slightly wounded, described crossing the warehouse to make his escape through a window after the shooting stopped: I was not even able to touch the floor, the concrete floor of the warehouse… After the shooting, I felt a strange kind of heat, warmth, which was actually coming from the blood that covered the concrete floor, and I was stepping on the dead people who were lying around. But there were even people who were still alive, who were only wounded, and as soon as I would step on him, I would hear him cry, moan, because I was trying to move as fast as I could. I could tell that people had been completely disembodied, and I could feel bones of the people that had been hit by those bursts of gunfire or shells, I could feel their

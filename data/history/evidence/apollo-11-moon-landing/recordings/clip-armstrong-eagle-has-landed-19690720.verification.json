@@ -1,0 +1,55 @@
+{
+ "clip_id": "clip-armstrong-eagle-has-landed-19690720",
+ "slug": "apollo-11-moon-landing",
+ "tool": "faster-whisper",
+ "tool_version": "1.2.1",
+ "model": "base.en",
+ "compute_type": "int8",
+ "beam_size": 5,
+ "source": {
+  "file": "https://archive.org/download/NasaAudioHighlightReels/Sound-Bite_Apollo-11_Eagle-has-Landed_Quote.wav",
+  "md5": "cb68497503b745508538c9e068d0e6ec",
+  "md5_expected": "cb68497503b745508538c9e068d0e6ec",
+  "rate": 48000
+ },
+ "window": {
+  "in": 0.0,
+  "out": 6.63,
+  "seconds": 6.63
+ },
+ "excerpt_sha256": "39a01807cc8571b5ad36dbdc94df5557a2122924a3ba213672ee0a52a8e5827b",
+ "excerpt_pcm": "s16le mono at the source rate, ffmpeg atrim, -bitexact",
+ "reference": "Houston, Tranquility Base here. The Eagle has landed.",
+ "hypothesis": "Listen, the Tanguillity Base here, the Eagle has landed.",
+ "wer": 0.375,
+ "coverage": 0.75,
+ "counts": {
+  "ref_words": 8,
+  "hyp_words": 9,
+  "substitutions": 2,
+  "deletions": 0,
+  "insertions": 1,
+  "first_matched_ref": 2,
+  "last_matched_ref": 7,
+  "lead_insertions": 1,
+  "trail_insertions": 0
+ },
+ "diff": [
+  "[+listen]",
+  "[houston -> the]",
+  "[tranquility -> tanguillity]",
+  "base here the eagle has landed"
+ ],
+ "thresholds": {
+  "coverage_min": 0.7,
+  "edge_slack_words": 1,
+  "edge_insert_max": 2
+ },
+ "pass": false,
+ "why": [
+  "the window does not open on the transcript's first words"
+ ],
+ "verified_at": "2026-10-04T04:55:56Z",
+ "signed": false,
+ "note": "a pass verifies the words in this window against the stored transcript. It does not verify the occasion, the date or the rights, and it signs nothing."
+}

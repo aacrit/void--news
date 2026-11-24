@@ -1,0 +1,7 @@
+source: src-burr-nsa-2020
+locator: secdoc67
+url: https://nsarchive.gwu.edu/briefing-book/nuclear-vault/2020-08-04/atomic-bomb-end-world-war-ii
+read: 2026-10-07
+note: the editor's commentary on Document 67 (excerpts from the Japanese Foreign Ministry's compilation on the end of the war, in the Archive's translation)
+
+When he learned of the atomic bombing from the Domei News Agency, Togo believed that it was time to give up and advised the cabinet that the atomic attack provided the occasion for Japan to surrender on the basis of the Potsdam Declaration. Togo could not persuade the cabinet, however, and the Army wanted to delay any decisions until it had learned what had happened to Hiroshima. When the Foreign Minister met with the Emperor, Hirohito agreed with him; he declared that the top priority was an early end to the war, although it would be acceptable to seek better surrender terms--probably U.S. acceptance of a figure-head emperor--if it did not interfere with that goal. In light of those instructions, Togo and Prime Minister Suzuki agreed that the Supreme War Council should meet the next day.

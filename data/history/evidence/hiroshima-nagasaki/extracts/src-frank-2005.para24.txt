@@ -1,0 +1,7 @@
+source: src-frank-2005
+locator: para24
+url: https://www.washingtonexaminer.com/weekly-standard/why-truman-dropped-the-bomb
+read: 2026-10-07
+note: paragraph 24, its second to fourth sentences
+
+But it is clear that all three of the critics’ central premises are wrong. The Japanese did not see their situation as catastrophically hopeless. They were not seeking to surrender, but pursuing a negotiated end to the war that preserved the old order in Japan, not just a figurehead emperor.

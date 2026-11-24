@@ -1,0 +1,56 @@
+[
+ {
+  "newsroom": "Deutsche Welle",
+  "lang_a": "en",
+  "lang_b": "de",
+  "score": 19,
+  "a": {
+   "title": "Germany&apos;s women: Ena Mahmutovic makes her case to become Germany&apos;s next No.1 goalkeeper",
+   "summary": "Germany&apos;s win against Australia saw Ena Mahmutovic excel in goal. The 22-year-old Bayern Munich goalkeeper is considered the successor to Ann-Katrin Berger and is making a name for herself.",
+   "link": "https://www.dw.com/en/germany-s-women-ena-mahmutovic-makes-her-case-to-become-germany-s-next-no-1-goalkeeper/a-79609341?maca=en-rss-en-all-1573-rdf",
+   "published": ""
+  },
+  "b": {
+   "title": "DFB-Frauen: Ena Mahmutovic nutzt Tor-Chance gegen Berger",
+   "summary": "Die DFB-Frauen gewinnen ihr Testspiel gegen Australien. Im Tor macht Ena Mahmutovic dabei eine gute Figur. Die 22-jährige Bayern-Keeperin gilt als Nachfolgerin von Ann-Katrin Berger und kann Punkte sammeln.",
+   "link": "https://www.dw.com/de/dfb-frauen-ena-mahmutovic-nutzt-tor-chance-gegen-berger/a-79598336?maca=de-rss-de-all-1119-rdf",
+   "published": ""
+  }
+ },
+ {
+  "newsroom": "Deutsche Welle",
+  "lang_a": "en",
+  "lang_b": "de",
+  "score": 18,
+  "a": {
+   "title": "Ronaldo stays on under cloud as Messi exits internationals",
+   "summary": "Just hours before Lionel Messi played his last match for Argentina, Cristiano Ronaldo posted his latest salvo in a row with Portugal. Ronaldo wants to play on despite the troubles, while Messi bathed in adulation.",
+   "link": "https://www.dw.com/en/ronaldo-stays-on-under-cloud-as-messi-exits-internationals/a-79574551?maca=en-rss-en-all-1573-rdf",
+   "published": ""
+  },
+  "b": {
+   "title": "Messi weint, Ronaldo flüchtet: Das Ende zweier Ären",
+   "summary": "Zwei große Nationalmannschaftskarrieren im Fußball gehen zu Ende. Doch während Lionel Messi in Argentinien als gefeierter Held abtritt, flüchtet Cristiano Ronaldo als beleidigter Altstar von Portugals Selecao.",
+   "link": "https://www.dw.com/de/messi-weint-ronaldo-flüchtet-das-ende-zweier-ären/a-79574118?maca=de-rss-de-all-1119-rdf",
+   "published": ""
+  }
+ },
+ {
+  "newsroom": "France 24",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 18,
+  "a": {
+   "title": "F1, Rwanda announce creation of African Grand Prix",
+   "summary": "Rwanda will host Africa's first Formula One Grand Prix since 1993 in \"the early 2030s\" after the circuit announced a decade-long deal with the country on Tuesday. The East African nation has been chasing a Grand Prix race for years, having already used football, basketball and other sports to enhance its image and attract investment. Human rights campaigners Amnesty International ⁠accused Formula ",
+   "link": "https://www.france24.com/en/video/20261014-f1-rwanda-announce-creation-of-african-grand-prix",
+   "published": "Wed, 14 Oct 2026 10:51:41 GMT"
+  },
+  "b": {
+   "title": "Formule 1 : un Grand Prix au Rwanda au début des années 2030",
+   "summary": "La Formule 1 fera son retour en Afrique « au début des années 2030 », avec un Grand Prix au Rwanda. Un événement historique pour le continent, qui n’a plus accueilli de course de F1 depuis 1993, année du dernier Grand Prix organisé en Afrique du Sud.",
+   "link": "https://www.france24.com/fr/vid%C3%A9o/20261014-formule-1-un-grand-prix-au-rwanda-au-d%C3%A9but-des-ann%C3%A9es-2030",
+   "published": "Wed, 14 Oct 2026 10:04:59 GMT"
+  }
+ }
+]

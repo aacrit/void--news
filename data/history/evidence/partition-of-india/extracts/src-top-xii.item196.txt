@@ -1,0 +1,8 @@
+source: src-top-xii
+locator: item196
+url: https://archive.org/download/indiatransferofp12nich/indiatransferofp12nich_djvu.txt
+read: 2026-09-25
+note: item n is the document number in the volume: No. 196, note 2, page 286: the editors' footnote on Sir George Abell's reply to the Punjab Boundary Commission's secretaries
+note: the OCR layer's double spaces are collapsed; nothing else changed
+
+2 Sir G. Abell replied on 23 July 1947 attaching copies of the complete passage of Lord Mountbatten’s address to the Press Conference; a question and answer from the Press Conference (R/3/1/157: f 21 1); the Congress Resolution referred to in the complete passage (ibid., f 212); and a letter to Pandit Nehru from Sikh and Hindu M.L.As and M.C.Ss, dated 2 April 1947 (Vol. X, No. 57). He did not attach the map but suggested that any map if read with the population statistics in the 1941 census would suffice for the purpose.

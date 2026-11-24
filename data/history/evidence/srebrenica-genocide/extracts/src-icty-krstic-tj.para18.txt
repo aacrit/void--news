@@ -1,0 +1,7 @@
+source: src-icty-krstic-tj
+locator: para18
+url: https://www.icty.org/x/cases/krstic/tjug/en/krs-tj010802e.pdf
+read: 2026-09-24
+note: the ICTY PDF text layer renders some diacritics with substitute glyphs (Poto~ari for Potocari, Erdemovi} for Erdemovic, @ivanovi} for Zivanovic, ^an~ari for Cancari); the passage is stored as the text layer prints it
+
+18. On 16 April 1993, the UN Security Council responded by passing a resolution, declaring that “all parties and others treat Srebrenica and its surroundings as a “ safe area ” that should be free from armed attack or any other hostile act.”17 At the same time, the Security Council created two other UN protected enclaves, Žepa and Goražde.18

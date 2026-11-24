@@ -1,0 +1,8 @@
+source: src-ssc-final-1974
+locator: secervin13
+url: https://archive.org/details/FinalReportOfTheSenateSelectCommitteeOnPresidentialCampaignActivities
+read: 2026-10-09
+note: the Internet Archive's OCR text of the scanned volume (the item's _djvu.txt), line breaks folded to spaces; OCR misreadings and line-end hyphens (including the '¬' the OCR prints for one) are kept as printed
+note: chapter 11, the individual views of Senator Ervin
+
+One shudders to think that the Watergate conspiracies might have been effectively concealed and their most dramatic episode might have been dismissed as a “third-rate” burglary conceived and committed solely by the seven original Watergate defendants had it not been for the courage and penetrating understanding of Judge Sirica, the thoroughness of the investigative reporting of Carl Bernstein, Bob Woodward, and other representatives of a free press, the labors of the Senate Select Committee and its excellent staff, and the dedication and diligence of Special Prosecutors Archibald Cox and Leon Jawor- ski and their associates.

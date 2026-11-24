@@ -1,0 +1,6 @@
+source: src-icty-mladic-tj
+locator: para5214
+url: https://www.icty.org/x/cases/mladic/tjug/en/171122-4of5_1.pdf
+read: 2026-09-24
+
+5214. For all the foregoing reasons, pursuant to Articles 23 and 24 of the Statute and Rules 98 ter, 101, and 103 of the Rules, and having considered all of the evidence and the parties’ submissions, the Trial Chamber finds the Accused, Ratko Mladić: NOT GUILTY of Count 1: Genocide; and GUILTY of the following counts pursuant to Article 7(1) of the Statue: Count 2: Genocide; Count 3: Persecution, a crime against humanity; Count 4: Extermination, a crime against humanity; Count 5: Murder, a crime against humanity; Count 6: Murder, a violation of the laws or customs of war; Count 7: Deportation, a crime against humanity; Count 8: Inhumane acts (forcible transfer), a crime against humanity; Count 9: Terror, a violation of the laws or customs of war; Count 10: Unlawful attacks on civilians, a violation of the laws or customs of war; and Count 11: Taking of Hostages, a violation of the laws or customs of war. 5215. The Trial Chamber sentences Ratko Mladić to life imprisonment.

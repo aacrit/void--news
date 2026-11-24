@@ -1,0 +1,8 @@
+source: src-saso-manifesto-1971
+locator: sec3
+url: https://www.saha.org.za/nonracialism/black_man_youre_on_your_own.htm
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+note: point 3(b) to (c); the page's editorial note marker 'iii' after (b) is kept as the page prints it
+
+That the white man must be made aware that one is either part of the solution or part of the problem; iii c) That in this context, because of the privileges accorded to them by legislation, and because of their continual maintenance of an oppressive regime, whites have defined themselves as part of the problem;

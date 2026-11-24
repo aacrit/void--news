@@ -1,0 +1,8 @@
+source: src-cwihp-doc8-19891109
+locator: secwhen
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_12-13.pdf
+read: 2026-10-09
+note: p. 157; the questioners are not named in this transcript ('many voices')
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Question: (many voices) When does that go into effect?... Without a passport? Without a passport? (no, no)—When is that in effect?... (confusion, voices...) At what point does the regulation take effect?

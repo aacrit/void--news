@@ -1,0 +1,7 @@
+source: src-yv-lacapra-1998
+locator: p1
+url: https://wwv.yadvashem.org/odot_pdf/microsoft%20word%20-%203647.pdf
+read: 2026-10-07
+note: the PDF text layer; line breaks collapsed
+
+L- One would have to argue that there is no singular key to the explanation of the Holocaust. There are a number of factors, and often it's very difficult to give the appropriate weight to the different factors. Most people at the present time (for example, Christopher Browning or Friedlander) are neither functionalist nor intentionalist. They see a limited value to both approaches: that there are some elements that were planned, at least on some level, even if you cannot go back to 1923 and see an entire schema of the Holocaust laid out. There are those who would also argue that the dynamic of institutions, the functioning of institutions, the activity of bureaucrats on the middle and lower levels were significant phenomena – these are the things that are generally focused on by functionalists.

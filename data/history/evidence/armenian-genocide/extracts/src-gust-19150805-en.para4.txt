@@ -1,0 +1,8 @@
+source: src-gust-19150805-en
+locator: para4
+url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs-en/1915-08-05-DE-002
+read: 2026-09-25
+note: paragraphs counted from the first line after the dateline of the document as the page prints it, enclosure headings included
+note: the translation is the online edition's own (sponsored by the Zoryan Institute), held here as the edition prints it, at most 150 words
+
+At the beginning of May, the known incidents in Van led the government and the military to take drastic disciplinary action against the Armenians. All Armenians still in armed service were dismissed from the army and placed in labour battalions. The inhabitants of the plains of Erzurum and Passin, now consisting of only women, children and old men, were driven out of their villages and were to be compulsorily taken to Mesopotamia. This measure, justified on the basis of military considerations, was carried out in an unnecessarily ruthless and cruel way. On the way to Erzindjan, those concerned were attacked, robbed and killed by Kurds and Turkish volunteers at Mama Hatun , Sansar, the Euphrates Bridge and Päräz. Between 10 and 20,000 people were probably killed, but the government's figures fall between only 3 and 4,000.

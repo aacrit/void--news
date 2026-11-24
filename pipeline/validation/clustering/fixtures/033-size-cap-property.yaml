@@ -1,0 +1,60 @@
+id: size-cap-property-2026-05-17
+name: "Cluster size-cap property: no cluster's source_count exceeds MEGA_CLUSTER_THRESHOLD"
+failure_date: "2026-05-17"
+failure_kind: size-cap-property
+articles:
+  - id: cap-bbc
+    title: "Climate summit ends with new methane pledge from 30 nations"
+    summary: "Thirty nations pledged to cut methane emissions 30% by 2030 at the closing day of COP."
+    full_text: >
+      The climate summit ended on Friday with a fresh pledge from 30 nations
+      to cut methane emissions by 30% by 2030. The pledge, brokered by the
+      US and EU, was framed as a quick-win complement to the longer-term CO2
+      goals. Critics noted China, India, and Russia did not sign. UN
+      Secretary-General hailed the pledge as a "concrete step." Activists at
+      the venue staged a die-in to protest fossil-fuel exclusions. Energy
+      ministers from the EU, UK, and Japan held a side-meeting.
+    source: { slug: bbc-news, country: GB, tier: international }
+    published_at: "2026-05-16T18:00Z"
+  - id: cap-reuters
+    title: "30 countries sign methane reduction pact at climate talks"
+    summary: "Thirty countries signed a methane reduction pact at the closing of the climate negotiations, the UN said."
+    full_text: >
+      Thirty countries signed a methane reduction pact at the closing of the
+      climate negotiations, the UN said. The pact commits signatories to cut
+      methane emissions 30% by the end of the decade. The US and EU led
+      negotiations. Notably absent: China, India, and Russia. The
+      Secretary-General called it a "concrete step." Energy ministers from
+      participating countries are expected to issue national implementation
+      timetables within 90 days. Activists held protests at the venue.
+    source: { slug: reuters, country: US, tier: us_major }
+    published_at: "2026-05-16T18:30Z"
+  - id: cap-aljazeera
+    title: "Methane pledge signed by 30 countries as climate summit closes"
+    summary: "A 30-nation methane pledge marked the close of the climate summit, with the US and EU brokering."
+    full_text: >
+      A 30-nation methane pledge marked the close of the climate summit, with
+      the US and EU brokering. The pledge targets a 30% cut by 2030. China,
+      India, and Russia did not sign. UN officials said the pact was a
+      concrete step. Protesters held a die-in outside the venue. Energy
+      ministers will reconvene in 90 days to share implementation timetables.
+    source: { slug: al-jazeera, country: QA, tier: international }
+    published_at: "2026-05-16T19:15Z"
+expectation:
+  type: should_have_capped_source_count
+  max_allowed: 75
+rationale: |
+  Generic property check: NO cluster in the pipeline's output should
+  ever expose a source_count above MEGA_CLUSTER_THRESHOLD (75). This
+  is the post-mortem assertion for the 217-source mega-cluster
+  regression.
+
+  This fixture passes trivially at fixture scale (3 articles → 1
+  cluster with source_count=3) but exists so the CI gate exercises
+  the size-cap predicate on every run. Combined with the new
+  validate-clustering.yml workflow, any future change that bypasses
+  Phase 5's cap or the MERGE_HARD_CEILING guard surfaces here.
+
+  Production sanity check (manual): periodically run
+    SELECT id, title, source_count FROM story_clusters ORDER BY source_count DESC LIMIT 20;
+  No row should exceed 75.

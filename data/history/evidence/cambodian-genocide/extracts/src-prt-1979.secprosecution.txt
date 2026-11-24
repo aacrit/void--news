@@ -1,0 +1,7 @@
+source: src-prt-1979
+locator: secprosecution
+url: https://archive.org/download/revtribunalpolpot/revtribunalpolpot_djvu.txt
+read: 2026-09-25
+note: from the Act of Prosecution; the text layer is optical character recognition of a 1990 print
+
+Running counter to our people’s deep felt wishes to live in peace, independence and democracy, to build a prosperous and happy country after complete liberation, over the last four years the Pol Pot - Ieng Sary clique have betrayed our people and driven them to the brink of extermination : about 3 million innocent people have been killed, the more than 4 million survivors seriously injured physically and morally : the national economy has been ruined, national culture destroyed and disastrous consequences suffered by all strata of population in different parts of the country, by all families, by the whole of our nation.

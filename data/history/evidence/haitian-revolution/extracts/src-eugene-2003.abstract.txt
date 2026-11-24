@@ -1,0 +1,8 @@
+source: src-eugene-2003
+locator: abstract
+url: https://www.persee.fr/doc/outre_1631-0438_2003_num_90_340_4049
+read: 2026-09-25
+note: the French abstract as the Persée record prints it
+note: held as the first 150 words of the abstract, under the cap on a copyrighted work
+
+Pour rétablir ses rapports avec l'ex-colonie française de Saint- Domingue, le roi Charles X imposa au gouvernement d'Haïti, puisque les négociations engagées entre les deux pays de 1814 à 1824, se sont révélées infructueuses, une ordonnance, signée le 17 avril 1825, reconnaissant la souveraineté haïtienne sur l'ancienne colonie, mais en contre partie d'une indemnité destinée à indemniser les anciens colons dépossédés. Fixée unilatéralement à cent cinquante millions de francs or et complétée par des avantages en faveur du commerce français, cette indemnité était de fait un acte d'autorité imposée à Haïti, du moins quant à la forme puisque le principe en avait été accepté par Boyer. Cependant, les ambiguïtés de l'acte d'émancipation et l'exiguïté des ressources de la République d'Haïti, portèrent le gouvernement de Louis Philippe à reconsidérer, en 1838, la politique adoptée par son prédécesseur. Un double traité distinguait clairement, d'une part, la reconnaissance de l'indépendance et, d'autre part,

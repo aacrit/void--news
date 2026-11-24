@@ -1,0 +1,8 @@
+source: src-saac-tani-1947
+locator: seccommon
+url: https://www.saac.gov.cn/zt/2014-12/11/content_77681.htm
+read: 2026-10-09
+note: the text is the page's own text in Chinese (simplified characters, as the archive publishes it), whitespace collapsed; a Void translation is beside it (.en.txt)
+note: two further passages of the judgment as the archive quotes them, with the archive's closing and opening quotation marks between them kept
+
+会攻南京之日军各将领，共同纵兵，分头实施屠杀、强奸、抢劫、破坏财产之事实，已属众证确凿，无可掩饰。” “被告与各会攻将领，率部陷我首都后，共同纵兵肆虐，遭戳者达数十万众。更以剖腹、枭首、轮奸、活焚之残酷行为，加诸徒手民众迂夫无辜妇孺。穷凶极恶，无与伦比。

@@ -1,0 +1,8 @@
+source: src-unts-paris-1973
+locator: art9
+url: https://treaties.un.org/doc/Publication/UNTS/Volume%20935/volume-935-I-13295-English.pdf
+read: 2026-10-09
+note: the United Nations Treaty Series PDF for volume 935, registration I-13295, its text layer, line breaks folded to spaces; footnote numbers print inline ('Viet-Nam.2')
+note: the first of the volume's two printings, as for art4
+
+Article 9 The Government of the United States of America and the Government of the Democratic Republic of Viet-Nam undertake to respect the following principles for the exercise of the South Vietnamese people's right to self- determination : (a) The South Vietnamese people's right to self-determination is sacred, inalienable, and shall be respected by all countries. (b) The South Vietnamese people shall decide themselves the political future of South Viet-Nam through genuinely free and democratic general elections under international supervision. (c) Foreign countries shall not impose any political tendency or personality on the South Vietnamese people.

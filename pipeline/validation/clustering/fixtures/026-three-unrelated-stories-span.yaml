@@ -1,0 +1,125 @@
+id: three-unrelated-stories-span-2026-05-15
+name: "'Three Unrelated Stories Span UK, Canada, Cambodia' (must split — garbage signature)"
+failure_date: "2026-05-15"
+failure_kind: garbage-aggregation
+articles:
+  # ---- UK arrest story ----
+  - id: uk-1
+    title: "Britain's most wanted criminal arrested in Spain on day public campaign launched"
+    summary: "One of Britain's most wanted criminals was arrested in Spain on the same day a public campaign launched, GB News reports."
+    full_text: >
+      One of Britain's most wanted criminals was arrested in Spain on the
+      same day the National Crime Agency launched a public campaign for
+      his capture. Detained in Marbella, the suspect was wanted on
+      multiple counts of organised-crime conspiracy. Spanish Guardia Civil
+      coordinated the arrest with NCA agents in London. The Foreign Office
+      praised the cross-border cooperation. The suspect will be extradited
+      under European Arrest Warrant procedures. NCA Director Graeme Biggar
+      called the arrest "a sign of what coordinated international policing
+      can achieve."
+    source: { slug: gb-news, country: GB, tier: international }
+    published_at: "2026-05-15T11:34Z"
+  - id: uk-2
+    title: "British fugitive caught in Marbella hours after appeal"
+    summary: "British fugitive caught in Marbella hours after the National Crime Agency appeal for information."
+    full_text: >
+      A British fugitive was caught in Marbella hours after the National
+      Crime Agency issued a fresh appeal for public information. The
+      Guardia Civil arrested the suspect at a beachfront café. The Foreign
+      Office said extradition proceedings would begin within days. NCA
+      Director Graeme Biggar praised the coordinated effort. The Crown
+      Prosecution Service has prepared a multi-count organised-crime
+      indictment.
+    source: { slug: bbc-news, country: GB, tier: international }
+    published_at: "2026-05-15T13:00Z"
+  # ---- Canada wildfire story ----
+  - id: ca-1
+    title: "Alberta wildfire forces evacuation of 4,200 from Fort McMurray suburb"
+    summary: "An Alberta wildfire forced the evacuation of 4,200 residents from a Fort McMurray suburb Wednesday afternoon."
+    full_text: >
+      An Alberta wildfire forced the evacuation of 4,200 residents from a
+      Fort McMurray suburb Wednesday afternoon, the provincial wildfire
+      agency said. The fire jumped containment lines around 2 p.m. local
+      time. Provincial premier Danielle Smith activated additional
+      firefighting resources. Highway 63 north of the city has been
+      closed. Air-quality alerts cover most of northeastern Alberta.
+      Environment Canada warned the smoke plume would reach Saskatchewan
+      and Manitoba by Thursday. The Regional Municipality of Wood Buffalo
+      opened reception centres in Lac La Biche.
+    source: { slug: cbc, country: CA, tier: international }
+    published_at: "2026-05-15T18:30Z"
+  - id: ca-2
+    title: "Fort McMurray evacuation ordered as Alberta wildfire grows"
+    summary: "A Fort McMurray evacuation was ordered as an Alberta wildfire grew rapidly Wednesday."
+    full_text: >
+      A Fort McMurray evacuation was ordered as an Alberta wildfire grew
+      rapidly Wednesday afternoon. The Regional Municipality of Wood Buffalo
+      opened reception centres in Lac La Biche. Provincial premier Danielle
+      Smith activated additional resources. Highway 63 north of the city
+      remains closed. The provincial wildfire agency reported the fire had
+      grown to 8,400 hectares overnight. Environment Canada issued air-
+      quality advisories covering most of northeastern Alberta.
+    source: { slug: globe-and-mail, country: CA, tier: international }
+    published_at: "2026-05-15T20:00Z"
+  # ---- Cambodia diplomatic story ----
+  - id: kh-1
+    title: "Cambodia recalls ambassador from Thailand over border dispute"
+    summary: "Cambodia recalled its ambassador from Thailand over the Preah Vihear border dispute, the foreign ministry said."
+    full_text: >
+      Cambodia recalled its ambassador from Thailand over the Preah Vihear
+      border dispute, the Cambodian foreign ministry said Wednesday. The
+      announcement follows a Thai military patrol crossing the disputed
+      area Tuesday. Foreign Minister Sok Chenda Sophea told a Phnom Penh
+      press conference Cambodia would lodge a formal complaint at ASEAN.
+      Thai Foreign Ministry spokesman expressed regret. The dispute
+      centres on the temple complex first internationally arbitrated in
+      1962.
+    source: { slug: kh-times, country: KH, tier: independent }
+    published_at: "2026-05-15T07:00Z"
+  - id: kh-2
+    title: "Phnom Penh recalls envoy after Thai border patrol incident"
+    summary: "Phnom Penh recalled its envoy from Bangkok after a Thai border patrol incident at Preah Vihear, the Cambodian foreign ministry said."
+    full_text: >
+      Phnom Penh recalled its envoy from Bangkok after a Thai border patrol
+      incident at the disputed Preah Vihear temple complex, the Cambodian
+      foreign ministry said. Foreign Minister Sok Chenda Sophea will lodge
+      a formal complaint at ASEAN. Thailand expressed regret but maintained
+      that its patrol had remained on Thai territory. The 1962 ICJ
+      arbitration awarded the temple complex to Cambodia.
+    source: { slug: bangkok-post, country: TH, tier: international }
+    published_at: "2026-05-15T09:30Z"
+  # ---- Garbage rollup that ties them together ----
+  - id: agg-1
+    title: "Three Unrelated Stories Span UK, Canada, Cambodia"
+    summary: "Three unrelated stories span the United Kingdom, Canada, and Cambodia, including a fugitive arrest, a wildfire evacuation, and a diplomatic recall."
+    full_text: >
+      Three unrelated stories spanned the United Kingdom, Canada, and
+      Cambodia today. In Britain, the National Crime Agency confirmed the
+      arrest of a wanted fugitive in Marbella. In Canada, the Alberta
+      wildfire agency ordered the evacuation of 4,200 residents from a
+      Fort McMurray suburb after the fire jumped containment lines. In
+      Cambodia, the foreign ministry recalled its ambassador from Thailand
+      over the Preah Vihear border dispute. None of the three events are
+      connected. The British arrest was a long-planned NCA operation.
+      The Alberta wildfire is a routine seasonal event for the province.
+      The Cambodia-Thailand recall is the latest in a multi-decade
+      arbitration history at the ICJ.
+    source: { slug: independent-aggregator, country: US, tier: independent }
+    published_at: "2026-05-15T22:00Z"
+expectation:
+  type: should_split
+  member_ids: [uk-1, uk-2, ca-1, ca-2, kh-1, kh-2, agg-1]
+  min_clusters: 3
+rationale: |
+  Production failure 2026-05-15: a "Three Unrelated Stories Span UK,
+  Canada, Cambodia" garbage rollup pulled three completely separate
+  events (NCA arrest, Alberta wildfire, Cambodia-Thailand diplomatic
+  recall) into a single cluster — the title literally announces the
+  garbage. Path A's Phase 4 garbage-title force-split has a regex
+  matching `\b(Two|Three|Four|Five|\d+)\s+Unrelated\b` and the existing
+  "Spans <list> and Y" pattern. Force-splits should re-cluster at
+  stricter gates and produce at least 3 clusters (one per real event).
+
+  This fixture is the inverse of fixture 022/023 — instead of testing
+  that semantic equivalents merge, it tests that explicit garbage
+  signatures get force-split.

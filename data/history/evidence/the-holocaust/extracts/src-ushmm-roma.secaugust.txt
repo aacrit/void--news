@@ -1,0 +1,6 @@
+source: src-ushmm-roma
+locator: secaugust
+url: https://encyclopedia.ushmm.org/content/en/article/genocide-of-european-roma-gypsies-1939-1945
+read: 2026-10-07
+
+After transferring as many as 3,000 Roma to Auschwitz I and other concentration camps in Germany by mid-summer of 1944, the SS moved against the inmates on August 2 and killed between 4,200 and 4,300. Most of the victims were ill, elderly men, women, and children. The camp staff killed virtually all in the gas chambers of Birkenau. A handful of children who had hidden during the operation were captured and killed in the following days. Approximately 21,000 of the 23,000 Roma and Sinti sent to Auschwitz died there.

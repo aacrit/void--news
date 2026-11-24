@@ -1,0 +1,9 @@
+source: src-clo-19480429
+locator: p610-611
+url: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+read: 2026-09-25
+note: the draft overlay's trimmed passage, which replaces the base extract of this locator for the draft: the section on Sheikhupura up to its recovery figures; the page is the volume's as the base extract gives it
+note: the OCR layer's Seikhupura, collecied and Istof are kept as printed; paragraph breaks are joined
+note: an East Punjab Liaison Agency record as Kirpal Singh reprints it, held under the cap
+
+(a) Seikhupura The total number of persons still to be evacuated is about 1900, out of whom at least 1300 are baazigars. Almost all of them are converts. They are being collecied in the camp and sent to Lahore from where they will be evacuated to Amritsar. These people have no camels with them. The number of abducted women still to be recovered is about 100 and the District Liaison Officer has clues of 47 out of them. The progress of recovery is very slow. From Istof April, 1948 to 25th April, 1948 only 16 women and 10 children were recovered.

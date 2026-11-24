@@ -1,0 +1,8 @@
+source: src-census-1921
+locator: secnatural
+url: https://archive.org/download/india.history.resource.92353/92353_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+note: the text layer prints and. Orissa with a stray full stop; the other Internet Archive scan of the same volume (in.gov.ignca.31056) prints and Orissa, and the stop is dropped
+
+Assam and Burma again show comparatively high rates of increase. Immigration, is an important factor in the rise in Assam but neither of these two provinces. were exposed to an invasion of the influenza equal in virulence to that which wiped off the whole of the natural increase in the Central Provinces and Berar, Bihar and Orissa and Bombay and substantially reduced the population in the United Provinces, the Rajputana and Central India Agencies and the Hyderabad State.

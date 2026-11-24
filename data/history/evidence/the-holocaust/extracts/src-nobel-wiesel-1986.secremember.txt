@@ -1,0 +1,6 @@
+source: src-nobel-wiesel-1986
+locator: secremember
+url: https://www.nobelprize.org/prizes/peace/1986/wiesel/acceptance-speech/
+read: 2026-10-07
+
+I remember: it happened yesterday or eternities ago. A young Jewish boy discovered the kingdom of night. I remember his bewilderment, I remember his anguish. It all happened so fast. The ghetto. The deportation. The sealed cattle car. The fiery altar upon which the history of our people and the future of mankind were meant to be sacrificed.

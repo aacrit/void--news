@@ -1,0 +1,8 @@
+source: src-un-sgsm6552
+locator: secopening
+url: https://web.archive.org/web/20010504213058/http://www.un.org:80/News/Press/docs/1998/19980506.sgsm6552.html
+read: 2026-10-07
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: the press release prints 'CHECK AGAINST DELIVERY' above the text: this is the text as issued, not a transcript of the speech as spoken
+
+We must and we do acknowledge that the world failed Rwanda at that time of evil. The international community and the United Nations could not muster the political will to confront it. The world must deeply repent this failure. Rwanda's tragedy was the world's tragedy. All of us who cared about Rwanda, all of us who witnessed its suffering, fervently wish that we could have prevented the genocide. Looking back now, we see the signs which then were not recognized. Now we know that what we did was not nearly enough -- not enough to save Rwanda from itself, not enough to honour the ideals for which the United Nations exists. We will not deny that, in their greatest hour of need, the world failed the people of Rwanda. In your people's agony, an ideology of hate and inhumanity tore the very fabric of existence and made victims of an entire people, turning every Tutsi man, woman and child into human prey in a concerted, planned, systematic and methodical campaign of mass extermination.

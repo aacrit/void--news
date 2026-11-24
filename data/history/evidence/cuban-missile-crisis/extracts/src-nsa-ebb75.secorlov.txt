@@ -1,0 +1,7 @@
+source: src-nsa-ebb75
+locator: secorlov
+url: https://nsarchive2.gwu.edu/NSAEBB/NSAEBB75/index2.htm
+read: 2026-10-04
+note: the editors' summary of Vadim Orlov's recollection, with the words they quote from it; the page spells the brigade commander's name Archipov; the page's HTML read as text
+
+Possibly even more dangerous was an incident on submarine B-59 recalled by Vadim Orlov, who served as a communications intelligence officer. In an account published by Mozgovoi (see document 16), Orlov recounted the tense and stressful situation on 27 October when U.S. destroyers lobbed PDCs at B-59. According to Orlov, a "totally exhausted" Captain Valentin Savitsky, unable to establish communications with Moscow, "became furious" and ordered the nuclear torpedo to be assembled for battle readiness. Savitsky roared "We're going to blast them now! We will die, but we will sink them all." Deputy brigade commander Second Captain Vasili Archipov calmed Savitsky down and they made the decision to surface the submarine. Orlov's description of the order to assemble the nuclear torpedo is controversial and the other submarine commanders do not believe that that Savitsky would have made such a command.

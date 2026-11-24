@@ -1,0 +1,7 @@
+source: src-icty-krstic-tj
+locator: para599
+url: https://www.icty.org/x/cases/krstic/tjug/en/krs-tj010802e.pdf
+read: 2026-09-24
+note: the ICTY PDF text layer renders some diacritics with substitute glyphs (Poto~ari for Potocari, Erdemovi} for Erdemovic, @ivanovi} for Zivanovic, ^an~ari for Cancari); the passage is stored as the text layer prints it
+
+599. The Trial Chamber has thus concluded that the Prosecution has proven beyond all reasonable doubt that genocide, crimes against humanity and violations of the laws or customs of war were perpetrated against the Bosnian Muslims, at Srebrenica, in July 1995.

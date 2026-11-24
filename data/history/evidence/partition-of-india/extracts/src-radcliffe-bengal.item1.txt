@@ -1,0 +1,7 @@
+source: src-radcliffe-bengal
+locator: item1
+url: https://archive.org/download/dli.csl.1040/1040_djvu.txt
+read: 2026-09-25
+note: item n is paragraph n of Annexure A, the schedule of the Bengal award
+
+1. A line shall be drawn along the boundary between the Thana of Phansidewa in the District of Darjeeling and the Thana Tetulia in the District of Jalpaiguri from the point where that boundary meets the Province of Bihar and then along the boundary between the Thanas of Tetulia and Rajganj; the Thanas of Pachagar and Rajganj, and the Thanas of Pachagar and Jalpaiguri, and shall then continue along the northern corner of the Thana Debiganj to the boundary of the State of Cooch-Behar. The District of Darjeeling and so much of the District of Jalpaiguri as lies north of this line shall belong to West Bengal, but the Thana of Patgram and any other portion of Jalpaiguri District which lies to the east or south shall belong to East Bengal.

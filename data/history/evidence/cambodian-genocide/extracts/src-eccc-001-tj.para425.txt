@@ -1,0 +1,6 @@
+source: src-eccc-001-tj
+locator: para425
+url: https://www.eccc.gov.kh/sites/default/files/documents/courtdoc/20100726_Judgement_Case_001_ENG_PUBLIC.pdf
+read: 2026-09-25
+
+425. No fewer than 345 Vietnamese prisoners of war and civilians were detained at S-21 and constituted protected persons under the Geneva Conventions of 1949.767 Vietnamese detainees were registered as either soldiers (122 entries), Vietnamese civilians (79 entries) or spies (144 entries).768 Vietnamese prisoners of war, many of whom were captured on the battlefield, entered the S-21 complex in their military uniforms.769 Amongst the Vietnamese civilians were women, as well as children brought to the S-21 complex along with their parents.770 The Accused stated that “spies” were classified as such on order of his superiors but were in fact either civilians or combatants.771

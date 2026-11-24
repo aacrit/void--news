@@ -1,0 +1,8 @@
+source: src-diet-20070425-aso
+locator: secthirty
+url: https://www.shugiin.go.jp/internet/itdb_kaigirokua.nsf/html/kaigirokua/000516620070425008.htm
+read: 2026-10-09
+note: the text is the page's own text in Japanese, whitespace collapsed; a Void translation is beside it (.en.txt)
+note: Foreign Minister Aso Taro's answer, continued
+
+まず今、人数の、三十万人等々の話がありますが、私どもとしては、当時の南京の大きさは大体今の世田谷区ぐらいの話で、人口が何十万あったかというところで三十万というのは現実的にはいかがなものかということで、渡辺先生、少なくともこの一年間ぐらい、三十という数字が中国側から出ることはなくなりましたですね。

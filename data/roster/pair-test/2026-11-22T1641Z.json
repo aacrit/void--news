@@ -1,0 +1,97 @@
+{
+ "collected_at": "2026-11-22T16:41:15Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 23,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16308805/Liverpool-vs-Manchester-United-Premier-League-Mauricio-Pochettino-takes-charge-Red-Devils-time-rivals-head-head-Anfield.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Liverpool vs Manchester United - Premier League: Leny Yoro is SENT OFF minutes into Mauricio Pochettino's Red Devils reign after disastrous defensive mishap",
+      "published": "Sun, 22 Nov 2026 16:40:30 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/mauricio-pochettino-names-both-players-37903885",
+      "title": "Mauricio Pochettino names both players Michael Carrick 'fell out with' in first Man Utd XI",
+      "published": "Sun, 22 Nov 2026 15:21:57 +0000"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16312937/Kim-Kardashian-wows-daring-leather-looks-vegas.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Kim Kardashian wows in two daring leather looks as she supports boyfriend Lewis Hamilton in Las Vegas",
+      "published": "Sun, 22 Nov 2026 09:56:03 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/3am/celebrity-news/kim-kardashian-wows-racy-leather-37903743",
+      "title": "Kim Kardashian wows in racy leather as she supports Lewis Hamilton at Vegas Grand Prix",
+      "published": "Sun, 22 Nov 2026 15:14:53 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 168,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/article-915697",
+      "title": "Police rescue female soldier, arrest minor for spitting at officers at haredi protest in Jerusalem",
+      "published": "Sun, 22 Nov 2026 13:04:48 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/israel-politics/2026-11-19/ty-article/.premium/police-violently-disperse-ultra-orthodox-protest-in-jerusalem/000001a1-f427-d9ff-a7b5-f5af85cf0000",
+      "title": "Israel Police violently disperse ultra-Orthodox protest in Jerusalem",
+      "published": "Thu, 19 Nov 2026 17:16:48 +0200"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": "HTTPError: 403 Client Error: Forbidden for url: https://www.indiatoday.in/rss/home"
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/11/islamic-school-in-new-jersey-reports-no-foreign-ties-in-irs-filings-despite-proven-links-to-turkey/",
+      "title": "Islamic school in New Jersey reports no foreign ties in IRS filings despite proven links to Turkey",
+      "published": "Tue, 17 Nov 2026 23:01:12 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 300,
+    "left": 10
+   }
+  }
+ }
+}

@@ -1,0 +1,7 @@
+source: src-afonso-15260706
+locator: secdano
+url: https://archive.org/download/monumentamissionariaafricana/MonumentaMission%C3%A1riaAfricana-01.001_djvu.txt
+read: 2026-10-09
+note: Brasio's transcription as the archive's OCR layer prints it; '( ls )' and '( 16 )' are the edition's footnote calls; '¬' marks a printed line-end; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+os ditos mercadores leuam cada dia nossos naturaes, filhos da terra e filhos de nossos fidallgos e vassallos, e nossos parentes, por que os ladrões e homés de maa cÕcyécya, os furtam com desejo daver asy as cousas e mercadoryas desse Reyno que sam dese- jossos ( ls ), os furtam e lhos trazem a vender. Em tanta ma¬ neyra Senhor, hé esta cor[r]uçam e devasydade ( 16 ), que nosa terra se despouoa toda

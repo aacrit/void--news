@@ -1,0 +1,19 @@
+{
+ "class": "quotation-altered",
+ "gate": "E-14",
+ "product": "card",
+ "covers": [
+  "pipeline/editorial/corrections.json#2026-10-02-hegseth-quote"
+ ],
+ "note": "Every word is the speaker's; an ellipsis became a full stop inside the quotation.",
+ "planted": {
+  "title": "Defense Secretary Addresses Officers at Quantico",
+  "summary": "He told the officers that those who “clung to the woke department. No longer work here,” and left the stage. Officials confirmed the figures on Tuesday, and the ministry said the review would continue through the month. Reporters were briefed at the ministry. ",
+  "source_text": "He told the officers that those who \"clung to the woke department ... no longer work here,\" and left the stage.\nOfficials confirmed the figures on Tuesday."
+ },
+ "clean": {
+  "title": "Defense Secretary Addresses Officers at Quantico",
+  "summary": "He told the officers that those who “clung to the woke department ... no longer work here,” and left the stage. Officials confirmed the figures on Tuesday, and the ministry said the review would continue through the month. Reporters were briefed at the ministry. ",
+  "source_text": "He told the officers that those who \"clung to the woke department ... no longer work here,\" and left the stage.\nOfficials confirmed the figures on Tuesday."
+ }
+}

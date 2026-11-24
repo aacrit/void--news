@@ -1,0 +1,7 @@
+source: src-ambedkar-1945
+locator: secfast
+url: https://archive.org/download/in.ernet.dli.2015.278459/2015.278459.What-Congress_djvu.txt
+read: 2026-10-09
+note: the text is the scan's OCR layer (archive.org djvu.txt), whitespace collapsed; line-end hyphens and glyph errors kept as printed
+
+Accordingly, on the 20th September 1932, Mr. Gandhi commenced his ‘‘fast unto death 'V as a protest against the grant of separate electorates to the Untouchables.

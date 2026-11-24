@@ -1,0 +1,6 @@
+source: src-med-1946-ch7
+locator: sechiroshima
+url: https://avalon.law.yale.edu/20th_century/mp07.asp
+read: 2026-10-05
+
+The bomb exploded over Hiroshima at 8:15 on the morning of August 6, 1945. About an hour previously, the Japanese early warning radar net had detected the approach of some American aircraft headed for the southern part of Japan. The alert had been given and radio broadcasting stopped in many cities, among them Hiroshima. The planes approached the coast at a very high altitude. At nearly 8:00 A.M., the radar operator in Hiroshima determined that the number of planes coming in was very small - probably not more than three - and the air raid alert was lifted.

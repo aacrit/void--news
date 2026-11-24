@@ -1,0 +1,7 @@
+source: src-app-homestead-19621126
+locator: secnote
+url: https://www.presidency.ucsb.edu/documents/remarks-homestead-air-force-base-florida-upon-presenting-unit-awards
+read: 2026-10-07
+note: the editorial note printed after the remarks; 'It.' stands in the page where 'Jr.' is meant, and is kept as it prints it
+
+In his closing remarks the President referred to Air Force Major Rudolf Anderson, It., of Greenville, S.C., pilot of a U-2 reconnaissance plane lost over Cuba on October 27, 1962.

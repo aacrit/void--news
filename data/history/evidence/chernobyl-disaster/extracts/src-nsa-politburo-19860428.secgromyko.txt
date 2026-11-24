@@ -1,0 +1,7 @@
+source: src-nsa-politburo-19860428
+locator: secgromyko
+url: https://nsarchive.gwu.edu/sites/default/files/documents/6279037/National-Security-Archive-Doc-4-Extraordinary.pdf
+read: 2026-10-07
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+Dobrynin A.F. The Americans will notice the fact of the explosion and the spread of the radioactive cloud anyway. Chebrikov V.M. The victims are being given the necessary assistance. Gromyko A.A. The statement should be written in such a way that it does not cause excessive anxiety or panic.

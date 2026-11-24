@@ -1,0 +1,8 @@
+source: src-nsa-hanyok-2001
+locator: secsharp
+url: https://www.nsa.gov/portals/75/documents/news-features/declassified-documents/gulf-of-tonkin/articles/release-1/rel1_skunks_bogies.pdf
+read: 2026-10-09
+note: NSA's declassified PDF of the Cryptologic Quarterly article, its text layer, line breaks folded to spaces; the classification markings the text layer garbles ('TeP 8E6AE"fl', '(SI/SI)') and line-end hyphens are kept as printed
+note: the page footer and running head fall inside the passage and are kept; footnote numbers print inline ('1°0' is the text layer's 100)
+
+At around 1400 EST, Admiral Ulysses S. Sharp, CINC- PACFLT, called the Pentagon with the news that "a review of the action makes many reported con- tacts and torpedoes fired 'appear doubtful' " because of freak weather, over-eager sonar oper- Page 24 l0fl Sl!!CR:ETI/COMIN I flX1 TQP SESRE'f1'1'e0MINl//)(1 Cryptologic Quarterly ators, and the absence of visual sightings.1° 0 McNamara called Sharp, who added that there was "a little doubt on just what exactly went on."101 Messages buzzed back and forth between Washington and the Pacific, demanding informa- tion and then getting contradictory evidence of the attack. The Desoto mission reported that except for possibly the first torpedo report at 2159G (1459Z), all others were caused by reflec- tions off the two destroyers' screws.

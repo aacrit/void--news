@@ -1,0 +1,8 @@
+source: src-hunter-1920
+locator: secfiring
+url: https://archive.org/download/disordersinquiry00unse/disordersinquiry00unse_djvu.txt
+read: 2026-10-09
+note: the text is the scan's OCR layer (archive.org djvu.txt), whitespace collapsed; line-end hyphens and glyph errors kept as printed
+note: majority report, paragraph 38
+
+Without giving the crowd any warning to disperse, which he considered unneces¬ sary as they were in breach of his proclamation, he ordered his troops to fixe and the firing was continued for about 10 minutes.

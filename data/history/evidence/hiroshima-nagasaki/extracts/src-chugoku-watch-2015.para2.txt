@@ -1,0 +1,7 @@
+source: src-chugoku-watch-2015
+locator: para2
+url: https://www.hiroshimapeacemedia.jp/?p=54789
+read: 2026-10-07
+note: the report's second paragraph
+
+The pocket watch, four centimeters in diameter, was the possession of Kengo Nikawa, who was 59 at the time. He experienced the atomic bomb at a location 1.6 kilometers southwest of the hypocenter and eventually died on August 22. The glass covering and the chain are missing. The watch was donated to the museum by Kengo’s son, Kazuo, in 1975. It had been exhibited near the entrance of the main building, next to the mannequins that depict A-bomb survivors wandering through the devastated city in the aftermath of the bombing. The watch also appears on the front cover of a photo book about collections of the Hiroshima Peace Memorial Museum that was published by the museum in 1999.

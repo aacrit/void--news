@@ -1,0 +1,15 @@
+{
+ "class": "cut-fragment",
+ "gate": "pipeline/editorial/standard.py::sentences",
+ "product": "card",
+ "covers": [
+  "pipeline/editorial/corrections.json#2026-11-19-card-solicitor-general-orphan"
+ ],
+ "note": "The standard's splitter broke after an initial, so a cut removed the back half of a sentence and left its front: 'U.S. Solicitor General D.' The gate reads a summary through the splitter and fails on any sentence that ends on a lone initial. The clean twin fails too if the splitter breaks after an initial again.",
+ "planted": {
+  "summary": "The order covers the National Institutes of Health and the departments of Defense and Transportation. U.S. Solicitor General D."
+ },
+ "clean": {
+  "summary": "The order covers the National Institutes of Health and the departments of Defense and Transportation. U.S. Solicitor General D. John Sauer argued the cuts were lawful. Lead counsel for the researchers disagreed."
+ }
+}

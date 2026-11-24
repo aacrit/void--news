@@ -1,0 +1,6 @@
+source: src-wilson-2012
+locator: para14
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3310086/fullTextXML
+read: 2026-09-25
+
+During the 1918 pandemic, the Māori mortality rate (4,230/100,000 population) was 7.3× the rate for the rest of the population (6), which was nearly all composed of settlers of European origin (Table; Figure 2). This work by Rice (14) was far more comprehensive than previous work that compared rates by ethnicity (15). Nevertheless, Rice noted limitations with data quality and considered that the Māori rate was still an underestimate of the true rate because some Māori deaths were not registered (14). This underestimation of Māori pandemic-related deaths was also a finding in a study of the pandemic in New Zealand’s largest city, Auckland (16).

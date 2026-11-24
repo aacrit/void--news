@@ -1,0 +1,8 @@
+source: src-biko-1970
+locator: secinferiority
+url: https://www.saha.org.za/nonracialism/black_man_youre_on_your_own.htm
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+note: the page opens this paragraph with an ellipsis, not held
+
+From this it becomes clear that as long as blacks are suffering from an inferiority complex — a result of 300 years of deliberate oppression, denigration and derision — they will be useless as co-architects of a normal society where man is nothing else but man for his own sake. Hence what is necessary as a prelude to anything else that may come is a very strong grassroots build-up of black consciousness, such that blacks can learn to assert themselves and stake their rightful claim.

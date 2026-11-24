@@ -1,0 +1,8 @@
+source: src-unesco-kbs-2015
+locator: secreunions
+url: https://media.unesco.org/sites/default/files/webform/mow001/korea_dispersed_persons_eng.pdf
+read: 2026-10-09
+note: the same form
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+As a result of these endeavors, two years after the “Finding Dispersed Families” broadcast, a North Korean delegation visited KBS (May 1985) and the historic first South–North family reunions took place in September 1985. As of 2014, a total of 18,523 people have been reunited with their families across the border.

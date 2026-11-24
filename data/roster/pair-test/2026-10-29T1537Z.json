@@ -1,0 +1,102 @@
+{
+ "collected_at": "2026-10-29T15:37:11Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.dailymail.com/debate/article-16247303/ANDREW-NEIL-Labour-believes-deficit-reduction-never-never-Healey-talked-prudence-noticed-profligacy.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "ANDREW NEIL: Labour believes in deficit reduction on the never-never. The more Healey talked of prudence, the more we noticed his profligacy...",
+      "published": "Thu, 29 Oct 2026 06:57:28 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/politics/john-healey-downs-pint-pub-37823336",
+      "title": "Moment Chancellor John Healey downs post-Budget pint in just 12 seconds",
+      "published": "Thu, 29 Oct 2026 15:19:05 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 135,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 24,
+     "right": {
+      "url": "https://www.jpost.com/israel-election-2026/article-913196",
+      "title": "Ra'am's Abbas rejects election interference claims, denies Qatari links 'unlike Netanyahu'",
+      "published": "Thu, 29 Oct 2026 10:41:02 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/elections/2026-10-29/ty-article/.premium/arab-parties-denounce-allegations-of-election-interference-as-filthy-lies/000001a1-87e9-dabc-afb5-fffb4a040000",
+      "title": "Arab parties reject election interference claims as right-wing incitement grows",
+      "published": "Thu, 29 Oct 2026 17:24:38 +0200"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.indiatoday.in/india/law-news/story/k-n-nehru-cash-for-jobs-case-dvac-searches-tamil-nadu-locations-ptag-3027985-2026-10-29?utm_source=rss",
+      "title": "DVAC searches 25 Tamil Nadu sites linked to K N Nehru in jobs scam probe",
+      "published": "Thu, 29 Oct 2026 20:50:29 +0530"
+     },
+     "left": {
+      "url": "https://www.thehindu.com/news/national/tamil-nadu/dvac-searches-places-linked-to-former-dmk-mla-industrialist-sekar-reddy-in-vellore/article71640674.ece",
+      "title": "DVAC searches places linked to former DMK MLA, industrialist Sekar Reddy in Vellore",
+      "published": "Thu, 29 Oct 2026 20:08:39 +0530"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/erdogans-family-business-ties-complicate-azerbaijan-dispute/",
+      "title": "Erdogan’s family business ties complicate Azerbaijan dispute",
+      "published": "Mon, 26 Oct 2026 23:01:29 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 316,
+    "left": 10
+   }
+  }
+ }
+}

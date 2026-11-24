@@ -1,0 +1,7 @@
+source: src-moh-1920
+locator: para17
+url: https://archive.org/download/pandemic-of-influenza-1918-1919_UK-MinistryofHealth_HMSO-1920/PandemicofInfluenzaHMSO_entire_book_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+
+17. Thirdly, the epidemic was remarkable in respect of the mortality. It should be borne in mind that the fatality of influenza is low, but its incidence is so vast that the number of deaths create an excessive mortality. Thus, it comes about that the epidemic destroyed more lives in the whole world than did the European war in five years.

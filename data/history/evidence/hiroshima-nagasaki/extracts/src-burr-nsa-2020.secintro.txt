@@ -1,0 +1,7 @@
+source: src-burr-nsa-2020
+locator: secintro
+url: https://nsarchive.gwu.edu/briefing-book/nuclear-vault/2020-08-04/atomic-bomb-end-world-war-ii
+read: 2026-10-07
+note: the introduction of the 2020 update, its first five sentences
+
+Along with the ethical issues involved in the use of atomic and other mass casualty weapons, why the bombs were dropped in the first place has been the subject of sometimes heated debate. As with all events in human history, interpretations vary and readings of primary sources can lead to different conclusions. Thus, the extent to which the bombings contributed to the end of World War II or the beginning of the Cold War remain live issues. A significant contested question is whether, under the weight of a U.S. blockade and massive conventional bombing, the Japanese were ready to surrender before the bombs were dropped. Also still debated is the impact of the Soviet declaration of war and invasion of Manchuria, compared to the atomic bombings, on the Japanese decision to surrender.

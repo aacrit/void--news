@@ -1,0 +1,12 @@
+source: src-dinmohammad-1947
+locator: p389-390
+url: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+read: 2026-09-25
+note: the page is the volume's, read from the scan's running numbers, which the OCR layer prints between pages: the passage lies between the two numbers given
+note: the OCR layer's 'SO percent' for 50 per cent and its 41,199,658 are kept as printed; the last figure is the layer's
+
+In the Lahore Division taken as a whole the Sikhs are only 19.9 per cent as against 58.18 per cent Muslims and their percentage in the District of Lahore is only 18.3 in the District of Gujranwala 10.8, in the District of Sheikhupura 18.8, in the District of Gurdaspur 19.19 and in the District of Sialkot 11.7 only in the District of Amritsar they are as much as 36.1 per cent but even there along with the Hindus they donot go beyond SO percent. As against this the Muslimsare 60.6 in the District.
+
+~. of Lahore, 51.14 in the District of Gurdaspur, 62.0 in the District of Sialkot, 70.4 in the
+
+District of Gujranwala and 63.6 in the District of Sheikhpura. The district of Amritsar has under notional division been placed along with the other non-Muslim majority districts but there too the population of the Sikhs is 510,845 while that of the Muslims is 657,695. How on any basis can it reasonably or equitably be urged that the whole Division of Lahore for the sake of 1,442,006 Sikhs be placed in East Punjab at the cost of 41,199,658 Muslims.

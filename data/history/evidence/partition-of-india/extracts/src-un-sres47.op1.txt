@@ -1,0 +1,7 @@
+source: src-un-sres47
+locator: op1
+url: https://documents.un.org/doc/resolution/gen/nr0/047/72/pdf/nr004772.pdf
+read: 2026-09-25
+note: the operative recommendation and Part A, paragraph 1(a); the layer's soft hyphens are rejoined
+
+Recommends to the Governments of India and Pakistan the following measures as those which in the opinion of the Council are appropriate to bring about a cessation of the fighting and to create proper conditions for a free and impartial plebiscite to decide whether the State of Jam.mu and Kashmir is to accede to India or Pakistan : A. Restoration of peace and order 1. The Government of Pakistan should undertake to use its best endeavours : (a) To secure the withdrawal from the State of Jam.mu and Kashmir of tribesmen and Pakistani nationals not normally resident therein who have entered the State for the purpose of fighting, and to prevent any intrusion into the State of such elements and any furnishing of material aid to those fighting in the State;

@@ -1,0 +1,7 @@
+source: src-icty-krstic-tj
+locator: fn2
+url: https://www.icty.org/x/cases/krstic/tjug/en/krs-tj010802e.pdf
+read: 2026-09-24
+note: the ICTY PDF text layer renders some diacritics with substitute glyphs (Poto~ari for Potocari, Erdemovi} for Erdemovic, @ivanovi} for Zivanovic, ^an~ari for Cancari); the passage is stored as the text layer prints it
+
+2 See Mr. Nesib Mandzi}, Transcript at page (hereafter “T.”) 963 (testifying that some 25,000 Bosnian Muslim refugees had gathered in Poto~ari); P 404/88 (Report of Karremans dated 12 July 1995 stating that, as of that date, 17,500 people had gathered in and around Poto~ari); P 77/26 (UNMO fax dated 13 July 1995 reporting that 10,000 refugees had been already transported with a further 20,000-25,000 to follow).

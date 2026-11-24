@@ -1,0 +1,8 @@
+source: src-hertle-cwihp-2001
+locator: secmoscow
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_12-13.pdf
+read: 2026-10-09
+note: p. 138
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+When the border crossings were “flooded” and East Germans were dancing on the Wall, the Soviet leadership was sound asleep.

@@ -1,0 +1,8 @@
+source: src-panthic-19470614
+locator: p108
+url: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+read: 2026-09-25
+note: p is the page of Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947 (2nd ed., 2005), read from the Internet Archive text layer; line breaks are joined and the layer's soft hyphens rejoined
+note: Document 61, the resolution as the Civil and Military Gazette of 15 June 1947 printed it; the layer's colon after 'population' is kept
+
+NEW DELHI, June 14, -- The following resolution has been passed by the joint meeting of the Panthic Assembly Party, the Working Committee of the Shromani Akali Dal and the Panthic Pratinidhi Board on the partition of the Pun jab. ‘Under the new plan of H.M.G. of June 3 the province of the Punjab has to be partitioned into the Eastern and Western Punjab. This partition has followed the division of the country into two sovereign States as a solution of the long standing communal tangle created by the Muslim League. “In the opinion of this conference, the Boundary Commission should be given express directive to make recommendations for the transfer of Hindu and Sikh population: and property from the western part of the Punjab to the eastern part after the partition has been affected on an equitable basis. “This conference apprehends that in the absence of provision of transfer of population and property, the very purpose of partition would be defeated.”

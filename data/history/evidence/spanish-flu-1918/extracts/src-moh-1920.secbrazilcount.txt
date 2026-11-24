@@ -1,0 +1,7 @@
+source: src-moh-1920
+locator: secbrazilcount
+url: https://archive.org/download/pandemic-of-influenza-1918-1919_UK-MinistryofHealth_HMSO-1920/PandemicofInfluenzaHMSO_entire_book_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+
+It is estimated that from 600,000 to 700,000 of the inhabitants were attacked by influenza in a period of some six weeks, out of a population of about 915,000 ; the mortality caused by the epidemic in the city is given approximately as 15,000. But the official mortality returns for October and November 1918 give smaller figures, namely deaths from all causes in October 11,291, of which 8,876 are ascribed to influenza, and in November 5,705 deaths from all causes, 3,287 being attributed to influenza.

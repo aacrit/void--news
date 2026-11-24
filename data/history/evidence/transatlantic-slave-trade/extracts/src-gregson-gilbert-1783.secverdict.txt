@@ -1,0 +1,7 @@
+source: src-gregson-gilbert-1783
+locator: secverdict
+url: https://archive.org/details/reportscasesarg04glengoog
+read: 2026-10-09
+note: the rule for a new trial; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+A verdict having been found for the plaintiff, a rule for a new trial was obtained on the grounds that a sufficient necessity did not exist for throwing the negroes overboard, and also that the loss was not within the terms of the policy.

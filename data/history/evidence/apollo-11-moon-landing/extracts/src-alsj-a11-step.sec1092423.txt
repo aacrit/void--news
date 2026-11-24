@@ -1,0 +1,7 @@
+source: src-alsj-a11-step
+locator: sec1092423
+url: https://www.apollojournals.org/alsj/a11/a11.step.html
+read: 2026-10-03
+note: the transmission at 109:24:23 ground elapsed time and the first part of the editor's bracketed note on the 'a'; the page's HTML read as text, whitespace collapsed
+
+109:24:23 Armstrong: That's one small step for (a) man; one giant leap for mankind. (Long Pause) [At the time of the mission, the world heard Neil say "That's one small step for man; one giant leap for mankind". As Andrew Chaikin details in A Man on the Moon , after the mission, Neil said that he had intended to say 'one small step for a man' and believed that he had done so. However, he also agreed that the 'a' didn't seem to be audible in the recordings. The important point is that the world had no problem understanding his meaning. However, over the decades, people interested in details of the mission - including your editor - have listened repeatedly to the recordings, without hearing any convincing evidence of the 'a'.

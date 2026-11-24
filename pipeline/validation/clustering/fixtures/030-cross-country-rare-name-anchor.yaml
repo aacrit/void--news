@@ -1,0 +1,100 @@
+id: cross-country-rare-name-anchor-2026-05-15
+name: "Cross-country rare-name anchor: Estonian FM Tsahkna in 3 different angles (must merge)"
+failure_date: "2026-05-15"
+failure_kind: anchor-entity-fragmentation
+articles:
+  # Estonian Foreign Minister Margus Tsahkna gave a statement on Tuesday at
+  # the EU foreign affairs council in Brussels about the Latvia drone
+  # incident. Three articles cover three different angles (the EU response,
+  # the Estonian-domestic angle, the Baltic-coordination angle), and Tsahkna
+  # is the only entity that uniquely identifies all three as the same news
+  # event. None of the OVERLY_COMMON_ENTITIES (EU, Estonia, Latvia, drone)
+  # are sufficient on their own. This is a perfect Phase 2.6 anchor-entity
+  # test — Tsahkna is rare enough to qualify (high IDF, low doc freq) and
+  # the title-Jaccard floor of 0.15 is satisfied by Tsahkna+EU+Latvia stems.
+  - id: tsahkna-eunews
+    title: "EU foreign affairs council: Tsahkna leads Baltic call for stronger air-defence package"
+    summary: "EU foreign affairs council: Estonian FM Margus Tsahkna led a Baltic call for a stronger air-defence package after the Latvia drone incident."
+    full_text: >
+      EU foreign affairs council: Estonian Foreign Minister Margus Tsahkna led
+      a Baltic call for a stronger air-defence package after the Latvia
+      drone incident, EUobserver reports. The Estonian, Latvian and
+      Lithuanian foreign ministers presented a joint paper at the
+      Brussels meeting. EU foreign-policy chief Kaja Kallas chaired the
+      session and said the bloc would consider an additional Patriot
+      battery deployment. Member states will hold a follow-up summit on
+      Thursday. The Latvian parliamentary inquiry into the drone incident
+      remains open.
+    source: { slug: euobserver, country: BE, tier: international }
+    published_at: "2026-05-13T16:00Z"
+  - id: tsahkna-postimees
+    title: "Tsahkna: 'Drone incursions over neighbours are direct threat to Estonia'"
+    summary: "Estonian Foreign Minister Margus Tsahkna said drone incursions over neighbours are a direct threat to Estonia, in a Tallinn press conference."
+    full_text: >
+      Estonian Foreign Minister Margus Tsahkna said drone incursions over
+      neighbours are a direct threat to Estonia, in a Tallinn press
+      conference Wednesday. Tsahkna referenced the Latvia drone incident
+      and the parallel Estonian air-defence review. He said the Estonian
+      Defence Forces had updated procedures for cross-border alert
+      sharing with Latvia and Finland. Estonian Prime Minister Kristen
+      Michal will address the Riigikogu next week. The Defence Ministry
+      is preparing an emergency budget supplement.
+    source: { slug: postimees, country: EE, tier: international }
+    published_at: "2026-05-13T18:30Z"
+  - id: tsahkna-baltictimes
+    title: "Baltic foreign ministers coordinate response: Tsahkna, Braže, Budrys joint statement"
+    summary: "The three Baltic foreign ministers Tsahkna, Braže and Budrys issued a joint statement on the regional air-defence review."
+    full_text: >
+      The three Baltic foreign ministers Margus Tsahkna of Estonia,
+      Baiba Braže of Latvia, and Kęstutis Budrys of Lithuania issued a
+      joint statement on the regional air-defence review at the
+      conclusion of the Brussels EU foreign affairs council. The
+      statement called for "an integrated air-defence architecture
+      east of the Vistula" and reiterated full support for Ukrainian
+      sovereignty. The Latvian Saeima inquiry into the drone incident
+      will continue independently. Polish Foreign Minister Radosław
+      Sikorski endorsed the joint position.
+    source: { slug: baltic-times, country: LT, tier: international }
+    published_at: "2026-05-13T19:00Z"
+  - id: tsahkna-err
+    title: "Foreign Minister Tsahkna in Brussels: Patriot package on FAC agenda"
+    summary: "Foreign Minister Margus Tsahkna said in Brussels that an expanded Patriot package was on the EU foreign affairs council agenda."
+    full_text: >
+      Foreign Minister Margus Tsahkna said in Brussels Tuesday that an
+      expanded Patriot package was on the EU foreign affairs council
+      agenda, ERR News reported. Tsahkna travelled to Brussels alongside
+      his Latvian and Lithuanian counterparts to coordinate the Baltic
+      response to the Latvia drone incident. EU foreign-policy chief
+      Kaja Kallas chaired the meeting. The Estonian Defence Forces will
+      brief the Riigikogu's National Defence Committee on Thursday on
+      revised air-alert procedures. NATO Secretary General Mark Rutte
+      welcomed the joint Baltic statement.
+    source: { slug: err-news-estonia, country: EE, tier: international }
+    published_at: "2026-05-13T17:00Z"
+expectation:
+  type: should_merge
+  expected_member_ids: [tsahkna-eunews, tsahkna-postimees, tsahkna-baltictimes, tsahkna-err]
+  min_clusters: 1
+  max_clusters: 2
+  min_source_count: 3
+rationale: |
+  Anchor-entity test: Estonian Foreign Minister Margus Tsahkna gave a
+  series of statements across multiple angles (EU foreign affairs
+  council, Tallinn domestic press conference, joint Baltic statement,
+  Estonian Defence Forces briefing). The shared common entities are
+  all in OVERLY_COMMON_ENTITIES (EU, Estonia, Latvia, drone, Baltic).
+  Phase 2.6 anchor-entity merge needs to fire on the rare anchor
+  "tsahkna" — a high-IDF rare proper noun appearing only in this story
+  cluster across the corpus.
+
+  Tsahkna meets ANCHOR_IDF_FRACTION_OF_MAX≥0.85 (rare in any news
+  corpus), ANCHOR_MAX_DOC_FREQ≤3 (only this story), and
+  ANCHOR_TITLE_JACCARD_FLOOR≥0.15 (title shares Tsahkna + Brussels/EU
+  + Baltic + ministers stems). The merge surfaces what would otherwise
+  be 4 single-source clusters as a coherent diplomatic-coordination
+  story.
+
+  This is the canonical "rare-anchor-entity" failure mode the auditor
+  flagged on 2026-05-15: small-country foreign minister coverage often
+  fragments because their names are unique to the story but the
+  surrounding political vocabulary is generic.

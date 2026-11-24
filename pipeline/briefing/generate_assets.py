@@ -13,19 +13,73 @@ slightly nostalgic. Intervals are chosen for their natural beating patterns
 when detuned by 1-2 Hz, creating organic shimmer without effects processing.
 
 Assets:
-  - ident.wav:      ~2.0s — harmonic bloom, D major 9th chord building
-                     from a single root. Feels like tuning in.
-  - transition.wav:  0.6s — soft breath: a glass-bell dyad that swells
-                     and vanishes. Marks a page turn.
-  - outro.wav:      ~1.8s — the bloom chord returns and resolves downward
-                     to a low D with decaying harmonics. The lens closing.
+  - ident.wav:           ~2.0s — harmonic bloom, D major 9th chord building
+                          from a single root. Feels like tuning in.
+  - transition.wav:       1.5s — rhythmic pulse phrase (legacy, kept for compat).
+  - section_break.wav:    0.9s — glass-bell chime between stories. Light,
+                          unobtrusive. Overlaid at silence gaps in speech.
+  - news_to_opinion.wav:  1.3s — editorial page-turn. Weighted, deliberate.
+                          Replaces transition.wav at the news→opinion boundary.
+  - headline_sting.wav:   0.4s — full chord stab. Punctuation after headlines.
+  - outro.wav:           ~1.8s — the bloom chord returns and resolves downward
+                          to a low D with decaying harmonics. The lens closing.
+
+Radio set (2026-09)
+-------------------
+A second, independent family of assets for the redesigned On Air radio show,
+synthesized with numpy (additive partials, spectrally shaped noise, raised-
+cosine envelopes, convolution reverb) and written as 24 kHz / mono / 16-bit
+PCM via the stdlib `wave` module, so rendering never needs ffmpeg. The D major
+/ B minor palette above is kept; the character is not. These are new files and
+nothing above is touched.
+
+  - radio_ident.wav:          2.4s — opening ident. A low D root swells, a
+                              bright upper voicing blooms all at once, the
+                              ninth falls away into the chord, and the root
+                              rings on as a tail the sign-on speaks over.
+                              Peak -14 dBFS.
+  - radio_menu_bed.wav:      20.0s — seamlessly loopable pad under the spoken
+                              headline menu. Eleven partials, each on its own
+                              7-20s breath cycle. No melody, no pulse.
+                              RMS -40 dBFS.
+  - radio_close_bed.wav:     12.0s — the menu bed's warmer, lower sibling for
+                              the sign-off. Does not loop; falls to silence
+                              across the last 3s. RMS -40 dBFS.
+  - radio_editorial_stab.wav: 0.7s — weighted low-mid page-turn marking the
+                              move from news to the editorial. Darkens as it
+                              settles; deliberately not a chime.
+                              Peak -12 dBFS.
+  - radio_outro.wav:          2.0s — the ident inverted: the voicing falls
+                              from D5 back down to D2 and decays.
+                              Peak -12 dBFS.
+  - radio_room_tone.wav:     10.0s — loopable synthesized studio room tone,
+                              pink-tilted, high-passed at 60 Hz, low-passed at
+                              4 kHz. Mixed under the whole programme so TTS's
+                              digital silence never sounds synthetic.
+                              RMS -57 dBFS, inaudible as hiss.
+
+ORIGINALITY RULE: every asset in this file is synthesized in-repo from first
+principles. Nothing is sampled, transcribed, or modelled after a broadcaster's
+or a library's signature. No time pips, no ascending-fifth fanfare, no
+rhythmic underscore.
+
+Loops are exact, not crossfaded: `_lock()` snaps every partial frequency and
+every LFO rate to an integer multiple of 1/duration, and noise layers are
+shaped over the full-buffer FFT, so the buffers are periodic and the wrap
+point is click-free. The render prints measured peak dBFS, RMS dBFS, duration
+and (for loopable assets) a seam ratio per file.
 """
 
+import sys
 from pathlib import Path
 from pydub import AudioSegment
 from pydub.generators import Sine
 
 ASSETS_DIR = Path(__file__).parent / "assets"
+
+# Match Gemini TTS native output rate (24kHz 16-bit mono).
+# Assets at the same sample rate avoid implicit resampling during assembly.
+SAMPLE_RATE = 24000
 
 
 # ---------------------------------------------------------------------------
@@ -40,7 +94,7 @@ def _bell(freq_hz: float, duration_ms: int, gain_db: float = -6) -> AudioSegment
     electronic beep.
     """
     seg = (
-        Sine(freq_hz)
+        Sine(freq_hz, sample_rate=SAMPLE_RATE)
         .to_audio_segment(duration=duration_ms)
         .apply_gain(gain_db)
         .fade_in(5)
@@ -59,7 +113,7 @@ def _pad(freq_hz: float, duration_ms: int, gain_db: float = -10) -> AudioSegment
     attack = int(duration_ms * 0.4)
     release = int(duration_ms * 0.5)
     seg = (
-        Sine(freq_hz)
+        Sine(freq_hz, sample_rate=SAMPLE_RATE)
         .to_audio_segment(duration=duration_ms)
         .apply_gain(gain_db)
         .fade_in(attack)
@@ -189,6 +243,9 @@ def generate_transition():
 
     This plays between stories. It gives the listener a breath, signals
     "next topic," and keeps the energy moving without rushing.
+
+    LEGACY: kept for backward compatibility. New assemblies use
+    section_break.wav (intra-story) and news_to_opinion.wav (editorial shift).
     """
     canvas = AudioSegment.silent(duration=1500)
 
@@ -218,7 +275,290 @@ def generate_transition():
     canvas = canvas.apply_gain(-4)
 
     canvas.export(ASSETS_DIR / "transition.wav", format="wav")
-    print(f"  transition.wav ({len(canvas)}ms) — rhythmic pulse phrase")
+    print(f"  transition.wav ({len(canvas)}ms) — rhythmic pulse phrase [legacy]")
+
+
+# ---------------------------------------------------------------------------
+# Section Break: "The Bell" — between stories within the news dialogue
+# ---------------------------------------------------------------------------
+
+def generate_section_break():
+    """Section break: a crisp two-note stinger. ~1.2s.
+
+    Inspired by The Economist's Intelligence podcast: their section
+    breaks are short, bright, unmistakable. They ANNOUNCE "next story"
+    rather than whispering it. The listener should think "oh, new topic"
+    without effort.
+
+    Design: a rising two-note motif (fifth → octave) with a shimmer tail.
+    The rising interval creates forward momentum — "we're moving on."
+    Louder than background, quieter than ident. This is a proper stinger,
+    not ambient texture.
+
+    Comparable to: Economist section break (~1-2s synth phrase),
+    NPR Up First story divider (~1s bright sting).
+    """
+    canvas = AudioSegment.silent(duration=1200)
+
+    # Beat 1: Fifth (A3) — the launch note, crisp bell
+    note1 = _bell(_CHORD["fifth"], 350, -8)
+    canvas = canvas.overlay(note1, position=50)
+
+    # Beat 2: Octave (D4) — arrives 300ms later, rising interval
+    note2 = _bell(_CHORD["octave"], 400, -8)
+    canvas = canvas.overlay(note2, position=350)
+
+    # Shimmer tail: A4 + detuned pair — sparkle after the notes land
+    tail = _shimmer_pair(_CHORD["hi_fifth"], 1.5, 500, -16)
+    canvas = canvas.overlay(tail, position=500)
+
+    # Root anchor: D3 pad underneath — connects to the chord palette
+    anchor = _pad(_CHORD["root"], 600, -18)
+    canvas = canvas.overlay(anchor, position=100)
+
+    # Ninth color: E4 ghost at the end — the "news" interval
+    color = _pad(_CHORD["ninth"], 300, -20)
+    canvas = canvas.overlay(color, position=600)
+
+    # Shape: instant attack, natural ring-out
+    canvas = canvas.fade_in(5).fade_out(400)
+
+    # Master gain: audible and crisp — a proper stinger, not ambient
+    canvas = canvas.apply_gain(-4)
+
+    canvas.export(ASSETS_DIR / "section_break.wav", format="wav")
+    print(f"  section_break.wav ({len(canvas)}ms) — glass bell between stories")
+
+
+# ---------------------------------------------------------------------------
+# News-to-Opinion: "The Page Turn" — editorial shift marker
+# ---------------------------------------------------------------------------
+
+def generate_news_to_opinion():
+    """News-to-opinion transition: a 2.5s three-phase editorial page turn.
+
+    The most important structural moment in the broadcast — the shift from
+    two-voice reporting to single-voice editorial.
+
+    Phase 1 — The Resolve (0-800ms):
+      The news section closes. Low D3 pad swells, the fifth (A3) arrives
+      as a bell. The feeling is "settling."
+
+    Phase 2 — The Breath (800-1600ms):
+      Literal silence. 800ms of nothing. The ear resets. The contrast
+      between Phase 1's harmonics and Phase 2's silence creates the
+      "page turn" — the brain registers a structural shift.
+
+    Phase 3 — The Arrival (1600-2500ms):
+      The opinion voice's territory. F#4 bell rings alone, then E4 ghosts
+      in underneath with A4 shimmer. A compressed intro bloom starting
+      from the chord's middle, not the root.
+    """
+    canvas = AudioSegment.silent(duration=2500)
+
+    # --- Phase 1: The Resolve (0-800ms) ---
+    # Root D3 pad — gravity, authority
+    root_open = _pad(_CHORD["root"], 800, -8)
+    canvas = canvas.overlay(root_open, position=0)
+
+    # Root detune — warmth, beating
+    root_detune = _pad(_CHORD["root"] + 0.8, 700, -16)
+    canvas = canvas.overlay(root_detune, position=50)
+
+    # Fifth A3 bell — short, settling
+    fifth = _bell(_CHORD["fifth"], 400, -14)
+    canvas = canvas.overlay(fifth, position=200)
+
+    # Sub-bass D2 — felt in the chest
+    sub = _pad(73.4, 600, -20)
+    canvas = canvas.overlay(sub, position=100)
+
+    # --- Phase 2: The Breath (800-1600ms) ---
+    # Silence. The canvas is already silent here. Nothing to add.
+
+    # --- Phase 3: The Arrival (1600-2500ms) ---
+    # F#4 bell — the warmth note, alone first
+    third_bell = _bell(_CHORD["third"], 500, -12)
+    canvas = canvas.overlay(third_bell, position=1600)
+
+    # E4 pad — the ninth ghosts in underneath
+    ninth_pad = _pad(_CHORD["ninth"], 400, -18)
+    canvas = canvas.overlay(ninth_pad, position=1700)
+
+    # A4 + 441.5 Hz shimmer pair — high crystalline shimmer
+    hi_shimmer = _shimmer_pair(_CHORD["hi_fifth"], 1.5, 350, -22)
+    canvas = canvas.overlay(hi_shimmer, position=1750)
+
+    # Shape: Phase 1 attack, Phase 3 decay
+    canvas = canvas.fade_in(60).fade_out(400)
+
+    # Master gain: more present than section break, less than ident
+    canvas = canvas.apply_gain(-4)
+
+    canvas.export(ASSETS_DIR / "news_to_opinion.wav", format="wav")
+    print(f"  news_to_opinion.wav ({len(canvas)}ms) — three-phase editorial page turn")
+
+
+# ---------------------------------------------------------------------------
+# Headline Underscore: "The Arrival" — rhythmic bed under opening headlines
+# ---------------------------------------------------------------------------
+
+def generate_headline_underscore(duration_ms: int) -> "AudioSegment":
+    """Generate a rhythmic underscore bed for the headlines section.
+
+    Dynamically generated at assembly time (not saved to disk) because its
+    duration must match the estimated headlines length.
+
+    Three layers from the D major 9th palette:
+      - D3 bell pulses every 800ms (75 BPM) — forward momentum
+      - A3 shimmer pair (1.5 Hz detune) — harmonic warmth that breathes
+      - Single E4 bell accent at 60% mark — the ninth waking up
+
+    Args:
+        duration_ms: Target duration, typically 12-20 seconds.
+
+    Returns:
+        AudioSegment at SAMPLE_RATE (24000 Hz), with fade-in and fade-out applied.
+    """
+    canvas = AudioSegment.silent(duration=duration_ms)
+
+    # Layer 1: Rhythmic root pulse — D3 bell every 800ms (75 BPM)
+    # Louder than before: these pulses should be felt as momentum
+    pulse_interval = 800
+    pulse_pos = 0
+    while pulse_pos + 200 <= duration_ms:
+        pulse = _bell(_CHORD["root"], 200, -14)
+        canvas = canvas.overlay(pulse, position=pulse_pos)
+        pulse_pos += pulse_interval
+
+    # Layer 2: Shimmer swell — A3 + A3+1.5 Hz pad pair
+    shimmer = _shimmer_pair(_CHORD["fifth"], 1.5, duration_ms, -18)
+    canvas = canvas.overlay(shimmer, position=0)
+
+    # Layer 3: Color accents — E4 bell at 40% and 80% marks
+    for pct in (0.4, 0.8):
+        accent_pos = int(duration_ms * pct)
+        if accent_pos + 300 <= duration_ms:
+            accent = _bell(_CHORD["ninth"], 300, -20)
+            canvas = canvas.overlay(accent, position=accent_pos)
+
+    # Layer 4: F#4 bell at 60% — the warmth note, once
+    warmth_pos = int(duration_ms * 0.6)
+    if warmth_pos + 250 <= duration_ms:
+        warmth = _bell(_CHORD["third"], 250, -22)
+        canvas = canvas.overlay(warmth, position=warmth_pos)
+
+    # Gain curve: 600ms fade-in, 2500ms fade-out (longer dissolve)
+    fade_in_ms = min(600, duration_ms // 3)
+    fade_out_ms = min(2500, duration_ms // 2)
+    canvas = canvas.fade_in(fade_in_ms).fade_out(fade_out_ms)
+
+    # Master gain: present — the headlines should feel energized
+    canvas = canvas.apply_gain(-10)
+
+    return canvas
+
+
+# ---------------------------------------------------------------------------
+# Headline Sting: "The Stamp" — quick punctuation after headlines
+# ---------------------------------------------------------------------------
+
+def generate_headline_sting():
+    """Headline sting: a 0.4s chord stab. Punctuation, not melody.
+
+    Used after the opening headlines rundown — a quick "full stop" that
+    marks the end of the summary and the beginning of the deep coverage.
+
+    The sound is a compressed version of the full D major 9th chord,
+    all tones arriving simultaneously and decaying fast. Think: a gavel
+    tap, but musical. Or a newspaper being snapped open to the front page.
+
+    Design choices:
+    - All chord tones at once (no staggered bloom — that is the intro's job)
+    - Very fast decay (300ms bell envelopes)
+    - The ninth (E4) and third (F#4) are slightly louder — they carry
+      the "identity" of the chord in this compressed form
+    - Root D3 provides just enough weight to feel authoritative
+    """
+    canvas = AudioSegment.silent(duration=400)
+
+    # All tones arrive together — simultaneous, not layered
+    root = _bell(_CHORD["root"], 300, -14)
+    canvas = canvas.overlay(root, position=10)
+
+    fifth = _bell(_CHORD["fifth"], 280, -16)
+    canvas = canvas.overlay(fifth, position=10)
+
+    octave = _bell(_CHORD["octave"], 260, -18)
+    canvas = canvas.overlay(octave, position=10)
+
+    # Identity tones — slightly more present
+    ninth = _bell(_CHORD["ninth"], 300, -12)
+    canvas = canvas.overlay(ninth, position=10)
+
+    third = _bell(_CHORD["third"], 300, -12)
+    canvas = canvas.overlay(third, position=10)
+
+    # High fifth — crystalline top
+    hi = _bell(_CHORD["hi_fifth"], 250, -16)
+    canvas = canvas.overlay(hi, position=10)
+
+    # Shape: instant attack, fast out
+    canvas = canvas.fade_in(5).fade_out(200)
+
+    # Master gain: crisp but not aggressive
+    canvas = canvas.apply_gain(-6)
+
+    canvas.export(ASSETS_DIR / "headline_sting.wav", format="wav")
+    print(f"  headline_sting.wav ({len(canvas)}ms) — chord stab punctuation")
+
+
+# ---------------------------------------------------------------------------
+# Opinion Kicker: "The Landing" — chord stab after editorial
+# ---------------------------------------------------------------------------
+
+def generate_opinion_kicker():
+    """Opinion kicker: a 0.6s chord stab. The period at the end of the editorial.
+
+    A compressed version of the outro's resolving motion, but faster and
+    heavier. Where the outro breathes over 1.8s, the kicker drops and lands
+    in 0.6s. Think: the last chord of a piano piece, played forte then
+    allowed to ring.
+
+    All tones arrive nearly simultaneously (within 20ms) — a chord stab,
+    not a bloom. The root is louder than in the headline sting (-6 vs. -14 dB),
+    giving it more gravity. The sub-bass provides physical weight.
+    """
+    canvas = AudioSegment.silent(duration=600)
+
+    # Root D3 bell — heavy, authoritative
+    root = _bell(_CHORD["root"], 500, -6)
+    canvas = canvas.overlay(root, position=0)
+
+    # Fifth A3 bell — arrives 10ms later
+    fifth = _bell(_CHORD["fifth"], 450, -10)
+    canvas = canvas.overlay(fifth, position=10)
+
+    # Third F#4 bell — warmth, same time as fifth
+    third = _bell(_CHORD["third"], 400, -10)
+    canvas = canvas.overlay(third, position=10)
+
+    # Ninth E4 bell — arrives 20ms later
+    ninth = _bell(_CHORD["ninth"], 350, -14)
+    canvas = canvas.overlay(ninth, position=20)
+
+    # Sub-bass D2 pad — physical weight, starts with root
+    sub = _pad(73.4, 400, -18)
+    canvas = canvas.overlay(sub, position=0)
+
+    # Shape: instant attack (5ms), ring and decay (350ms)
+    canvas = canvas.fade_in(5).fade_out(350)
+
+    # Master gain: present, comparable to the ident
+    canvas = canvas.apply_gain(-4)
+
+    canvas.export(ASSETS_DIR / "opinion_kicker.wav", format="wav")
+    print(f"  opinion_kicker.wav ({len(canvas)}ms) — chord stab after editorial")
 
 
 # ---------------------------------------------------------------------------
@@ -279,13 +619,1507 @@ def generate_outro():
 
 
 # ---------------------------------------------------------------------------
+# Background Bed: "The Presence Layer" — felt, not heard
+# ---------------------------------------------------------------------------
+
+def generate_background_bed():
+    """Background bed: a 10s loopable subharmonic warmth layer.
+
+    This sits BELOW the speech frequency band (200-4000 Hz) so it never
+    competes with voices. No ducking needed. The listener won't consciously
+    hear it, but removing it would make the broadcast feel thinner.
+
+    Three layers, all subharmonic:
+      - D2 (73.4 Hz) at -34 dB — root presence, felt in headphones
+      - D3 (147 Hz) at -38 dB — harmonic warmth, octave reinforcement
+      - A3 (220 Hz) shimmer pair at -42 dB — 1.2 Hz beating for life
+
+    The bed is tileable: identical fade-in/fade-out shapes at start/end
+    allow seamless looping when tiled in the assembly pipeline.
+
+    Industry standard: background music 20-26 dB below speech (W3C, BBC).
+    These levels (-34 to -42 dB individual, ~-30 dB combined) exceed that
+    margin against TTS output at ~-6 to -12 dBFS.
+    """
+    duration = 10000  # 10 seconds, tileable
+
+    canvas = AudioSegment.silent(duration=duration)
+
+    # Layer 1: Root presence — D2, felt in the chest
+    root = _pad(73.4, duration, -34)
+    canvas = canvas.overlay(root)
+
+    # Layer 2: Harmonic warmth — D3, octave above root
+    warmth = _pad(_CHORD["root"], duration, -38)
+    canvas = canvas.overlay(warmth)
+
+    # Layer 3: Shimmer ghost — A3 detuned pair, 1.2 Hz beating
+    # Creates imperceptible pulse that makes the bed feel alive
+    shimmer = _shimmer_pair(_CHORD["fifth"], 1.2, duration, -42)
+    canvas = canvas.overlay(shimmer)
+
+    # Tileable crossfade: gentle ramps at both ends
+    canvas = canvas.fade_in(500).fade_out(500)
+
+    canvas.export(ASSETS_DIR / "background_bed.wav", format="wav")
+    print(f"  background_bed.wav ({len(canvas)}ms) — subharmonic presence layer")
+
+
+# ===========================================================================
+# RADIO SET (2026-09) — numpy additive synthesis
+# ===========================================================================
+# Everything below is a separate, self-contained synthesis layer. It does not
+# touch the pydub generators above; the weekly/history assemblies keep loading
+# ident.wav / outro.wav / background_bed.wav / news_to_opinion.wav /
+# opinion_kicker.wav unchanged.
+#
+# Why numpy here: the radio set needs sample-accurate control the pydub
+# generator API cannot give — per-partial envelopes, spectrally shaped noise,
+# convolution reverb, and (critically) beds that loop without a seam.
+#
+# ORIGINALITY RULE: every sample is computed from first principles in this
+# file. Nothing is sampled, transcribed, or modelled after a broadcaster's
+# signature. No pips, no ascending-fifth fanfare, no rhythmic underscore.
+#
+# LOOP MATHEMATICS: an asset loops seamlessly with no crossfade when every
+# component is exactly periodic over the buffer. `_lock()` snaps each partial
+# frequency and each LFO rate to an integer multiple of 1/duration, and the
+# noise layers are built by shaping a full-buffer FFT (circular by
+# construction). The last sample then flows into the first sample as if the
+# buffer were infinite. `_seam_ratio()` measures this and it is printed per
+# loopable file: a value near 1.0 means the wrap-around step is no larger
+# than an ordinary sample-to-sample step, i.e. inaudible.
+
+import wave
+
+try:  # numpy is in pipeline/requirements.txt; guard so audio_producer's
+    import numpy as np  # import of generate_headline_underscore never breaks.
+except ImportError:  # pragma: no cover
+    np = None
+
+# The radio set, in programme order. Every cue from radio_theme onward is the
+# same motif (see THEME_PULSE_S / _theme_figure): one programme, one identity.
+RADIO_ASSETS = [
+    "radio_ident.wav",          # legacy opener, kept as the theme's fallback
+    "radio_theme.wav",
+    "radio_menu_bed.wav",
+    "radio_story_bed.wav",
+    "radio_transition.wav",
+    "radio_break.wav",
+    "radio_opinion_theme.wav",
+    "radio_opinion_bed.wav",
+    "radio_close_bed.wav",
+    "radio_outro.wav",
+    "radio_room_tone.wav",
+    "radio_promo_bed.wav",      # under the house promo; rendered by --promo-bed only
+    # The Sunday set: the same motif at half the tempo (see WEEKLY_PULSE_S).
+    "weekly_theme.wav",
+    "weekly_transition.wav",
+    "weekly_break.wav",
+    "weekly_bed.wav",
+    "weekly_outro.wav",
+]
+
+# Same D major / B minor palette as the pydub set above, extended down to D2
+# for gravity and up to F#5 for the ident's bright voicing. B2/B3 are the
+# B-minor shading: they let the beds read as harmonically rich without ever
+# committing to a melody.
+_NOTE = {
+    "D2":  73.416,
+    # G2/G3: the suspended fourth over the D root. The Sunday cues open on it
+    # and only resolve at the outro, because the programme is an argument.
+    "G2":  97.999,
+    "A2": 110.000,
+    "B2": 123.471,
+    "D3": 146.832,
+    "F#3": 184.997,
+    "G3": 195.998,
+    "A3": 220.000,
+    "B3": 246.942,
+    "D4": 293.665,
+    "E4": 329.628,
+    "F#4": 369.994,
+    "A4": 440.000,
+    "B4": 493.883,
+    "D5": 587.330,
+    "E5": 659.255,
+    "F#5": 739.989,
+}
+
+
+# ---------------------------------------------------------------------------
+# numpy primitives
+# ---------------------------------------------------------------------------
+
+def _time(duration_s: float):
+    """Sample-clock array for `duration_s` at SAMPLE_RATE."""
+    return np.arange(int(round(duration_s * SAMPLE_RATE))) / float(SAMPLE_RATE)
+
+
+def _lock(freq_hz: float, duration_s: float) -> float:
+    """Snap a frequency to the nearest integer multiple of 1/duration.
+
+    A partial at k/duration Hz completes exactly k cycles in the buffer, so
+    its value and slope at the wrap point are identical to those at t=0.
+    Snapping every partial and LFO makes the whole buffer periodic, which is
+    what makes the beds loop with no crossfade and no click. The shift is at
+    most 1/(2*duration) Hz (0.025 Hz over 20s) — far below any pitch JND.
+    """
+    return max(1.0, round(freq_hz * duration_s)) / float(duration_s)
+
+
+def _tone(t, freq_hz: float, phase: float = 0.0):
+    """One sine partial. No square/saw anywhere in this file, by design."""
+    return np.sin(2.0 * np.pi * freq_hz * t + phase)
+
+
+def _swell(t, onset: float, attack: float, hold: float, release: float):
+    """Raised-cosine attack / flat hold / raised-cosine release.
+
+    Cosine rather than linear ramps: the first derivative is zero at both
+    ends, so a swell never announces itself with an edge. This is the
+    "soft attack" the radio set is built on.
+    """
+    env = np.zeros_like(t)
+    x = t - onset
+    a = (x >= 0.0) & (x < attack)
+    env[a] = 0.5 - 0.5 * np.cos(np.pi * x[a] / attack)
+    h = (x >= attack) & (x < attack + hold)
+    env[h] = 1.0
+    r = (x >= attack + hold) & (x < attack + hold + release)
+    env[r] = 0.5 + 0.5 * np.cos(np.pi * (x[r] - attack - hold) / release)
+    return env
+
+
+def _pluck(t, onset: float, attack_tau: float, decay_tau: float):
+    """Soft-attack exponential decay: (1 - e^-x/a) * e^-x/d.
+
+    Used for the stab and the outro cascade. `attack_tau` of 10-40ms keeps
+    the onset weighted rather than clicky — there is no instantaneous edge,
+    so nothing reads as a beep.
+    """
+    x = np.maximum(t - onset, 0.0)
+    env = (1.0 - np.exp(-x / attack_tau)) * np.exp(-x / decay_tau)
+    env[t < onset] = 0.0
+    return env
+
+
+def _breath(t, rate_hz: float, depth: float, phase: float):
+    """Slow amplitude wander between (1-depth) and 1.0. Never a pulse.
+
+    Rates used in the beds are 0.05-0.15 Hz, i.e. 7-20 second cycles. At
+    that speed the ear reads "the room is alive", not "something is
+    repeating".
+    """
+    return (1.0 - depth) + depth * (0.5 + 0.5 * np.sin(2.0 * np.pi * rate_hz * t + phase))
+
+
+def _shaped_noise(n: int, shaper, seed: int):
+    """Noise with an arbitrary magnitude response, periodic over n samples.
+
+    White noise -> rFFT -> multiply by the shaper's magnitude curve -> irFFT.
+    Because the shaping happens on the full-buffer spectrum, the result is a
+    circular (periodic) signal: sample n-1 leads into sample 0 correctly.
+    That is what lets the room tone loop forever with no seam.
+    """
+    rng = np.random.default_rng(seed)
+    spec = np.fft.rfft(rng.standard_normal(n))
+    freqs = np.fft.rfftfreq(n, 1.0 / SAMPLE_RATE)
+    gain = shaper(freqs)
+    gain[0] = 0.0  # kill DC; a DC offset would eat headroom and thump on loop
+    out = np.fft.irfft(spec * gain, n)
+    peak = np.max(np.abs(out))
+    return out / peak if peak > 0 else out
+
+
+def _pink_lp_hp(pink_exp: float, lp_hz: float, hp_hz: float, order: int = 2):
+    """Magnitude-response shaper: 1/f^exp tilt, Butterworth-shaped LP and HP."""
+    def shaper(f):
+        f = np.maximum(f, 1e-6)
+        tilt = 1.0 / np.power(f, pink_exp)
+        lp = 1.0 / np.sqrt(1.0 + np.power(f / lp_hz, 2 * order))
+        hp = np.power(f / hp_hz, order) / np.sqrt(1.0 + np.power(f / hp_hz, 2 * order))
+        return tilt * lp * hp
+    return shaper
+
+
+def _reverb_ir(duration_s: float, decay_tau: float, lp_hz: float, seed: int):
+    """Algorithmic reverb impulse: a dark, exponentially decaying noise burst.
+
+    A decaying noise tail convolved with the dry signal is the cheapest
+    honest reverb there is: dense from the first millisecond, no comb
+    ringing, no metallic flutter. Low-passing the tail makes the room feel
+    upholstered rather than tiled — a studio, not a stairwell.
+    """
+    n = int(round(duration_s * SAMPLE_RATE))
+    tail = _shaped_noise(n, _pink_lp_hp(0.0, lp_hz, 80.0, order=2), seed)
+    tail = tail * np.exp(-np.arange(n) / (decay_tau * SAMPLE_RATE))
+    tail /= np.max(np.abs(tail))
+    tail[:24] *= np.linspace(0.0, 1.0, 24)  # no pre-echo edge on the tail
+    ir = np.zeros(n)
+    ir[0] = 1.0                              # dry impulse
+    ir += 0.55 * tail
+    return ir
+
+
+def _reverberate(x, wet: float, ir):
+    """Mix a convolved tail in behind the dry signal, truncated to length."""
+    tail = np.convolve(x, ir)[: len(x)]
+    peak = np.max(np.abs(tail))
+    if peak > 0:
+        tail = tail * (np.max(np.abs(x)) / peak)
+    return (1.0 - wet) * x + wet * tail
+
+
+def _edge_fade(x, fade_in_ms: float, fade_out_ms: float):
+    """Raised-cosine fades so a one-shot never starts or ends on an edge."""
+    out = x.copy()
+    n_in = int(SAMPLE_RATE * fade_in_ms / 1000.0)
+    n_out = int(SAMPLE_RATE * fade_out_ms / 1000.0)
+    if n_in > 1:
+        out[:n_in] *= 0.5 - 0.5 * np.cos(np.pi * np.arange(n_in) / n_in)
+    if n_out > 1:
+        out[-n_out:] *= 0.5 + 0.5 * np.cos(np.pi * np.arange(n_out) / n_out)
+    return out
+
+
+# ---------------------------------------------------------------------------
+# Measurement, gain staging, file writing
+# ---------------------------------------------------------------------------
+
+def _peak_dbfs(x) -> float:
+    peak = float(np.max(np.abs(x)))
+    return -999.0 if peak <= 0 else 20.0 * np.log10(peak)
+
+
+def _rms_dbfs(x) -> float:
+    rms = float(np.sqrt(np.mean(np.square(x))))
+    return -999.0 if rms <= 0 else 20.0 * np.log10(rms)
+
+
+def _norm_peak(x, target_dbfs: float):
+    """Scale so the loudest sample sits exactly at target_dbfs."""
+    peak = float(np.max(np.abs(x)))
+    if peak <= 0:
+        return x
+    return x * (10.0 ** (target_dbfs / 20.0) / peak)
+
+
+def _norm_rms(x, target_dbfs: float, peak_ceiling_dbfs: float = -1.0):
+    """Scale to a target RMS, then pull back if that would risk the ceiling.
+
+    Beds are specified by RMS because RMS is what determines whether they
+    read under speech; peak is irrelevant at -40 dBFS. The ceiling check is
+    the clip guard: it can only ever reduce gain, never raise it.
+    """
+    rms = float(np.sqrt(np.mean(np.square(x))))
+    if rms <= 0:
+        return x
+    out = x * (10.0 ** (target_dbfs / 20.0) / rms)
+    ceiling = 10.0 ** (peak_ceiling_dbfs / 20.0)
+    peak = float(np.max(np.abs(out)))
+    if peak > ceiling:
+        out = out * (ceiling / peak)
+    return out
+
+
+def _seam_ratio(x) -> float:
+    """How big the loop wrap-around step is vs an ordinary sample step.
+
+    ~1.0 means the seam is indistinguishable from any other sample
+    transition, i.e. the loop is click-free. Anything above ~10 would be
+    audible as a tick once per cycle.
+    """
+    typical = float(np.mean(np.abs(np.diff(x))))
+    if typical <= 0:
+        return 0.0
+    return float(abs(x[0] - x[-1])) / typical
+
+
+def _write_radio_wav(filename: str, x, note: str, loopable: bool = False):
+    """Hard-clip guard, 16-bit PCM write via stdlib `wave`, then report.
+
+    stdlib `wave` rather than pydub export: the render must not depend on
+    ffmpeg being present.
+    """
+    clipped = int(np.count_nonzero(np.abs(x) > 1.0))
+    x = np.clip(x, -1.0, 1.0)
+    pcm = np.round(x * 32767.0).astype(np.int16)
+
+    path = ASSETS_DIR / filename
+    with wave.open(str(path), "wb") as fh:
+        fh.setnchannels(1)
+        fh.setsampwidth(2)
+        fh.setframerate(SAMPLE_RATE)
+        fh.writeframes(pcm.tobytes())
+
+    # Measure what actually landed on disk, post-quantisation.
+    measured = pcm.astype(np.float64) / 32768.0
+    seam = f"  seam x{_seam_ratio(measured):.2f}" if loopable else ""
+    guard = f"  CLIPPED {clipped}" if clipped else ""
+    print(
+        f"  {filename:<26} {len(measured) / SAMPLE_RATE:5.2f}s  "
+        f"peak {_peak_dbfs(measured):6.1f} dBFS  "
+        f"rms {_rms_dbfs(measured):6.1f} dBFS{seam}{guard}  — {note}"
+    )
+
+
+# ---------------------------------------------------------------------------
+# 1. radio_ident.wav — "Tuning In"
+# ---------------------------------------------------------------------------
+
+def generate_radio_ident():
+    """2.4s opening ident. Peak -14 dBFS.
+
+    The gesture is one continuous act of focusing, not a tune:
+
+      0.00-0.85s  A low D2/D3 root swells up out of nothing. Slight detune
+                  (0.7 / 1.1 Hz) gives a slow breathing beat, and two quiet
+                  upper harmonics on D3 make it read as a struck body rather
+                  than a test tone.
+      0.45s       The upper voicing arrives ALL AT ONCE (D4, F#4, A4, D5,
+                  F#5). Simultaneous, deliberately: a staggered entry would
+                  be an ascending fanfare, which is exactly the broadcast
+                  cliche this must avoid.
+      0.45-1.45s  E5, the ninth, hangs above the voicing and then falls away
+                  while D5 stays. That is the resolution — a suspension
+                  releasing INTO the chord, heard as the sound settling into
+                  focus rather than as two melody notes.
+      1.6-2.4s    Everything above the root has gone. D2/D3 ring on alone at
+                  a low level: the tail the sign-on speaks over.
+
+    Deliberately NOT: no pips (no isolated 1 kHz tones, nothing on a grid),
+    no ascending perfect fifth, no rhythmic element of any kind, no
+    brass/orchestral fanfare shape, nothing with a repeating figure.
+    """
+    dur = 2.4
+    t = _time(dur)
+    sig = np.zeros_like(t)
+
+    # --- Low root swell: gravity arrives first ---
+    root_env = _swell(t, 0.00, 0.85, 0.55, 1.00)
+    sig += 0.58 * root_env * _tone(t, _NOTE["D2"], 0.0)
+    sig += 0.22 * root_env * _tone(t, _NOTE["D2"] + 0.7, 1.9)   # 0.7 Hz beat
+    sig += 0.42 * root_env * _tone(t, _NOTE["D3"], 0.6)
+    sig += 0.17 * root_env * _tone(t, _NOTE["D3"] + 1.1, 3.1)   # 1.1 Hz beat
+    # Two quiet harmonics of D3: body, not brightness.
+    sig += 0.07 * root_env * _tone(t, _NOTE["D3"] * 2.0, 2.2)
+    sig += 0.035 * root_env * _tone(t, _NOTE["D3"] * 3.0, 0.4)
+
+    # --- Upper voicing: simultaneous bloom, no arpeggio ---
+    up_env = _swell(t, 0.45, 0.22, 0.50, 0.90)
+    for note, amp, detune, phase in (
+        ("D4",  0.17, 0.0, 0.3),
+        ("F#4", 0.15, 0.0, 1.4),
+        ("A4",  0.20, 0.0, 2.6),
+        ("D5",  0.16, 0.0, 4.0),
+        ("F#5", 0.085, 0.0, 5.2),
+        ("A4",  0.075, 1.4, 0.9),   # shimmer twin
+        ("D5",  0.060, 1.4, 2.1),   # shimmer twin
+    ):
+        sig += amp * up_env * _tone(t, _NOTE[note] + detune, phase)
+
+    # --- The ninth: present, then released. This is the "resolve". ---
+    ninth_env = _swell(t, 0.45, 0.20, 0.25, 0.55)
+    sig += 0.135 * ninth_env * _tone(t, _NOTE["E5"], 1.1)
+    sig += 0.050 * ninth_env * _tone(t, _NOTE["E5"] + 1.6, 3.4)
+
+    # --- Room ---
+    sig = _reverberate(sig, 0.18, _reverb_ir(0.80, 0.22, 3500.0, seed=101))
+
+    sig = _edge_fade(sig, 8.0, 70.0)
+    sig = _norm_peak(sig, -14.0)
+    _write_radio_wav("radio_ident.wav", sig, "opening ident, low root into bright voicing")
+
+
+# ---------------------------------------------------------------------------
+# 2. radio_menu_bed.wav — "Under the Menu"
+# ---------------------------------------------------------------------------
+
+def generate_radio_menu_bed():
+    """20s seamlessly loopable pad under the spoken headline menu. RMS -40 dBFS.
+
+    Low-information by construction. Eleven sine partials of a D-major-with-
+    B-minor-shading stack, each on its own 7-to-20-second breath cycle at a
+    different phase, so the composite never repeats a recognisable shape and
+    never pulses. Nothing here is a melody, because nothing here ever changes
+    pitch.
+
+    Nearly all the energy is below 250 Hz, i.e. under the speech
+    intelligibility band. At -40 dBFS RMS against TTS at roughly -18 dBFS it
+    sits ~22 dB down, inside the W3C/BBC 20-26 dB guidance for a bed under
+    speech, so the headline menu needs no ducking.
+
+    The loop is exact, not crossfaded: every partial frequency and every
+    breath rate is snapped by `_lock()` to a multiple of 1/20 Hz, and the
+    air layer is FFT-shaped over the whole buffer.
+    """
+    dur = 20.0
+    t = _time(dur)
+    sig = np.zeros_like(t)
+
+    # (note, detune Hz, amplitude, breath rate Hz, breath depth, phase)
+    voices = (
+        ("D2",  0.00, 0.60, 0.05, 0.25, 0.0),
+        ("D2",  0.35, 0.24, 0.07, 0.30, 2.1),
+        ("A2",  0.00, 0.34, 0.06, 0.30, 4.2),
+        ("D3",  0.00, 0.40, 0.09, 0.35, 1.3),
+        ("D3",  0.55, 0.16, 0.11, 0.40, 3.7),
+        ("F#3", 0.00, 0.22, 0.08, 0.45, 5.5),
+        ("A3",  0.00, 0.20, 0.10, 0.45, 0.8),
+        ("A3",  1.15, 0.09, 0.13, 0.50, 2.9),
+        ("B3",  0.00, 0.10, 0.07, 0.55, 4.8),   # B minor shading
+        ("D4",  0.00, 0.09, 0.12, 0.55, 1.7),
+        ("F#4", 1.70, 0.05, 0.14, 0.60, 3.3),
+    )
+    for note, detune, amp, rate, depth, phase in voices:
+        freq = _lock(_NOTE[note] + detune, dur)
+        sig += amp * _breath(t, _lock(rate, dur), depth, phase) * _tone(t, freq, phase)
+
+    # Two faint harmonics of the root: richness without adding information.
+    for mult, amp, phase in ((2.0, 0.05, 2.4), (3.0, 0.025, 5.0)):
+        sig += amp * _breath(t, _lock(0.06, dur), 0.3, phase) * _tone(
+            t, _lock(_NOTE["D2"] * mult, dur), phase
+        )
+
+    # Air: a narrow, very quiet noise band so the pad has a top without
+    # having a treble. FFT-shaped, therefore periodic, therefore loop-safe.
+    air = _shaped_noise(len(t), _pink_lp_hp(0.5, 1100.0, 260.0, order=2), seed=202)
+    sig += 0.030 * _breath(t, _lock(0.05, dur), 0.35, 2.0) * air
+
+    sig = _norm_rms(sig, -40.0)
+    _write_radio_wav(
+        "radio_menu_bed.wav", sig, "loopable headline-menu pad", loopable=True
+    )
+
+
+# ---------------------------------------------------------------------------
+# 3. radio_close_bed.wav — "Under the Sign-Off"
+# ---------------------------------------------------------------------------
+
+def generate_radio_close_bed():
+    """24s bed under the sign-off, with a natural end. RMS -40 dBFS.
+
+    The menu bed's family, moved down and warmed: the top is B3, there is no
+    F#4 shimmer, and the B2 gives the stack a minor-key weight the opening
+    bed does not have. Same breathing construction, so the two beds are
+    audibly siblings.
+
+    It does not loop and must not be looped: it is a one-shot that falls to
+    silence, so a second pass would re-enter audibly. 24s because the sign-off
+    budget is 25-55 words, which is 10-21s of speech, and a 12s bed under it
+    opened a hole before the outro arrived.
+
+    A 1.2s swell in, a long hold, then a 3.0s raised-cosine fall to true
+    digital silence, so the programme ends on a decay rather than a cut.
+    """
+    dur = 24.0
+    t = _time(dur)
+    sig = np.zeros_like(t)
+
+    voices = (
+        ("D2",  0.00, 0.62, 0.06, 0.25, 0.4),
+        ("D2",  0.30, 0.26, 0.08, 0.30, 2.7),
+        ("A2",  0.00, 0.36, 0.07, 0.30, 4.9),
+        ("B2",  0.00, 0.14, 0.05, 0.40, 1.1),   # the warm minor shade
+        ("D3",  0.00, 0.38, 0.09, 0.35, 3.5),
+        ("D3",  0.45, 0.15, 0.11, 0.40, 5.8),
+        ("F#3", 0.00, 0.20, 0.08, 0.45, 0.9),
+        ("A3",  0.00, 0.16, 0.10, 0.50, 2.2),
+        ("B3",  0.00, 0.07, 0.12, 0.55, 4.4),
+    )
+    for note, detune, amp, rate, depth, phase in voices:
+        sig += amp * _breath(t, rate, depth, phase) * _tone(t, _NOTE[note] + detune, phase)
+
+    for mult, amp, phase in ((2.0, 0.045, 1.8), (3.0, 0.020, 4.6)):
+        sig += amp * _breath(t, 0.07, 0.3, phase) * _tone(t, _NOTE["D2"] * mult, phase)
+
+    air = _shaped_noise(len(t), _pink_lp_hp(0.5, 850.0, 220.0, order=2), seed=303)
+    sig += 0.026 * _breath(t, 0.06, 0.35, 3.0) * air
+
+    # Swell in, hold, and fall to silence across the last 3 seconds.
+    sig *= _swell(t, 0.0, 1.2, 19.8, 3.0)
+
+    sig = _norm_rms(sig, -40.0)
+    _write_radio_wav("radio_close_bed.wav", sig, "sign-off bed, fades to silence")
+
+
+# ---------------------------------------------------------------------------
+# 4. radio_editorial_stab.wav — "The Page Turn"
+# ---------------------------------------------------------------------------
+
+def generate_radio_close_bed():
+    """24s bed under the sign-off, with a natural end. RMS -40 dBFS.
+
+    The menu bed's family, moved down and warmed: the top is B3, there is no
+    F#4 shimmer, and the B2 gives the stack a minor-key weight the opening
+    bed does not have. Same breathing construction, so the two beds are
+    audibly siblings.
+
+    It does not loop and must not be looped: it is a one-shot that falls to
+    silence, so a second pass would re-enter audibly. 24s because the sign-off
+    budget is 25-55 words, which is 10-21s of speech, and a 12s bed under it
+    opened a hole before the outro arrived.
+
+    A 1.2s swell in, a long hold, then a 3.0s raised-cosine fall to true
+    digital silence, so the programme ends on a decay rather than a cut.
+    """
+    dur = 24.0
+    t = _time(dur)
+    sig = np.zeros_like(t)
+
+    voices = (
+        ("D2",  0.00, 0.62, 0.06, 0.25, 0.4),
+        ("D2",  0.30, 0.26, 0.08, 0.30, 2.7),
+        ("A2",  0.00, 0.36, 0.07, 0.30, 4.9),
+        ("B2",  0.00, 0.14, 0.05, 0.40, 1.1),   # the warm minor shade
+        ("D3",  0.00, 0.38, 0.09, 0.35, 3.5),
+        ("D3",  0.45, 0.15, 0.11, 0.40, 5.8),
+        ("F#3", 0.00, 0.20, 0.08, 0.45, 0.9),
+        ("A3",  0.00, 0.16, 0.10, 0.50, 2.2),
+        ("B3",  0.00, 0.07, 0.12, 0.55, 4.4),
+    )
+    for note, detune, amp, rate, depth, phase in voices:
+        sig += amp * _breath(t, rate, depth, phase) * _tone(t, _NOTE[note] + detune, phase)
+
+    for mult, amp, phase in ((2.0, 0.045, 1.8), (3.0, 0.020, 4.6)):
+        sig += amp * _breath(t, 0.07, 0.3, phase) * _tone(t, _NOTE["D2"] * mult, phase)
+
+    air = _shaped_noise(len(t), _pink_lp_hp(0.5, 850.0, 220.0, order=2), seed=303)
+    sig += 0.026 * _breath(t, 0.06, 0.35, 3.0) * air
+
+    # Swell in, hold, and fall to silence across the last 3 seconds.
+    sig *= _swell(t, 0.0, 1.2, 19.8, 3.0)
+
+    sig = _norm_rms(sig, -40.0)
+    _write_radio_wav("radio_close_bed.wav", sig, "sign-off bed, fades to silence")
+
+
+# ---------------------------------------------------------------------------
+# 4. radio_editorial_stab.wav — "The Page Turn"
+# ---------------------------------------------------------------------------
+
+def generate_radio_editorial_stab():
+    """0.7s stab marking news -> editorial. Peak -12 dBFS.
+
+    Weighted and deliberate, and pointedly NOT a chime. Three things keep it
+    out of chime territory:
+
+      1. The whole stack lives between D2 and D4. There is no bell partial
+         above 300 Hz, so there is nothing to ring.
+      2. Spectral darkening: the higher partials are given short decay
+         constants and the low ones long ones, so the sound loses its top
+         within 150ms and settles. That downward spectral motion is what the
+         ear reads as weight.
+      3. A 40ms low-passed noise transient under the onset — the physical
+         sound of something being moved, not struck.
+
+    The attack is 12ms of raised exponential, not a step: deliberate, never
+    percussive.
+    """
+    dur = 0.7
+    t = _time(dur)
+    sig = np.zeros_like(t)
+
+    # (note, detune Hz, amp, attack_tau, decay_tau, phase)
+    # Decay constants fall as pitch rises: the stack darkens as it settles.
+    for note, detune, amp, atk, dec, phase in (
+        ("D2",  0.0, 0.58, 0.014, 0.30, 0.0),
+        ("D2",  0.6, 0.20, 0.016, 0.26, 2.3),   # detuned twin
+        ("D3",  0.0, 0.52, 0.012, 0.24, 1.2),
+        ("F#3", 0.0, 0.30, 0.013, 0.17, 3.4),
+        ("A3",  0.0, 0.25, 0.013, 0.13, 5.1),
+        ("D4",  0.0, 0.13, 0.011, 0.085, 0.7),
+    ):
+        sig += amp * _pluck(t, 0.0, atk, dec) * _tone(t, _NOTE[note] + detune, phase)
+
+    # Sub weight, felt rather than heard on a phone speaker.
+    sig += 0.16 * _pluck(t, 0.0, 0.020, 0.22) * _tone(t, _NOTE["D2"] / 2.0, 1.5)
+
+    # The physical transient: dark, short, low in the mix.
+    thud = _shaped_noise(len(t), _pink_lp_hp(0.6, 760.0, 70.0, order=2), seed=404)
+    sig += 0.26 * _pluck(t, 0.0, 0.004, 0.055) * thud
+
+    # Small, tight, upholstered room. A long tail would turn this into a bell.
+    sig = _reverberate(sig, 0.13, _reverb_ir(0.35, 0.10, 2200.0, seed=505))
+
+    sig = _edge_fade(sig, 2.0, 60.0)
+    sig = _norm_peak(sig, -12.0)
+    _write_radio_wav("radio_editorial_stab.wav", sig, "news -> editorial page turn")
+
+
+# ---------------------------------------------------------------------------
+# 5. radio_outro.wav — "The Descent"
+# ---------------------------------------------------------------------------
+
+def generate_radio_outro():
+    """14.0s close. Peak -13 dBFS, ending at true digital silence.
+
+    The CEO asked for "music in the end as well, fading out to oblivion". So
+    the programme does not stop, it leaves: four bars of the theme's figure
+    with the bass thinning out, a low D landing on bar four, and then a 5.5s
+    raised-cosine fall to ZERO. The last 200ms are digital silence, asserted at
+    render time, so nothing is cut off and nothing lingers.
+
+    It starts under the last words of the sign-off (outro_overlap) and the file
+    ends `tail` ms after its final sample.
+    """
+    dur, t = 14.0, _time(14.0)
+    sig = _theme_figure(t, max_beats=16, bass_beats=8)
+    # The landing: low D with its detuned twin and body harmonics, the same
+    # pairing the ident opens with, so the close answers the open.
+    for note, det, amp, atk, dec in (("D2", 0.0, 0.62, 0.030, 2.40),
+                                     ("D2", 0.8, 0.24, 0.035, 2.20),
+                                     ("D3", 0.0, 0.46, 0.020, 1.80),
+                                     ("D3", 1.1, 0.18, 0.024, 1.60)):
+        sig += amp * _pluck(t, 8.0, atk, dec) * _tone(t, _NOTE[note] + det)
+    sig += 0.07 * _pluck(t, 8.0, 0.030, 1.40) * _tone(t, _NOTE["D2"] * 2.0, 0.6)
+    sig = _reverberate(sig, 0.18, _reverb_ir(0.90, 0.26, 3000.0, seed=606))
+    # Hold to 8.25s, then fall to nothing across 5.5s. _swell is exactly zero
+    # outside its window, so the tail is true silence, not a small number.
+    sig *= _swell(t, 0.0, 0.25, 8.0, 5.5)
+    sig = _edge_fade(sig, 3.0, 0.0)
+    sig = _norm_peak(sig, -13.0)
+    tail_rms = _rms_dbfs(sig[-int(0.2 * SAMPLE_RATE):])
+    if tail_rms > -80.0:
+        raise AssertionError(f"outro does not end in silence: last 200ms at {tail_rms:.1f} dBFS")
+    _write_radio_wav("radio_outro.wav", sig, "close, four bars falling to silence")
+
+
+def generate_radio_room_tone():
+    """10s loopable synthesized studio room tone. RMS -57 dBFS.
+
+    Mixed under the entire programme. Its only job is that the gaps between
+    TTS turns stop being mathematically perfect digital silence, which is the
+    single loudest tell that a broadcast was machine-assembled. Real rooms
+    are never silent; this gives the ear a floor to rest on.
+
+    Spectrum: a 1/sqrt(f) pink tilt, 2nd-order high-pass at 60 Hz (below that
+    is rumble that costs headroom and buys nothing), 2nd-order low-pass at
+    4 kHz (above that it would read as hiss). At -57 dBFS RMS it is roughly
+    39 dB under speech and around 20 dB under the beds, so it is inaudible as
+    hiss at any normal level and only noticeable if it is removed.
+
+    A 0.1 Hz, +/-0.4 dB level wander keeps it from sounding like a frozen
+    noise buffer. Built by full-buffer FFT shaping and a period-locked
+    wander, so the loop is exact.
+    """
+    dur = 10.0
+    t = _time(dur)
+
+    tone = _shaped_noise(
+        len(t), _pink_lp_hp(0.5, 4000.0, 60.0, order=2), seed=707
+    )
+    # Barely-there level drift: one full cycle per buffer, so loop-safe.
+    tone = tone * _breath(t, _lock(0.1, dur), 0.09, 0.0)
+
+    tone = _norm_rms(tone, -57.0)
+    _write_radio_wav(
+        "radio_room_tone.wav", tone, "loopable studio room tone", loopable=True
+    )
+
+
+# ---------------------------------------------------------------------------
+# Radio set entry point
+# ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# 7. The Daily-shaped set (CEO 2026-09-19) — music that MOVES
+# ---------------------------------------------------------------------------
+# The six assets above are deliberately motionless: drones with no pulse and
+# no melody, made to sit under a menu and disappear. A scored programme needs
+# the opposite, a bed with a heartbeat that carries the reader between stories.
+# These four are placeholders with real motion, and they are what the show
+# uses until licensed tracks are supplied through VOID_RADIO_MUSIC_DIR. They
+# are still original and still synthesised here, so the repo stays clean.
+
+def _note_hz(name: str, transpose: int = 0, invert_about: str | None = None) -> float:
+    """A note of the house palette, optionally mirrored and transposed.
+
+    `invert_about` mirrors the interval about a tonic in log-frequency (a
+    fifth above becomes a fifth below), which is the one new operation the
+    History score needs (HISTORY-AUDIO-ARCHIVAL.md §5b). With neither set the
+    value is `_NOTE[name]` exactly, so every existing cue is bit-identical.
+    """
+    f = _NOTE[name]
+    if invert_about is not None:
+        tonic = _NOTE[invert_about]
+        f = tonic * tonic / f
+    if transpose:
+        f = f * (2.0 ** (transpose / 12.0))
+    return f
+
+
+def _pulse(t, period_s: float, notes, decay_tau: float = 0.28, max_beats: int | None = None,
+           transpose: int = 0, invert_about: str | None = None, attack_tau: float = 0.004,
+           first_beat: int = 0):
+    """A repeating plucked figure: the spine of every track below.
+
+    `max_beats` stops the figure after N plucks instead of filling the buffer,
+    which is how a cue resolves on its root and then lets the tail ring rather
+    than starting the cell again. `first_beat` starts the cell part-way, so a
+    cue can play only a figure's LAST beats (the History rupture entry).
+    """
+    sig = np.zeros_like(t)
+    n = int(np.ceil(t[-1] / period_s)) + 1
+    if max_beats is not None:
+        n = min(n, max_beats)
+    for i in range(n):
+        onset = i * period_s
+        name = notes[(i + first_beat) % len(notes)]
+        freq = _NOTE[name] if not (transpose or invert_about) else _note_hz(name, transpose, invert_about)
+        env = _pluck(t, onset, attack_tau, decay_tau)
+        sig += env * (_tone(t, freq) + 0.30 * _tone(t, freq * 2.0)
+                      + 0.10 * _tone(t, freq * 3.0))
+    return sig
+
+
+# ---------------------------------------------------------------------------
+# The motif. Every cue in the programme is this figure at this tempo.
+# ---------------------------------------------------------------------------
+# The CEO kept the opening theme and asked for everything else to be built from
+# it ("make it the same musical theme as the intro, i like the calm beats
+# style"). So the theme's content lives here, and the theme, the story
+# transition, the mid-programme break, the opinion entrance and the outro are
+# all calls to _theme_figure with different cells, lengths and envelopes.
+#
+# No percussion layer is added. The "beats" the CEO likes ARE these plucks; a
+# kick on the transitions but not on the theme they are supposed to match would
+# split the family the brief asks us to keep together.
+THEME_PULSE_S = 0.50                                   # 120 bpm; the 4-note cell is a 2.0s bar
+THEME_CELL = ("D3", "A3", "D3", "F#3")
+THEME_BASS = ("D2", "D2", "A2", "D2")                  # half-time, 1.00s
+THEME_PAD = (("D3", 0.22, 0.10, 0.30, 0.0),            # (note, amp, breath rate, depth, phase)
+             ("A3", 0.16, 0.08, 0.35, 2.2),
+             ("F#4", 0.08, 0.12, 0.45, 4.1))
+
+
+def _theme_figure(t, *, period_s: float = THEME_PULSE_S, cell=THEME_CELL,
+                  bass=THEME_BASS, pad=THEME_PAD, pulse_amp: float = 0.42,
+                  bass_amp: float = 0.20, pulse_decay: float = 0.30,
+                  bass_decay: float = 0.55, max_beats: int | None = None,
+                  bass_beats: int | None = None, pad_env=None,
+                  transpose: int = 0, invert_about: str | None = None,
+                  attack_tau: float = 0.004, first_beat: int = 0, lock_s: float | None = None):
+    """The motif: plucked cell over a half-time bass under a breathing pad.
+
+    `pad_env` multiplies the pad only, so a cue can let the pad bloom and thin
+    out while the pulse runs underneath. `transpose`, `invert_about`,
+    `attack_tau` and `first_beat` are the History parameter set (§5b); their
+    defaults leave On Air's and Weekly's cues exactly as they were. `lock_s`
+    snaps the pad partials to a loop length, for a bed.
+    """
+    sig = 0.0 if not pulse_amp else pulse_amp * _pulse(
+        t, period_s, cell, pulse_decay, max_beats, transpose, invert_about, attack_tau, first_beat)
+    sig = sig + bass_amp * _pulse(t, period_s * 2.0, bass, bass_decay, bass_beats,
+                                  transpose, None, max(attack_tau, 0.004))
+    pad_sig = np.zeros_like(t)
+    for note, amp, rate, depth, phase in pad:
+        f = _NOTE[note] if not (transpose or invert_about) else _note_hz(note, transpose, invert_about)
+        if lock_s:
+            f, rate = _lock(f, lock_s), _lock(rate, lock_s)
+        pad_sig += amp * _breath(t, rate, depth, phase) * _tone(t, f, phase)
+    return sig + (pad_sig * pad_env if pad_env is not None else pad_sig)
+
+
+def generate_radio_theme():
+    """8.0s opening theme. Peak -13 dBFS.
+
+    A pulse in D that states the show's two-note signature (D, A) and opens
+    into the same D-major stack the ident uses, so the new theme and the old
+    bookends are audibly the same family.
+    """
+    dur, t = 8.0, _time(8.0)
+    sig = _theme_figure(t)
+    sig *= _swell(t, 0.0, 0.25, dur - 2.4, 2.1)
+    sig = sig / (np.abs(sig).max() or 1.0) * 10 ** (-13 / 20)
+    _write_radio_wav("radio_theme.wav", sig, "opening theme, pulse in D")
+
+
+def generate_radio_story_bed():
+    """24.0s loopable bed under the news block. RMS -38 dBFS.
+
+    Motion without melody: a slow pulse on the root and fifth under a breathing
+    pad. It carries the reader across the seams between stories, and because
+    the duck in radio_producer pulls it down whenever a voice is up, it is only
+    fully present in the gaps.
+
+    Loop is exact: every frequency and breath rate is snapped by `_lock()` to a
+    multiple of 1/24 Hz, and the pulse period divides 24.0 exactly.
+    """
+    dur, t = 24.0, _time(24.0)
+    sig = 0.30 * _pulse(t, 1.50, ("D3", "A2", "D3", "F#3"), 0.42)
+    for note, amp, rate, depth, phase in (("D2", 0.55, 0.05, 0.25, 0.0),
+                                          ("A2", 0.30, 0.07, 0.30, 2.4),
+                                          ("D3", 0.22, 0.09, 0.35, 4.6),
+                                          ("A3", 0.12, 0.11, 0.40, 1.1)):
+        sig += amp * _breath(t, _lock(rate, dur), depth, phase) * _tone(t, _lock(_NOTE[note], dur), phase)
+    rms = float(np.sqrt(np.mean(sig ** 2))) or 1.0
+    sig *= 10 ** (-38 / 20) / rms
+    _write_radio_wav("radio_story_bed.wav", sig, "news bed, pulse + pad", loopable=True)
+
+
+def generate_radio_opinion_bed():
+    """20.0s loopable bed under the editorial. RMS -40 dBFS.
+
+    Darker and slower than the news bed, with the B-minor shading brought
+    forward: the editorial is an argument, not a report, and the bed says so
+    before the voice does. Quieter too, so the opinion stays legible as speech.
+    """
+    dur, t = 20.0, _time(20.0)
+    sig = 0.20 * _pulse(t, 2.50, ("D2", "B2", "D2", "A2"), 0.70)
+    for note, amp, rate, depth, phase in (("D2", 0.60, 0.05, 0.25, 0.7),
+                                          ("B2", 0.26, 0.06, 0.35, 3.1),
+                                          ("D3", 0.18, 0.08, 0.40, 5.0),
+                                          ("F#3", 0.09, 0.10, 0.45, 1.9)):
+        sig += amp * _breath(t, _lock(rate, dur), depth, phase) * _tone(t, _lock(_NOTE[note], dur), phase)
+    rms = float(np.sqrt(np.mean(sig ** 2))) or 1.0
+    sig *= 10 ** (-40 / 20) / rms
+    _write_radio_wav("radio_opinion_bed.wav", sig, "opinion bed, minor shading", loopable=True)
+
+
+def generate_radio_transition():
+    """2.9s transition between stories. Peak -13 dBFS.
+
+    The theme's own cell, four beats and then the root, so a seam in the
+    programme sounds like the programme. It replaced a three-note pluck that
+    shared nothing with the theme and which the CEO heard, accurately, as "a
+    digital ding".
+
+    It plays in the CLEAR: the timeline reserves transition_lead + this length
+    + transition_settle before the story it introduces, so nothing is spoken
+    over it.
+    """
+    dur, t = 2.9, _time(2.9)
+    sig = _theme_figure(t, cell=THEME_CELL, bass=("D2", "A2", "D2"),
+                        pad=(), max_beats=4, bass_beats=3)
+    # The resolving root, after the four-beat cell, with a longer decay.
+    sig += 0.46 * _pluck(t, 2.0, 0.004, 0.62) * (
+        _tone(t, _NOTE["D3"]) + 0.30 * _tone(t, _NOTE["D3"] * 2.0))
+    sig += 0.30 * _pluck(t, 2.0, 0.012, 0.85) * _tone(t, _NOTE["D2"])
+    sig *= _swell(t, 0.0, 0.01, 2.2, 0.65)
+    sig = _edge_fade(sig, 2.0, 40.0)
+    sig = _norm_peak(sig, -13.0)
+    _write_radio_wav("radio_transition.wav", sig, "story-to-story, the theme's cell")
+
+
+def generate_radio_break():
+    """9.0s mid-programme break. Peak -13 dBFS.
+
+    The CEO asked for a break "just to let the broadcast breathe halfway into
+    the news". It is the theme's figure over four bars: the pulse runs
+    throughout, the pad blooms across bars two and three and thins out again,
+    and bar four resolves to the root. Instrumental, in the clear, no speech.
+
+    It REPLACES the transition at its seam. A nine-second cue that resolves on
+    the root followed by a three-second cue that also resolves on the root is
+    two endings in a row.
+    """
+    dur, t = 9.0, _time(9.0)
+    pad_env = _swell(t, 1.5, 2.5, 1.0, 2.5)
+    sig = _theme_figure(t, max_beats=16, bass_beats=8, pad_env=pad_env)
+    sig += 0.44 * _pluck(t, 8.0, 0.006, 0.70) * (
+        _tone(t, _NOTE["D3"]) + 0.28 * _tone(t, _NOTE["D3"] * 2.0))
+    sig += 0.34 * _pluck(t, 8.0, 0.014, 0.95) * _tone(t, _NOTE["D2"])
+    sig *= _swell(t, 0.0, 0.02, 8.2, 0.75)
+    sig = _edge_fade(sig, 2.0, 40.0)
+    sig = _norm_peak(sig, -13.0)
+    _write_radio_wav("radio_break.wav", sig, "mid-programme break, four bars")
+
+
+def generate_radio_opinion_theme():
+    """6.5s entrance to Void Opinion. Peak -13 dBFS.
+
+    The open's figure in the opinion's own colour: the cell's fourth note moves
+    from F#3 to B2, which is the same minor shading the opinion bed carries,
+    and the pulse is dotted (0.75s) so the segment arrives slower than the news
+    does. It ends on an open fifth (D2 + A2 + D3, no third) held under a 2.0s
+    release, and the first sentence of the opinion starts over that tail, the
+    way the sign-on starts over the theme's.
+
+    This replaced a 0.7s stab. The CEO asked for "a similar entry music for
+    opinion", and an entrance is what tells the listener the news has ended and
+    an argument has begun: the opinion firewall, in sound.
+    """
+    dur, t = 6.5, _time(6.5)
+    pad = (("D3", 0.22, 0.10, 0.30, 0.0),
+           ("A3", 0.14, 0.08, 0.35, 2.2),
+           ("B3", 0.10, 0.12, 0.45, 4.1))
+    pad_env = _swell(t, 0.0, 0.25, 3.5, 0.75)
+    sig = _theme_figure(t, period_s=0.75, cell=("D3", "A3", "D3", "B2"),
+                        bass=("D2", "D2", "B2", "D2"), pad=pad,
+                        max_beats=6, bass_beats=3, pad_env=pad_env)
+    # The open fifth the first sentence speaks over. No third: unresolved, which
+    # is the right harmony for a column that is about to argue something.
+    for note, amp, dec in (("D2", 0.52, 1.35), ("A2", 0.34, 1.20), ("D3", 0.26, 1.05)):
+        sig += amp * _pluck(t, 4.5, 0.020, dec) * _tone(t, _NOTE[note])
+    sig *= _swell(t, 0.0, 0.25, 4.25, 2.0)
+    sig = _edge_fade(sig, 2.0, 40.0)
+    sig = _norm_peak(sig, -13.0)
+    _write_radio_wav("radio_opinion_theme.wav", sig, "Void Opinion entrance, minor shading")
+
+
+# ---------------------------------------------------------------------------
+# The Sunday set — void --weekly, "The Argument"
+#
+# The same motif at HALF THE TEMPO. `_theme_figure` is fully parameterised, so
+# the weekly cue family is a parameter set rather than new synthesis: one
+# publication, one identity, and a listener who knows On Air recognises the
+# house before the first word. What separates them is pace. A bulletin is
+# racing the clock; a magazine is not, so `period_s = 1.0` against the radio's
+# 0.50, which is 60 bpm.
+#
+# The harmony shifts too. The Sunday cues open on the SUSPENDED fourth (G3
+# against the D root) and only resolve at the close, because the programme's
+# whole shape is an argument that is not settled until the editorial.
+# ---------------------------------------------------------------------------
+WEEKLY_PULSE_S = 1.00                                   # 60 bpm, half the radio tempo
+WEEKLY_CELL = ("D3", "G3", "D3", "A3")                  # the sus4 colour
+WEEKLY_BASS = ("D2", "D2", "G2", "D2")
+WEEKLY_PAD = (("D3", 0.20, 0.07, 0.30, 0.0),
+              ("A3", 0.15, 0.06, 0.35, 2.2),
+              ("D4", 0.07, 0.09, 0.45, 4.1))
+
+
+def generate_weekly_theme():
+    """10.0s opening theme. Peak -13 dBFS.
+
+    Five bars at 60 bpm, opening on the suspended fourth and NOT resolving:
+    the last chord is D + G + A, which wants somewhere to go. The open of a
+    programme whose subject is a disagreement should not sound settled.
+    """
+    t = _time(10.0)
+    pad_env = _swell(t, 0.0, 0.40, 6.0, 3.0)
+    sig = _theme_figure(t, period_s=WEEKLY_PULSE_S, cell=WEEKLY_CELL,
+                        bass=WEEKLY_BASS, pad=WEEKLY_PAD,
+                        max_beats=10, bass_beats=5, pad_env=pad_env)
+    for note, amp, dec in (("D2", 0.50, 2.10), ("G2", 0.30, 1.80), ("A3", 0.22, 1.60)):
+        sig += amp * _pluck(t, 8.0, 0.025, dec) * _tone(t, _NOTE[note])
+    sig *= _swell(t, 0.0, 0.35, 6.4, 3.2)
+    sig = _edge_fade(sig, 3.0, 40.0)
+    sig = _norm_peak(sig, -13.0)
+    _write_radio_wav("weekly_theme.wav", sig, "weekly open, sus4, unresolved")
+
+
+def generate_weekly_transition():
+    """3.5s seam between movements. Peak -13 dBFS.
+
+    The theme's cell at the weekly tempo, four beats and a landing. Plays in
+    the clear, the way the radio transition does.
+    """
+    t = _time(3.5)
+    sig = _theme_figure(t, period_s=WEEKLY_PULSE_S, cell=WEEKLY_CELL,
+                        bass=("D2", "G2"), pad=(), max_beats=3, bass_beats=2)
+    sig += 0.44 * _pluck(t, 2.6, 0.006, 0.80) * (
+        _tone(t, _NOTE["D3"]) + 0.28 * _tone(t, _NOTE["D3"] * 2.0))
+    sig += 0.30 * _pluck(t, 2.6, 0.014, 1.05) * _tone(t, _NOTE["D2"])
+    sig *= _swell(t, 0.0, 0.02, 2.6, 0.85)
+    sig = _edge_fade(sig, 2.0, 40.0)
+    sig = _norm_peak(sig, -13.0)
+    _write_radio_wav("weekly_transition.wav", sig, "weekly seam, the cell at 60 bpm")
+
+
+def generate_weekly_break():
+    """9.0s break before the numbers. Peak -13 dBFS.
+
+    Four bars at the weekly tempo with the pad blooming across the middle two.
+    It sits where the programme turns from the argument to the measurement,
+    which is the one seam in the running order that changes the KIND of thing
+    being said, not merely the subject.
+    """
+    t = _time(9.0)
+    pad_env = _swell(t, 1.5, 2.5, 1.5, 2.5)
+    sig = _theme_figure(t, period_s=WEEKLY_PULSE_S, cell=WEEKLY_CELL,
+                        bass=WEEKLY_BASS, pad=WEEKLY_PAD,
+                        max_beats=8, bass_beats=4, pad_env=pad_env)
+    sig += 0.42 * _pluck(t, 8.0, 0.008, 0.85) * (
+        _tone(t, _NOTE["D3"]) + 0.26 * _tone(t, _NOTE["D3"] * 2.0))
+    sig *= _swell(t, 0.0, 0.03, 8.0, 0.90)
+    sig = _edge_fade(sig, 2.0, 40.0)
+    sig = _norm_peak(sig, -13.0)
+    _write_radio_wav("weekly_break.wav", sig, "weekly break, four bars")
+
+
+def generate_weekly_bed():
+    """24.0s loopable bed. RMS -38 dBFS, exact seam.
+
+    Under the OPEN, the CONTENTS, the NUMBERS, the EDITORIAL and the CLOSE
+    only. The argument itself is DRY, which is the format's one strong sonic
+    decision: two people disagreeing over a bed is a talk show, and naked voice
+    with a held pause between the sides is a courtroom.
+
+    Every partial and LFO is snapped with `_lock`, so this repeats
+    sample-exactly and is looped with NO crossfade (see LOCKED_LOOPS): a
+    crossfade shortens each cycle and walks the pulse off the theme's grid.
+    """
+    dur = 24.0
+    t = _time(dur)
+    sig = np.zeros_like(t)
+    # A slow root-and-fifth motion under a breathing pad. Motion, no melody:
+    # a bed with a tune competes with the sentence on top of it.
+    for note, amp, rate, depth, phase in (("D2", 0.34, 0.05, 0.25, 0.0),
+                                          ("A2", 0.22, 0.04, 0.30, 1.7),
+                                          ("D3", 0.16, 0.06, 0.35, 3.1),
+                                          ("G3", 0.09, 0.03, 0.40, 4.6)):
+        sig += amp * _breath(t, _lock(rate, dur), depth, phase) * \
+            _tone(t, _lock(_NOTE[note], dur), phase)
+    sig += 0.10 * _pulse(t, dur / 12.0, ("D3", "A3"), 1.60, 12)
+    sig = _norm_rms(sig, -38.0)
+    _write_radio_wav("weekly_bed.wav", sig, "weekly bed, 24s exact loop", loopable=True)
+
+
+def generate_weekly_outro():
+    """14.0s close, falling to TRUE digital silence. Peak -13 dBFS.
+
+    The resolution the theme withheld: the suspended fourth finally moves to
+    the third, the programme lands on D major, and then it leaves. The last
+    200ms are asserted silent at render time, the same guard the radio outro
+    carries, because "fading to oblivion" has to mean zero and not a small
+    number that a listener's amplifier will find.
+    """
+    t = _time(14.0)
+    sig = _theme_figure(t, period_s=WEEKLY_PULSE_S,
+                        cell=("D3", "G3", "D3", "F#3"),   # sus4 resolving to the third
+                        bass=WEEKLY_BASS, pad=WEEKLY_PAD,
+                        max_beats=8, bass_beats=4)
+    for note, det, amp, atk, dec in (("D2", 0.0, 0.60, 0.030, 2.60),
+                                     ("D2", 0.8, 0.22, 0.035, 2.40),
+                                     ("F#3", 0.0, 0.34, 0.022, 2.00),
+                                     ("A3", 0.0, 0.26, 0.020, 1.90)):
+        sig += amp * _pluck(t, 8.0, atk, dec) * _tone(t, _NOTE[note] + det)
+    sig = _reverberate(sig, 0.20, _reverb_ir(0.95, 0.28, 3000.0, seed=808))
+    sig *= _swell(t, 0.0, 0.30, 8.0, 5.5)
+    sig = _edge_fade(sig, 3.0, 0.0)
+    sig = _norm_peak(sig, -13.0)
+    tail_rms = _rms_dbfs(sig[-int(0.2 * SAMPLE_RATE):])
+    if tail_rms > -80.0:
+        raise AssertionError(f"weekly outro does not end in silence: {tail_rms:.1f} dBFS")
+    _write_radio_wav("weekly_outro.wav", sig, "weekly close, sus4 resolved, to silence")
+
+
+def weekly_spectrum(mean_lean: float, spread: float, duration_s: float = 22.0):
+    """Void reading its own scorecard, as a sound. Returns a numpy buffer.
+
+    Held under THE NUMBERS at -40 dBFS, well beneath the read. Pitch carries
+    the week's mean lean: the root D at centre, rising a fifth toward the right
+    edge and falling a fifth toward the left. Detuning width carries the
+    SPREAD, so a balanced-but-contested week beats audibly while a genuine
+    consensus sits still — the same distinction the Sigil's divergence fan
+    makes on the page, in the one medium where a fan cannot be drawn.
+
+    Not written to disk: it is different every week, by construction.
+    """
+    t = _time(duration_s)
+    # lean 0..100 -> -1..+1 of a fifth (7 semitones).
+    semis = ((max(0.0, min(100.0, mean_lean)) - 50.0) / 50.0) * 7.0
+    root = _NOTE["D3"] * (2.0 ** (semis / 12.0))
+    # sd 0 -> no beating; sd 40 -> ~6 Hz, which is a clear wobble and not a
+    # second pitch.
+    width = min(6.0, max(0.0, spread) / 40.0 * 6.0)
+    sig = 0.50 * _tone(t, root)
+    sig += 0.34 * _tone(t, root + width, 1.1)
+    sig += 0.34 * _tone(t, max(1.0, root - width), 2.3)
+    sig += 0.12 * _tone(t, root * 2.0, 0.7)
+    sig *= _breath(t, 0.08, 0.18, 0.0)
+    sig *= _swell(t, 0.0, 2.5, max(0.5, duration_s - 6.0), 3.5)
+    return _norm_rms(sig, -40.0)
+
+
+def render_weekly_assets():
+    """Render the five Sunday cues into ASSETS_DIR.
+
+    Independent of the radio set: nothing here overwrites a radio_*.wav.
+    `radio_room_tone.wav` is reused as-is, because a studio floor is a studio
+    floor and there is no Sunday version of one.
+    """
+    if np is None:  # pragma: no cover
+        raise RuntimeError("numpy is required to render the weekly set")
+    ASSETS_DIR.mkdir(parents=True, exist_ok=True)
+    print("Generating void --weekly Sunday set (2026-09):")
+    generate_weekly_theme()
+    generate_weekly_transition()
+    generate_weekly_break()
+    generate_weekly_bed()
+    generate_weekly_outro()
+
+
+def render_radio_assets():
+    """Render the eleven radio-set assets into ASSETS_DIR.
+
+    Independent of the pydub set: nothing here overwrites ident.wav,
+    outro.wav, background_bed.wav, news_to_opinion.wav or opinion_kicker.wav.
+    """
+    if np is None:  # pragma: no cover
+        raise RuntimeError(
+            "numpy is required to render the radio set "
+            "(pip install 'numpy~=1.26.4'); it is listed in pipeline/requirements.txt"
+        )
+    ASSETS_DIR.mkdir(parents=True, exist_ok=True)
+    print("Generating void --onair radio set (2026-09):")
+    generate_radio_ident()
+    generate_radio_theme()
+    generate_radio_menu_bed()
+    generate_radio_story_bed()
+    generate_radio_transition()
+    generate_radio_break()
+    generate_radio_opinion_theme()
+    generate_radio_opinion_bed()
+    generate_radio_close_bed()
+    generate_radio_outro()
+    generate_radio_room_tone()
+
+
+# ---------------------------------------------------------------------------
+# 8. radio_promo_bed.wav — under the house promo (2026-09-21)
+# ---------------------------------------------------------------------------
+
+def generate_radio_promo_bed():
+    """13.0s one-shot under the house promo. RMS -34 dBFS, ends in silence.
+
+    The CEO asked for more drama under the promo than the ducked outro gives
+    it. This is the same motif as everything else in the programme, at the
+    Sunday tempo (60 bpm) and in its minor shading, over a low D drone with
+    its detuned twin; a filtered-noise riser climbs across the first eight
+    seconds and lands on the outro's own low D at 8.0s, so the cue answers
+    the close it sits inside. Swell in over a second, hold, then a 3.5s
+    raised-cosine fall to true silence at 12.5s, which hands the ending back
+    to the outro's fall and the room tone.
+
+    It is placed 1.2s before the promo's first word and never loops.
+    """
+    dur, t = 13.0, _time(13.0)
+    sig = np.zeros_like(t)
+    # The floor: low D with its detuned twin, breathing slowly.
+    for note, det, amp, rate, depth, phase in (("D2", 0.0, 0.70, 0.05, 0.20, 0.0),
+                                                ("D2", 0.7, 0.30, 0.07, 0.25, 2.1),
+                                                ("A2", 0.0, 0.34, 0.06, 0.30, 4.0)):
+        sig += amp * _breath(t, rate, depth, phase) * _tone(t, _NOTE[note] + det, phase)
+    # The minor shade above it: B2 / D3 / F#3, the weekly's argument voicing.
+    for note, amp, rate, depth, phase in (("B2", 0.22, 0.06, 0.35, 1.0),
+                                          ("D3", 0.30, 0.08, 0.30, 3.3),
+                                          ("F#3", 0.16, 0.09, 0.40, 0.7)):
+        sig += amp * _breath(t, rate, depth, phase) * _tone(t, _NOTE[note], phase)
+    # The pulse: the motif's cell at the Sunday tempo, darkened to B2, eight
+    # beats, so it stops on the landing rather than running under the fall.
+    sig += 0.34 * _pulse(t, WEEKLY_PULSE_S, ("D3", "B2", "D3", "A2"), 0.40, max_beats=8)
+    sig += 0.16 * _pulse(t, WEEKLY_PULSE_S * 2.0, ("D2", "D2"), 0.60, max_beats=4)
+    # The riser: filtered noise whose brightness and level climb to 8.0s.
+    dark = _shaped_noise(len(t), _pink_lp_hp(0.5, 500.0, 120.0, order=2), seed=911)
+    bright = _shaped_noise(len(t), _pink_lp_hp(0.3, 2600.0, 300.0, order=2), seed=912)
+    climb = np.clip(t / 8.0, 0.0, 1.0)
+    riser = (1.0 - climb) * dark + climb * bright
+    sig += 0.11 * riser * _swell(t, 0.0, 7.6, 0.4, 1.4) * (0.35 + 0.65 * climb)
+    # The landing: the outro's own low D pairing, so the two cues agree.
+    for note, det, amp, atk, dec in (("D2", 0.0, 0.62, 0.030, 2.40),
+                                     ("D2", 0.8, 0.24, 0.035, 2.20),
+                                     ("D3", 0.0, 0.40, 0.020, 1.80)):
+        sig += amp * _pluck(t, 8.0, atk, dec) * _tone(t, _NOTE[note] + det)
+    sig = _reverberate(sig, 0.22, _reverb_ir(1.10, 0.30, 2800.0, seed=913))
+    # In over a second, hold, then fall to nothing across 3.5s; silent from 12.5s.
+    sig *= _swell(t, 0.0, 1.0, 8.0, 3.5)
+    sig = _edge_fade(sig, 4.0, 0.0)
+    sig = _norm_rms(sig, -34.0, peak_ceiling_dbfs=-3.0)
+    tail_rms = _rms_dbfs(sig[-int(0.4 * SAMPLE_RATE):])
+    if tail_rms > -80.0:
+        raise AssertionError(f"promo bed does not end in silence: last 400ms at {tail_rms:.1f} dBFS")
+    _write_radio_wav("radio_promo_bed.wav", sig, "under the house promo, falls to silence")
+
+
+# ---------------------------------------------------------------------------
+# The History score — a third parameter set on `_theme_figure`
+#
+# docs/proposals/HISTORY-AUDIO-ARCHIVAL.md §5b. On Air is the motif at 120 bpm
+# in D; The Argument is the motif at 60 bpm on the suspended fourth; History is
+# the motif a fifth DOWN, in G, with a 1.6 s pulse, played on pad partials with
+# a slow attack rather than the radio's bells. One house, three rooms.
+#
+# The moods are parameter sets inside it, never new material:
+#   dread      the bass and the low pad only, held, no pulse
+#   procedure  the figure once, dry, plucked
+#   rupture    nothing, then the figure's LAST TWO beats, entering on a word
+#   grief      the figure inverted about the tonic, up an octave, thin
+#   testimony  nothing at all: no score under a person's own words
+#   reckoning  the pulse alone on the root, no melody, the thinnest bed
+#
+# The only new operation is the inversion (`_note_hz(invert_about=)`). Era is a
+# room, not a tune: the same cues through a wider or tighter reverb by `era`.
+# Rendered in memory by the producer at render time (history_cues), so nothing
+# here is committed as audio; `generate_assets.py --history` writes the set out
+# for listening.
+# ---------------------------------------------------------------------------
+HISTORY_PULSE_S = 1.60
+HISTORY_TRANSPOSE = -7                                  # down a fifth: D -> G
+HISTORY_CELL = THEME_CELL
+HISTORY_BASS = THEME_BASS
+HISTORY_PAD = (("D3", 0.22, 0.06, 0.30, 0.0),
+               ("A3", 0.14, 0.05, 0.35, 2.2),
+               ("F#4", 0.06, 0.07, 0.45, 4.1))
+HISTORY_BED_S = 25.6                                    # 16 pulses: loops on the grid
+HISTORY_MOODS = ("dread", "procedure", "rupture", "grief", "testimony", "reckoning")
+# Era is the room: (reverb wet, IR decay seconds, IR low-pass Hz).
+HISTORY_ERA_ROOM = {
+    "contemporary": (0.10, 0.25, 3600.0),
+    "modern":       (0.14, 0.32, 3200.0),
+    "early-modern": (0.18, 0.42, 2800.0),
+    "medieval":     (0.22, 0.52, 2500.0),
+    "classical":    (0.28, 0.66, 2200.0),
+    "ancient":      (0.26, 0.60, 2000.0),
+}
+# Bed loudness by mood (RMS dBFS before the producer's bed gain). Reckoning is
+# the thinnest, as the spec asks: a pulse, well under the others.
+HISTORY_BED_RMS = {"dread": -39.0, "procedure": -40.0, "grief": -41.0, "reckoning": -45.0}
+
+
+def _fft_convolve(x, ir, circular: bool = False):
+    """Convolution by FFT. `circular` wraps the tail onto the head, which is
+    what a loop-locked bed needs: the reverb of the last beat rings into the
+    first, exactly as it would on the next pass."""
+    n = len(x) if circular else len(x) + len(ir) - 1
+    size = 1 << int(np.ceil(np.log2(max(n, len(ir)))))
+    if circular:
+        size = len(x)
+        irc = np.zeros(size)
+        m = min(len(ir), size)
+        irc[:m] = ir[:m]
+        return np.fft.irfft(np.fft.rfft(x) * np.fft.rfft(irc), size)
+    y = np.fft.irfft(np.fft.rfft(x, size) * np.fft.rfft(ir, size), size)
+    return y[:len(x)]
+
+
+def _history_room(x, era: str, circular: bool = False, wet_scale: float = 1.0):
+    wet, decay, lp = HISTORY_ERA_ROOM.get(era or "", HISTORY_ERA_ROOM["modern"])
+    ir = _reverb_ir(max(0.6, decay * 3.0), decay, lp, seed=1947)
+    tail = _fft_convolve(x, ir, circular=circular)
+    peak = float(np.max(np.abs(tail))) or 1.0
+    tail = tail * (float(np.max(np.abs(x))) / peak)
+    w = wet * wet_scale
+    return (1.0 - w) * x + w * tail
+
+
+def _folded(render, dur: float):
+    """Render onsets in [0, dur) into a 2*dur buffer and fold the second half
+    back onto the first, so every decay that crosses the seam lands at the
+    head of the loop: sample-exact repetition with no crossfade."""
+    n = int(round(dur * SAMPLE_RATE))
+    t2 = _time(2 * dur)
+    x = render(t2)
+    return x[:n] + x[n:2 * n]
+
+
+def _history_figure(t, **kw):
+    kw.setdefault("period_s", HISTORY_PULSE_S)
+    kw.setdefault("cell", HISTORY_CELL)
+    kw.setdefault("bass", HISTORY_BASS)
+    kw.setdefault("pad", HISTORY_PAD)
+    kw.setdefault("transpose", HISTORY_TRANSPOSE)
+    kw.setdefault("attack_tau", 0.035)          # pad partials, not bells
+    kw.setdefault("pulse_decay", 0.95)
+    kw.setdefault("bass_decay", 1.60)
+    return _theme_figure(t, **kw)
+
+
+def history_bed(mood: str, era: str = "modern"):
+    """A 25.6 s loop-locked bed for one mood, or None for a mood with no bed."""
+    dur = HISTORY_BED_S
+    beats = int(round(dur / HISTORY_PULSE_S))
+    if mood == "dread":
+        # The low register only, held: the bass figure at half time with a
+        # long decay, under the two lowest pad partials. No pulse.
+        def render(t):
+            return _history_figure(t, pulse_amp=0.0, bass_amp=0.34, bass_decay=2.6,
+                                   bass_beats=beats // 2, pad=HISTORY_PAD[:2], lock_s=dur)
+    elif mood == "procedure":
+        # The figure ONCE per loop, dry and plucked, over a single thin partial.
+        def render(t):
+            return _history_figure(t, max_beats=4, attack_tau=0.006, pulse_decay=0.55,
+                                   bass_amp=0.0, pad=HISTORY_PAD[:1], lock_s=dur)
+    elif mood == "grief":
+        # Inverted about the tonic, an octave up: the fifth above becomes the
+        # fifth below and the major third a minor one. Thin, slow, breathing.
+        def render(t):
+            pad = (("D3", 0.16, 0.05, 0.40, 0.0), ("A3", 0.08, 0.04, 0.40, 2.2))
+            return _history_figure(t, period_s=HISTORY_PULSE_S * 2.0, transpose=HISTORY_TRANSPOSE + 12,
+                                   invert_about="D3", pulse_amp=0.30, max_beats=beats // 2,
+                                   bass_amp=0.0, pad=pad, lock_s=dur)
+    elif mood == "reckoning":
+        # The pulse alone, on the root. No melody, no pad.
+        def render(t):
+            return _history_figure(t, cell=("D3",), pulse_amp=0.40, attack_tau=0.008, pulse_decay=0.45,
+                                   max_beats=beats, bass_amp=0.0, pad=())
+    else:
+        return None
+    x = _folded(render, dur)
+    x = _history_room(x, era, circular=True, wet_scale=0.6)
+    return _norm_rms(x, HISTORY_BED_RMS[mood])
+
+
+def history_transition(mood: str, era: str = "modern"):
+    """The seam INTO a scene or the turn, in the clear, in the incoming
+    segment's mood. None for rupture (withheld) and testimony (dry)."""
+    p = HISTORY_PULSE_S / 2.0
+    if mood == "dread":
+        dur = 3.8
+        t = _time(dur)
+        x = _history_figure(t, period_s=p, pulse_amp=0.0, bass_amp=0.40, bass_decay=1.4,
+                            bass_beats=2, pad=())
+        for note, amp, dec in (("D2", 0.44, 1.7), ("A2", 0.28, 1.5), ("D3", 0.16, 1.3)):
+            x = x + amp * _pluck(t, 1.6, 0.040, dec) * _tone(t, _note_hz(note, HISTORY_TRANSPOSE))
+    elif mood == "procedure":
+        dur = 4.0
+        t = _time(dur)
+        x = _history_figure(t, period_s=p, max_beats=4, attack_tau=0.006, pulse_decay=0.45,
+                            bass_amp=0.0, pad=())
+        x = x + 0.40 * _pluck(t, 3.2, 0.006, 0.55) * _tone(t, _note_hz("D3", HISTORY_TRANSPOSE))
+    elif mood == "grief":
+        dur = 4.4
+        t = _time(dur)
+        x = _history_figure(t, period_s=p, transpose=HISTORY_TRANSPOSE + 12, invert_about="D3",
+                            max_beats=4, pulse_decay=0.9, bass_amp=0.0,
+                            pad=(("D3", 0.12, 0.2, 0.4, 0.0),))
+    elif mood == "reckoning":
+        dur = 3.4
+        t = _time(dur)
+        x = _history_figure(t, period_s=p, cell=("D3",), max_beats=4, attack_tau=0.008,
+                            pulse_decay=0.35, bass_amp=0.18, bass_beats=2, pad=())
+    else:
+        return None
+    x = x * _swell(t, 0.0, 0.03, dur - 1.0, 0.95)
+    x = _history_room(x, era)
+    x = _edge_fade(x, 3.0, 60.0)
+    return _norm_peak(x, -14.0)
+
+
+def history_rupture_entry(era: str = "modern"):
+    """The figure's last two beats, then the tonic chord blooming and held:
+    the score's one entry in a rupture scene, landing on its last word."""
+    dur = 6.0
+    t = _time(dur)
+    x = _history_figure(t, period_s=HISTORY_PULSE_S / 2.0, first_beat=2, max_beats=2,
+                        pulse_decay=1.1, bass_amp=0.0, pad=())
+    for note, amp, dec in (("D2", 0.40, 2.6), ("A2", 0.26, 2.3), ("D3", 0.20, 2.1), ("F#3", 0.12, 1.9)):
+        x = x + amp * _pluck(t, 1.6, 0.060, dec) * _tone(t, _note_hz(note, HISTORY_TRANSPOSE))
+    x = x * _swell(t, 0.0, 0.05, 3.2, 2.6)
+    x = _history_room(x, era, wet_scale=1.4)
+    x = _edge_fade(x, 3.0, 80.0)
+    return _norm_peak(x, -15.0)
+
+
+def history_theme(era: str = "modern"):
+    """10.4 s open: the motif in G at the History pulse, the pad blooming, and
+    an open fifth held for the first line to start over."""
+    dur = 10.4
+    t = _time(dur)
+    pad_env = _swell(t, 0.0, 1.2, 6.0, 3.0)
+    x = _history_figure(t, max_beats=5, bass_beats=3, pad_env=pad_env)
+    for note, amp, dec in (("D2", 0.50, 2.4), ("A2", 0.30, 2.1), ("D3", 0.18, 1.8)):
+        x = x + amp * _pluck(t, 6.4, 0.040, dec) * _tone(t, _note_hz(note, HISTORY_TRANSPOSE))
+    x = x * _swell(t, 0.0, 0.6, dur - 3.8, 3.2)
+    x = _history_room(x, era)
+    x = _edge_fade(x, 4.0, 60.0)
+    return _norm_peak(x, -13.0)
+
+
+def history_outro(era: str = "modern"):
+    """12.8 s close: the figure once more, resolving on the tonic major, to
+    true digital silence (asserted, the house rule for every outro)."""
+    dur = 12.8
+    t = _time(dur)
+    x = _history_figure(t, max_beats=4, bass_beats=2)
+    for note, amp, dec in (("D2", 0.56, 2.6), ("F#3", 0.30, 2.0), ("A3", 0.22, 1.9)):
+        x = x + amp * _pluck(t, 6.4, 0.030, dec) * _tone(t, _note_hz(note, HISTORY_TRANSPOSE))
+    x = _history_room(x, era)
+    x = x * _swell(t, 0.0, 0.40, 6.4, 5.8)
+    x = _edge_fade(x, 3.0, 0.0)
+    x = _norm_peak(x, -13.0)
+    if _rms_dbfs(x[-int(0.2 * SAMPLE_RATE):]) > -80.0:
+        raise AssertionError("history outro does not end in silence")
+    return x
+
+
+def history_sting(kind: str, era: str = "modern"):
+    """to_document: one low partial, 400 ms, for the change of voice.
+    from_clip: a two-partial swell that begins only after a real recording's
+    trailing silence, so the music returns to a room the clip has left."""
+    if kind == "to_document":
+        dur = 0.4
+        t = _time(dur)
+        x = _pluck(t, 0.0, 0.030, 0.16) * _tone(t, _note_hz("D2", HISTORY_TRANSPOSE))
+        x = _edge_fade(x, 3.0, 40.0)
+        return _norm_peak(x, -22.0)
+    if kind == "from_clip":
+        dur = 2.4
+        t = _time(dur)
+        x = _swell(t, 0.0, 0.9, 0.3, 1.2) * (0.6 * _tone(t, _note_hz("D3", HISTORY_TRANSPOSE))
+                                             + 0.35 * _tone(t, _note_hz("A3", HISTORY_TRANSPOSE)))
+        x = _history_room(x, era)
+        x = _edge_fade(x, 3.0, 60.0)
+        return _norm_peak(x, -20.0)
+    raise ValueError(kind)
+
+
+def history_cues(era: str = "modern") -> dict:
+    """Every History cue for one era, as mono float arrays at SAMPLE_RATE.
+
+    Keys: theme, outro, rupture_entry, sting:to_document, sting:from_clip,
+    bed:<mood>, transition:<mood>. A mood with no bed or no transition is
+    simply absent, which is how the producer knows to leave it dry."""
+    if np is None:  # pragma: no cover
+        raise RuntimeError("numpy is required to render the History score")
+    out = {"theme": history_theme(era), "outro": history_outro(era),
+           "rupture_entry": history_rupture_entry(era),
+           "sting:to_document": history_sting("to_document", era),
+           "sting:from_clip": history_sting("from_clip", era)}
+    for mood in HISTORY_MOODS:
+        b = history_bed(mood, era)
+        if b is not None:
+            out[f"bed:{mood}"] = b
+        tr = history_transition(mood, era)
+        if tr is not None:
+            out[f"transition:{mood}"] = tr
+    return out
+
+
+def render_history_assets(era: str = "contemporary"):
+    """Write the History set to ASSETS_DIR/history/ for listening. Not
+    committed: the producer renders the same arrays in memory."""
+    global ASSETS_DIR
+    keep = ASSETS_DIR
+    ASSETS_DIR = keep / "history"
+    ASSETS_DIR.mkdir(parents=True, exist_ok=True)
+    try:
+        print(f"Generating the History score ({era}):")
+        for k, x in history_cues(era).items():
+            _write_radio_wav(f"history_{k.replace(':', '_')}.wav", x, k, loopable=k.startswith("bed:"))
+    finally:
+        ASSETS_DIR = keep
+
+
+# ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
     ASSETS_DIR.mkdir(parents=True, exist_ok=True)
+    if "--history" in sys.argv:
+        # The History score, written out for listening. The producer renders
+        # it in memory at render time, so these files are never committed.
+        render_history_assets()
+        raise SystemExit(0)
+    if "--promo-bed" in sys.argv:
+        # The promo bed alone. The rest of the set is never regenerated by
+        # this path: an episode must carry the same music as the show beside
+        # it, and those files are committed.
+        generate_radio_promo_bed()
+        raise SystemExit(0)
     print("Generating void --news sonic identity (Glass & Gravity):")
     generate_ident()
     generate_transition()
+    generate_section_break()
+    generate_news_to_opinion()
+    generate_headline_sting()
+    generate_opinion_kicker()
     generate_outro()
+    generate_background_bed()
+    print()
+    render_radio_assets()
     print("Done.")

@@ -1,0 +1,8 @@
+source: src-cwihp-politburo-19490924
+locator: secamericans
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_5.pdf
+read: 2026-10-09
+note: the same directive
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Moreover, it is necessary to consider that if military actions begin at the initiative of the North and acquire a prolonged character, then this can give to the Americans cause for any kind of interference in Korean affairs.

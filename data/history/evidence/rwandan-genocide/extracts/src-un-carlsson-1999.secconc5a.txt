@@ -1,0 +1,8 @@
+source: src-un-carlsson-1999
+locator: secconc5a
+url: https://web.archive.org/web/20001203205100/http://www.un.org:80/News/ossg/rwanda_report.htm
+read: 2026-10-07
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: section III, Conclusions, '5. Failure to respond to the genocide', the opening of its first paragraph, cut at a sentence end
+
+a. After the Presidential plane was shot down, the situation in Kigali quickly descended into chaos. Roadblocks were set up, massacres of Tutsi and opposition and moderate politicians began.

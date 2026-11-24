@@ -1,0 +1,7 @@
+source: src-dubois-garrigus-2006
+locator: sec25
+url: https://today.duke.edu/showcase/haitideclaration/declarationstext.html
+read: 2026-09-25
+note: the closing paragraph of the Deed
+
+The generals, deeply moved by these sacred principles, after voting their unanimous attachment to the declared project of independence, have all sworn to posterity, to the universe, to forever renounce France, and to die rather than to live under its domination.

@@ -1,0 +1,7 @@
+source: src-nl-trial-tapes
+locator: sec7412
+url: https://www.nixonlibrary.gov/watergate-trial-tapes
+read: 2026-10-09
+note: the page's entry for conversation 741-2; the page's own dash between the exhibit number and the case name is kept as it prints it
+
+DATE: Friday, June 23, 1972 Cassette Number / Minutes: E - 2 Segment 1 (8 minutes) | Conversation Number: 741-2 Location: White House Oval Office Exhibit Number: Exhibit 1 – U.S. v. John B. Connally, et al. Abstract: "The Smoking Gun" conversation: Haldeman and Nixon discuss the progress of the FBI's investigation especially the tracing of the source of money found on the burglars. They propose having the CIA ask the FBI to halt their investigation of the Watergate break-in by claiming that the break-in was a national security operation. Participants: President Nixon H.R.Haldeman

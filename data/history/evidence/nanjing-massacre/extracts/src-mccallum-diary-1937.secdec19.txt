@@ -1,0 +1,8 @@
+source: src-mccallum-diary-1937
+locator: secdec19
+url: https://www.legal-tools.org/doc/a4c38a/pdf/
+read: 2026-10-09
+note: the text is the scan's own OCR layer as the Legal Tools Database serves it, whitespace collapsed; the transcript's printed line numbers (1 to 25) and the OCR's glyph errors sit inside the text and are kept as the layer gives them
+note: transcript page 4,467, exhibit 309, 'Diary Notes Written by Mr. James McCallum', portions read by Mr Sutton
+
+"Dec. 19, 1937. It has been just one week now since the collapse of the Chinese army in its Nanking defense. Japanese soldiers came marching 14, down Chung Shan Road past the Hospital on Monday, and 15 I Japane'se flags began to appear here and there. We all 16 17 18 19 i 20 21 22 23 24 25 breathed a sigh of relief ,thinking new or,de'r wQuld be restored after the panic and stampede caused' by 'he' ~etreating Chinese army_ 'Airplanes could fly ovep our heads without causing apprehension or tenSion. But a week has past and it has been a hell on earth.

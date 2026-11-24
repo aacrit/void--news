@@ -1,0 +1,10 @@
+source: src-unsc-res83-1950
+locator: fn12
+url: https://documents.un.org/doc/resolution/gen/nr0/064/96/pdf/nr006496.pdf
+read: 2026-10-09
+note: the UN scan prints English and French in two columns; the English column was taken from the PDF by word position (x0 in the left half of the page), then sliced
+note: footnote 12 to the adoption line of resolution 83, which the scan reads 'hv 7 votes to 1 (Yugoslavia)'
+note: the copy is a scan with an OCR text layer; its misreadings are kept as read, not corrected
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+12 Two members (Egypt, India) did not participate in the voting; one member (Union of Soviet Socialist Republics) was absent.

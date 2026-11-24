@@ -1,0 +1,390 @@
+# The documentary score for "The Haitian Revolution", as note data on sampled
+# real instruments. Rendered by pipeline/history/score.py; the samples live in
+# ~/.cache/void-score-samples (never in the repository) and are pinned by sha256.
+#
+# The music claims nothing about the event. Nothing here imitates an anthem, a
+# hymn, a march, a drum, a bell, a fanfare, a dance of the period or a music of
+# the region: the palette is an oboe, a tenor trombone and a viola section
+# plucked, each presented as what it is, and none of the six earlier composed
+# scores uses any of them. This is a story of enslaved people who won, of a
+# constitution, an indemnity and a debt, so the score is given dignity rather
+# than triumph or lament: the oboe plays one plain line and never ornaments,
+# never leaps except inside the cell itself and never vibrates; the trombone
+# holds one note at a time, soft, and breathes where a player would, so nothing
+# in it is a call; the plucked violas keep a count under procedure, dry, one
+# note to a beat. Grief and testimony carry silence: testimony and rupture have
+# no bed at all (mood.py), and the grief bed is the trombone alone for twenty-
+# eight of its thirty-four seconds.
+#
+# The theme is built from the house cell (tonic, fifth, tonic, third: the shape
+# of the On Air motif), in B flat, in the major mode with the seventh left
+# unraised (A flat, never A), at 56 beats a minute in two-beat bars: eight
+# bars, sixteen beats of 1.071 s, then a hold. B flat, D and F, the three notes
+# of the cell, are each a recording of that note, unshifted. Bars 1 to 4 state
+# the cell on B flat and step down home. Bars 5 to 8 rise by step from the
+# third, D, E flat, F, to G held, then fall, E flat, D, C, and land on B flat:
+# the line comes home under the title. The ground does not: on the landing the
+# trombone leaves B flat for A flat, the unraised seventh, and holds it under
+# the home note, so the voice is settled and the floor it stands on is not. The
+# outro takes the same fall and puts the trombone back on B flat under it, once,
+# at the close. The grief bed states the fall and stops on C, the step before
+# home, and leaves it there.
+#
+# Cues are keyed to the producer's moods and segment kinds, never to a line of
+# text, so the cinematic variant renders from this manifest whatever moods it
+# picks. Where each cue plays is the producer's (mood_plan): the theme under
+# the TITLE, the first word inside its release; beds under the spoken body by
+# mood, ducked to the mood's floor; transitions in the clear before a scene;
+# the rupture entry on the last word of the moment, or 1,200 ms after a clip's
+# trailing silence, never under it; the outro at the close, with the house
+# promo riding its held bars, so it is at most 13.75 s and silent at its end.
+slug: haitian-revolution
+title: The Haitian Revolution
+version: 1
+key: Bb
+mode: major, with the seventh left unraised; the line comes home under the title, the bass does not until the outro
+tempo_bpm: 56
+house_cell: [0, 7, 0, 4]
+textures: []
+
+instruments:
+  oboe:
+    library: VSCO 2 Community Edition (Versilian Studios), Oboe, sustain (the Sus set, the one recorded without vibrato; a separate Vib set exists and is not used), softest layer (v1). The files are named an octave below what they sound (the file "A#3" measures 466.1 Hz, Bb4, by two independent estimators, within 2 cents; "D4" measures 587.3 Hz, D5; "F4" measures 698.3 Hz, F5); `note` is the sounding pitch. Bb, D and F are recordings of those notes, unshifted; C is two semitones from the Bb, Eb one from the D, G two from the F; nothing is asked of it below Bb4 or above G5
+    role_as_presented: an oboe, played without vibrato
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme asks for credit and that the samples not be sold on their own)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VSCO-2-CE/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios and Sam Gossner, VSCO 2 Community Edition
+    kind: sustain
+    attack_s: 0.25
+    release_s: 0.7
+    loop_start_s: 1.0
+    gain_db: 0.0
+    # Loop regions are the steady part of each recording, measured in 0.5 s
+    # frames: each holds within about 2.5 dB of itself (a player's breath, not
+    # a decay) from 1 s to the point named, then falls 12 dB in the last half
+    # second as the note is released (the Bb4 at 10.0 s, the D5 at 9.0, the
+    # F5 at 8.5). No cue holds the oboe past its recording (the longest hold
+    # is 7 beats, 7.5 s, plus its 0.7 s release, against 9.45 s for the
+    # shortest file), so nothing loops today; the regions are set for any
+    # hold that one day does.
+    samples:
+      - {file: vsco2ce/Woodwinds/Oboe/Sus/Oboe_Sus_A#3_v1_Main.wav, note: Bb4, loop_end_s: 9.5, sha256: 07a36bd18290315aee1a98221c4d40935f1d926c85ba6f29017e59f7b450444a, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Woodwinds/Oboe/Sus/Oboe_Sus_A%233_v1_Main.wav"}
+      - {file: vsco2ce/Woodwinds/Oboe/Sus/Oboe_Sus_D4_v1_Main.wav, note: D5, loop_end_s: 8.6, sha256: cbc9cdf1b6ca5765ec67918cd4a19669f792f9c6f755837ab807d3b8e0f3dfa9, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Woodwinds/Oboe/Sus/Oboe_Sus_D4_v1_Main.wav"}
+      - {file: vsco2ce/Woodwinds/Oboe/Sus/Oboe_Sus_F4_v1_Main.wav, note: F5, loop_end_s: 8.2, sha256: e4d1bf4166f77f42ad1f113f23c758db109e860c4764d5dd19705c70917a7c43, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Woodwinds/Oboe/Sus/Oboe_Sus_F4_v1_Main.wav"}
+
+  trombone:
+    library: VSCO 2 Community Edition (Versilian Studios), Tenor Trombone, sustain, softest layer (v1). The files are named an octave below what they sound (the file "A#1" measures 116.6 Hz, Bb2, by two independent estimators, and holds within 2 cents of it for its whole length with no vibrato; "F2" measures 174.7 Hz, F3); `note` is the sounding pitch. The Bb and the F it holds are recordings of those notes, unshifted; the Ab is two semitones under the recorded Bb. It plays one note at a time, as a trombone does, and breathes at the halfway bar of every long hold
+    role_as_presented: a tenor trombone
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme asks for credit and that the samples not be sold on their own)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VSCO-2-CE/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios and Sam Gossner, VSCO 2 Community Edition
+    kind: sustain
+    attack_s: 0.9
+    release_s: 1.0
+    gain_db: 0.0
+    # The Bb2 recording is 17.9 s and ends without a release of its own (the
+    # file is cut while the tone is still full), so every hold here ends in
+    # the renderer's release, never in the recording's. Its level sags 3 dB
+    # between 5.5 and 7 s and is then steady within a decibel from 8 s to the
+    # end, which is the loop region named. The F3 is 20.5 s, steady within
+    # about 1.5 dB from 2 to 11 s, then wanders, and releases at 19.5 s. No
+    # cue holds the trombone past its recording (the longest hold is 7.7
+    # beats, 8.25 s, plus its 1 s release, against 17.9 s), so nothing loops
+    # today.
+    samples:
+      - {file: vsco2ce/Brass/Tenor Trombone/sus/tenortbn_sus_A#1_v1_1.wav, note: Bb2, loop_start_s: 8.0, loop_end_s: 17.0, sha256: 0d87a1004cbfeff3786f72731731cda752ec6f99d3b2a2e50cdd9a574b23272a, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Brass/Tenor%20Trombone/sus/tenortbn_sus_A%231_v1_1.wav"}
+      - {file: vsco2ce/Brass/Tenor Trombone/sus/tenortbn_sus_F2_v1_1.wav, note: F3, loop_start_s: 2.0, loop_end_s: 11.0, sha256: c9d6777e444e1076000b0dbbacce691739ce7f7f9968b410f29501e38214a764, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Brass/Tenor%20Trombone/sus/tenortbn_sus_F2_v1_1.wav"}
+
+  violas_pizz:
+    library: VSCO 2 Community Edition (Versilian Studios), Viola Section, pizzicato, softest layer (v1). The files are named an octave below what they sound (the file "G2" measures 196.0 Hz, G3; "B2" measures 246.6 Hz, B3; "D3" 293 Hz, D4; "F3" 350 Hz, F4; "A3" 441 Hz, A4; measured on the attack, where a pluck still has a pitch); `note` is the sounding pitch. The B is the second round robin, the one take of that note in tune (2 cents under; the first measures 17 under). The count's D and F are recordings of those notes, unshifted; its Bb and C are one semitone from the B, the Ab one from the G, the upper Bb one from the A. Every pluck decays 40 dB inside a second, so the count is dry on its own
+    role_as_presented: a viola section, plucked
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme asks for credit and that the samples not be sold on their own)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VSCO-2-CE/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios and Sam Gossner, VSCO 2 Community Edition
+    kind: pluck
+    release_s: 0.4
+    gain_db: 0.0
+    samples:
+      - {file: vsco2ce/Strings/Viola Section/pizz/ViolaEns_pizz_G2_v1_rr1.wav, note: G3, sha256: ca80be7af88078d7f241020bb31a4cb0da4856e9bdd7d0b9d3a61f7549024855, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Viola%20Section/pizz/ViolaEns_pizz_G2_v1_rr1.wav"}
+      - {file: vsco2ce/Strings/Viola Section/pizz/ViolaEns_pizz_B2_v1_rr2.wav, note: B3, sha256: 82af1a63240d194f0a9047797bc9afe666bf93c08c2e7e40ba1e23b754d3425b, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Viola%20Section/pizz/ViolaEns_pizz_B2_v1_rr2.wav"}
+      - {file: vsco2ce/Strings/Viola Section/pizz/ViolaEns_pizz_D3_v1_rr1.wav, note: D4, sha256: 411baec47dcad3627ec9f774e8a78c0a6c39ff8ec7a16fec9bbd4039b85ad765, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Viola%20Section/pizz/ViolaEns_pizz_D3_v1_rr1.wav"}
+      - {file: vsco2ce/Strings/Viola Section/pizz/ViolaEns_pizz_F3_v1_rr1.wav, note: F4, sha256: 7ff4e7d2c5d311577ec4ee301248dc25464a5f971b3c31436134ebe8e8134c38, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Viola%20Section/pizz/ViolaEns_pizz_F3_v1_rr1.wav"}
+      - {file: vsco2ce/Strings/Viola Section/pizz/ViolaEns_pizz_A3_v1_rr1.wav, note: A4, sha256: b90bbeee2427b90f8a9bd91e755d4b0265f6ef33d9dda8dacc696c72effc50cc, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Viola%20Section/pizz/ViolaEns_pizz_A3_v1_rr1.wav"}
+
+# Note rows are [instrument, note, start in beats, length in beats or null, velocity].
+# null length on a pluck lets the recording decay on its own. One beat is 1.071 s.
+cues:
+  # Statement 1, under the TITLE: the line once over the trombone's Bb, the
+  # plucked violas marking the bar groups. Bars 1 to 4 are the cell on Bb and
+  # the step home; bars 5 to 8 the rise by step to G held, the fall, and the
+  # landing on Bb. The trombone breathes at the halfway bar, and on the
+  # landing leaves Bb for Ab and holds it under the home note; the pluck
+  # marks the move with it. The first word of the title lands inside the
+  # last note's release.
+  theme:
+    claims: []
+    length_s: 23.5
+    peak_dbfs: -13.0
+    room_wet: 1.0
+    notes:
+      - [oboe, Bb4, 0, 2, 0.62]
+      - [oboe, F5, 2, 1, 0.50]
+      - [oboe, Bb4, 3, 1, 0.58]
+      - [oboe, D5, 4, 2, 0.56]
+      - [oboe, C5, 6, 1, 0.56]
+      - [oboe, Bb4, 7, 1, 0.58]
+      - [oboe, D5, 8, 1, 0.54]
+      - [oboe, Eb5, 9, 1, 0.54]
+      - [oboe, F5, 10, 1, 0.50]
+      - [oboe, G5, 11, 2, 0.46]
+      - [oboe, Eb5, 13, 1, 0.54]
+      - [oboe, D5, 14, 1, 0.54]
+      - [oboe, C5, 15, 1, 0.56]
+      - [oboe, Bb4, 16, 2.6, 0.60]
+      - [trombone, Bb2, 0, 7.6, 0.50]
+      - [trombone, Bb2, 8.4, 7.4, 0.48]
+      - [trombone, Ab2, 15.9, 3.1, 0.50]
+      - [violas_pizz, Bb3, 0, null, 0.55]
+      - [violas_pizz, Bb4, 8, null, 0.42]
+      - [violas_pizz, Ab3, 16, null, 0.50]
+
+  # Statement 3, at the close: the fall again, Eb, D, C, onto Bb, and under it
+  # the trombone's Ab giving way to Bb: the one time the ground comes home.
+  # Everything released by 8.3 s and faded to silence inside 13.6 s so the
+  # house promo can ride it.
+  outro:
+    claims: []
+    length_s: 13.6
+    peak_dbfs: -13.0
+    room_wet: 1.0
+    fade_out_ms: 2400
+    tail_silence: true
+    notes:
+      - [oboe, Eb5, 0, 1, 0.54]
+      - [oboe, D5, 1, 1, 0.54]
+      - [oboe, C5, 2, 1, 0.54]
+      - [oboe, Bb4, 3, 3.2, 0.58]
+      - [trombone, Ab2, 0, 2.6, 0.48]
+      - [trombone, Bb2, 2.7, 4.0, 0.50]
+      - [violas_pizz, Bb3, 0, null, 0.50]
+      - [violas_pizz, Bb3, 3, null, 0.42]
+
+  # On the last word of a rupture scene, or after a recording's trailing
+  # silence: the theme's last two notes on a swell, C onto Bb over the
+  # trombone's Bb, inside the 6 s mood_plan opens.
+  rupture_entry:
+    claims: []
+    length_s: 6.0
+    peak_dbfs: -15.0
+    room_wet: 1.4
+    swell: [0.5, 2.8, 2.7]
+    notes:
+      - [oboe, C5, 0, 1, 0.52]
+      - [oboe, Bb4, 1, 2.2, 0.58]
+      - [trombone, Bb2, 0, 3.2, 0.50]
+
+  # The change of voice (a prayer written down later, words reported in a
+  # memoir, a declaration, a verdict): one plucked note, touched.
+  sting:to_document:
+    claims: []
+    length_s: 0.9
+    peak_dbfs: -22.0
+    room_wet: 0.6
+    fade_out_ms: 150
+    notes:
+      - [violas_pizz, Bb3, 0, 0.3, 0.55]
+
+  # The music returning after a recording, once its trailing silence is over.
+  # The live script carries no clip, so this key is defined for the producer's
+  # grammar and fires only if the cinematic variant admits one.
+  sting:from_clip:
+    claims: []
+    length_s: 2.4
+    peak_dbfs: -20.0
+    room_wet: 1.0
+    swell: [0.8, 0.6, 1.0]
+    notes:
+      - [trombone, F3, 0, 0.9, 0.50]
+      - [violas_pizz, Bb4, 0, 1.2, 0.40]
+
+  # Dread (the clearing, what the colony was worth, the acquittal, the
+  # warships off the coast): the trombone's Bb held in four breaths of eight
+  # seconds, as a player holds it, each release running into the next attack
+  # so the breath is a dip and not a gap (5 dB in 0.25 s frames; 6.7 dB with
+  # a gap, measured); the oboe faint on F, the fifth, two octaves and more
+  # above, 6 dB under the trombone, in five breaths of seven, each of its
+  # breaths taken while the trombone is full and each of the trombone's while
+  # the oboe is, and the oboe's last hold running a quarter beat past the
+  # seam so its release crosses into its own attack. So one of the two is
+  # always sounding, no hold outlasts its recording, and nothing in this bed
+  # loops a sample. The stack is a hollow fifth with no third anywhere; the
+  # plucked Ab, the unraised seventh, once every 17 s, off the seam.
+  bed:dread:
+    claims: []
+    length_s: 34.286
+    fold: true
+    rms_dbfs: -34.0
+    room_wet: 0.6
+    notes:
+      - [trombone, Bb2, 0, 7.7, 0.60]
+      - [trombone, Bb2, 8, 7.7, 0.58]
+      - [trombone, Bb2, 16, 7.7, 0.60]
+      - [trombone, Bb2, 24, 7.7, 0.58]
+      - [oboe, F5, 0, 4.0, 0.14]
+      - [oboe, F5, 4.7, 6.3, 0.14]
+      - [oboe, F5, 11.7, 6.3, 0.13]
+      - [oboe, F5, 18.7, 6.3, 0.14]
+      - [oboe, F5, 25.7, 6.075, 0.13]
+      - [violas_pizz, Ab3, 1, null, 0.30]
+      - [violas_pizz, Ab3, 17, null, 0.26]
+
+  # Procedure (the revenue, the Code Noir, the constitution of 1801, the
+  # indemnity's terms and the years it ran): the plucked violas keeping the
+  # count, dry. The house cell, one note every 1.071 s, the last note
+  # alternating.
+  bed:procedure:
+    claims: []
+    length_s: 34.286
+    fold: true
+    rms_dbfs: -33.0
+    room_wet: 0.0
+    notes:
+      - [violas_pizz, Bb3, 0, null, 0.62]
+      - [violas_pizz, F4, 1, null, 0.46]
+      - [violas_pizz, Bb3, 2, null, 0.52]
+      - [violas_pizz, D4, 3, null, 0.46]
+      - [violas_pizz, Bb3, 4, null, 0.62]
+      - [violas_pizz, F4, 5, null, 0.46]
+      - [violas_pizz, Bb3, 6, null, 0.52]
+      - [violas_pizz, C4, 7, null, 0.46]
+      - [violas_pizz, Bb3, 8, null, 0.62]
+      - [violas_pizz, F4, 9, null, 0.46]
+      - [violas_pizz, Bb3, 10, null, 0.52]
+      - [violas_pizz, D4, 11, null, 0.46]
+      - [violas_pizz, Bb3, 12, null, 0.62]
+      - [violas_pizz, F4, 13, null, 0.46]
+      - [violas_pizz, Bb3, 14, null, 0.52]
+      - [violas_pizz, C4, 15, null, 0.46]
+      - [violas_pizz, Bb3, 16, null, 0.62]
+      - [violas_pizz, F4, 17, null, 0.46]
+      - [violas_pizz, Bb3, 18, null, 0.52]
+      - [violas_pizz, D4, 19, null, 0.46]
+      - [violas_pizz, Bb3, 20, null, 0.62]
+      - [violas_pizz, F4, 21, null, 0.46]
+      - [violas_pizz, Bb3, 22, null, 0.52]
+      - [violas_pizz, C4, 23, null, 0.46]
+      - [violas_pizz, Bb3, 24, null, 0.62]
+      - [violas_pizz, F4, 25, null, 0.46]
+      - [violas_pizz, Bb3, 26, null, 0.52]
+      - [violas_pizz, D4, 27, null, 0.46]
+      - [violas_pizz, Bb3, 28, null, 0.62]
+      - [violas_pizz, F4, 29, null, 0.46]
+      - [violas_pizz, Bb3, 30, null, 0.52]
+      - [violas_pizz, C4, 31, null, 0.46]
+
+  # Reckoning (the turn, the five accounts, what each leaves out): the
+  # plucked violas alone on Bb every 2.14 s, the lower Bb every 17 s. No
+  # melody, the thinnest bed, under the deepest duck. The count starts on
+  # the second beat, not the first, so the loop's seam falls inside a
+  # decaying pluck rather than on an attack (the sparse-bed seam rule).
+  bed:reckoning:
+    claims: []
+    length_s: 34.286
+    fold: true
+    rms_dbfs: -35.0
+    room_wet: 0.3
+    notes:
+      - [violas_pizz, Bb3, 1, null, 0.55]
+      - [violas_pizz, Bb4, 3, null, 0.40]
+      - [violas_pizz, Bb4, 5, null, 0.40]
+      - [violas_pizz, Bb4, 7, null, 0.40]
+      - [violas_pizz, Bb4, 9, null, 0.40]
+      - [violas_pizz, Bb4, 11, null, 0.40]
+      - [violas_pizz, Bb4, 13, null, 0.40]
+      - [violas_pizz, Bb4, 15, null, 0.40]
+      - [violas_pizz, Bb3, 17, null, 0.55]
+      - [violas_pizz, Bb4, 19, null, 0.40]
+      - [violas_pizz, Bb4, 21, null, 0.40]
+      - [violas_pizz, Bb4, 23, null, 0.40]
+      - [violas_pizz, Bb4, 25, null, 0.40]
+      - [violas_pizz, Bb4, 27, null, 0.40]
+      - [violas_pizz, Bb4, 29, null, 0.40]
+      - [violas_pizz, Bb4, 31, null, 0.40]
+
+  # Grief (the mortality of the plantations, the fortress in the Alps, the
+  # massacre, the bill): the trombone's Bb alone, faint, in four breaths of
+  # eight seconds, so the bed falls about 11 dB for under a second four times
+  # a cycle (measured in 0.25 s frames), which is what grief is given here;
+  # the dread bed's breaths overlap and dip 5 dB, these do not. The oboe, quiet, states
+  # the theme's fall once, Eb, D, and stops on C, the step before home, and
+  # is then silent. The last 26 s of the loop are the trombone alone. No hold
+  # outlasts its recording, so nothing here loops a sample.
+  bed:grief:
+    claims: []
+    length_s: 34.286
+    fold: true
+    rms_dbfs: -35.0
+    room_wet: 1.0
+    notes:
+      - [trombone, Bb2, 0, 7.5, 0.42]
+      - [trombone, Bb2, 8, 7.5, 0.40]
+      - [trombone, Bb2, 16, 7.5, 0.42]
+      - [trombone, Bb2, 24, 7.5, 0.40]
+      - [oboe, Eb5, 2, 1, 0.30]
+      - [oboe, D5, 3, 1, 0.30]
+      - [oboe, C5, 4, 3, 0.32]
+
+  # Into a dread scene, in the clear: the trombone's Bb swelling with the
+  # oboe's F faint above it, one plucked Ab.
+  transition:dread:
+    claims: []
+    length_s: 3.8
+    peak_dbfs: -14.0
+    room_wet: 1.0
+    swell: [0.3, 2.1, 1.4]
+    notes:
+      - [trombone, Bb2, 0, 1.8, 0.55]
+      - [oboe, F5, 0, 1.8, 0.24]
+      - [violas_pizz, Ab3, 0.2, null, 0.42]
+
+  # Into a procedure scene: three strokes of the count, dry.
+  transition:procedure:
+    claims: []
+    length_s: 4.6
+    peak_dbfs: -14.0
+    room_wet: 0.0
+    fade_out_ms: 900
+    notes:
+      - [violas_pizz, Bb3, 0, null, 0.62]
+      - [violas_pizz, F4, 1, null, 0.50]
+      - [violas_pizz, Bb3, 2, null, 0.52]
+
+  # Into a grief scene: the fall stopping short, D onto C, on the oboe alone,
+  # the trombone's Bb under it.
+  transition:grief:
+    claims: []
+    length_s: 4.8
+    peak_dbfs: -14.0
+    room_wet: 1.0
+    notes:
+      - [oboe, D5, 0, 1.0, 0.44]
+      - [oboe, C5, 1, 1.4, 0.46]
+      - [trombone, Bb2, 0, 2.4, 0.42]
+
+  # Into the turn and the accounts: the count arriving.
+  transition:reckoning:
+    claims: []
+    length_s: 4.2
+    peak_dbfs: -14.0
+    room_wet: 0.3
+    fade_out_ms: 800
+    notes:
+      - [violas_pizz, Bb3, 0, null, 0.58]
+      - [violas_pizz, Bb4, 1, null, 0.46]
+      - [violas_pizz, Bb4, 2, null, 0.46]

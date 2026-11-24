@@ -1,0 +1,7 @@
+source: src-icty-krstic-tj
+locator: para80
+url: https://www.icty.org/x/cases/krstic/tjug/en/krs-tj010802e.pdf
+read: 2026-09-24
+note: the ICTY PDF text layer renders some diacritics with substitute glyphs (Poto~ari for Potocari, Erdemovi} for Erdemovic, @ivanovi} for Zivanovic, ^an~ari for Cancari); the passage is stored as the text layer prints it
+
+80. It is impossible to determine with precision the number of Bosnian Muslim men killed by Bosnian Serb forces following the take-over of Srebrenica in July 1995. During the course of the exhumations conducted by the OTP, the process of identifying the number of bodies was complicated by the fact that, in the course of being removed from primary gravesites to secondary gravesites, the corpses were broken up and body parts became intermingled. However, as already noted, experts were able to conservatively determine that the minimum number of bodies in the graves exhumed was 2028.165

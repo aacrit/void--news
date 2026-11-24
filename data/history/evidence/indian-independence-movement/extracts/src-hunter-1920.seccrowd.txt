@@ -1,0 +1,8 @@
+source: src-hunter-1920
+locator: seccrowd
+url: https://archive.org/download/disordersinquiry00unse/disordersinquiry00unse_djvu.txt
+read: 2026-10-09
+note: the text is the scan's OCR layer (archive.org djvu.txt), whitespace collapsed; line-end hyphens and glyph errors kept as printed
+note: majority report, paragraph 37
+
+According to the report sent by General Dyer to the Adjutant-General after the occurrence the crowd numbered about 6,000. It is probable that it was much more numerous and that from 10 to 20 thousand people were assembled.

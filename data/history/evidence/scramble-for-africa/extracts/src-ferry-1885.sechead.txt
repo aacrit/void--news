@@ -1,0 +1,10 @@
+source: src-ferry-1885
+locator: sechead
+url: https://www2.assemblee-nationale.fr/decouvrir-l-assemblee/histoire/grands-discours-parlementaires/jules-ferry-28-juillet-1885
+read: 2026-09-25
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: the page's title and the Assemblée's two introductory sentences, which date the sitting
+
+Jules Ferry (28 juillet 1885)
+Depuis le début des années 1880, la France cherche à coloniser de nouveaux territoires. La Tunisie, en 1881, l’Annam en 1883 et le Tonkin en 1885 deviennent des protectorats français. La séance parlementaire du 28 juillet 1885 est consacrée à la discussion d’un projet de crédits extraordinaires pour financer une expédition à Madagascar où la France tente d’imposer son protectorat.
+Jules Ferry, ancien maire et député de Paris, est le porte-parole de cette nouvelle politique de conquête coloniale et défend dans ce discours, face à un adversaire de taille qu’est George Clemenceau, les bienfaits économiques, humanitaires et stratégiques du colonialisme.

@@ -1,0 +1,114 @@
+{
+ "collected_at": "2026-10-10T14:47:57Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 122,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 21,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/article-911212",
+      "title": "Hind Rajab Foundation asks ICC to investigate Israeli doctors over alleged Sde Teiman torture",
+      "published": "Sat, 10 Oct 2026 09:06:25 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/world-news/2026-10-10/ty-article/.premium/rights-group-asks-icc-to-probe-israeli-doctors-over-palestinian-detainee-abuse/000001a1-24e5-d90c-a7bd-ade5e0030000",
+      "title": "Hind Rajab Foundation asks ICC to probe Israeli doctors over Palestinian detainee abuse",
+      "published": "Sat, 10 Oct 2026 13:41:07 +0300"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.jpost.com/middle-east/article-911222",
+      "title": "Palestinian Authority President Abbas postpones November legislative elections until late 2027",
+      "published": "Sat, 10 Oct 2026 14:53:58 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/middle-east-news/palestinians/2026-10-10/ty-article/report-palestinian-president-abbas-postpones-elections-by-a-further-year/000001a1-25cb-d0ca-a7b7-bfeb2c2e0000",
+      "title": "Report: Palestinian President Mahmoud Abbas postpones elections by a further year",
+      "published": "Sat, 10 Oct 2026 16:43:09 +0300"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.indiatoday.in/india/story/supreme-court-to-hold-special-sunday-sitting-to-hear-plea-linked-to-delhi-protest-curbs-3014366-2026-10-10?utm_source=rss",
+      "title": "Supreme Court to hold special Sunday sitting to hear plea linked to Delhi protest curbs",
+      "published": "Sat, 10 Oct 2026 19:59:45 +0530"
+     },
+     "left": {
+      "url": "https://www.thehindu.com/news/cities/Delhi/cjp-protests-jantar-mantar-new-delhi-election-commissioner-gyanesh-kumar-resignation-sir-cec-row-october-10-2026-live-news/article71566021.ece",
+      "title": "Anti-CEC protest LIVE updates: Supreme Court to hold Sunday special hearing on contempt petition against shutdown of transit corridors, metro stations across Delhi",
+      "published": "Sat, 10 Oct 2026 20:13:46 +0530"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/classified-turkish-intelligence-operation-in-moldova-comes-back-under-judicial-scrutiny/",
+      "title": "Classified Turkish intelligence operation in Moldova comes back under judicial scrutiny",
+      "published": "Tue, 06 Oct 2026 22:12:19 +0000"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/diplomacy/erdogan-putin-discuss-black-sea-security-russia-ukraine-contacts",
+      "title": "Erdoğan, Putin discuss Black Sea security, Russia-Ukraine contacts",
+      "published": "Wed, 07 Oct 2026 14:52:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/rise-of-a-new-mobster-ali-ugur-uzun-exposes-turkeys-deepening-state-mafia-nexus/",
+      "title": "Rise of new mobster Ali Ugur Uzun exposes Turkey’s deepening state-mafia nexus",
+      "published": "Wed, 07 Oct 2026 22:03:21 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 308,
+    "left": 10
+   }
+  }
+ }
+}

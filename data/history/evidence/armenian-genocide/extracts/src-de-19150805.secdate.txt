@@ -1,0 +1,7 @@
+source: src-de-19150805
+locator: secdate
+url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs/1915-08-05-DE-002
+read: 2026-09-25
+note: the dateline of the document as the page prints it
+
+Erserum, den 5. August 1915

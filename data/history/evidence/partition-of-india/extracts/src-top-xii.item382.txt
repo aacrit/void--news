@@ -1,0 +1,8 @@
+source: src-top-xii
+locator: item382
+url: https://archive.org/download/indiatransferofp12nich/indiatransferofp12nich_djvu.txt
+read: 2026-09-25
+note: item n is the document number in the volume: No. 382, Sir E. Jenkins (Punjab) to Viscount Mountbatten, telegram No. 219-G of 8 August 1947, paragraph 4, page 584
+note: the OCR layer's double spaces are collapsed and its soft hyphens rejoined; nothing else changed
+
+4. Commander Punjab Boundary Force tells me strength of his 5 Brigade groups average 1500 effective rifles. This means that in addition to police we have a strength of say 7500 effective rifles to control 12 districts with a population of no less than 12 million. Use of training centres and static troops will add another 1500 but even so strength will not be large. Rural raiding in areas in which communities are inextricably mixed cannot be checked except by display and use of force on massive scale. I am satisfied everything possible is being done with resources available and have told Commander Punjab Boundary Force that all ranks will be backed up in any bona fide action to disperse unlawful assemblies under section 5 of Punjab Disturbed Areas Act and connected Central Ordinance.2 Interception and immediate dispersal of raiders is vital.

@@ -1,0 +1,6 @@
+source: src-stroop-1061ps
+locator: secfirstday
+url: https://avalon.law.yale.edu/imt/1061-ps.asp
+read: 2026-10-07
+
+When we invaded the Ghetto for the first time, the Jews and the Polish bandits succeeded in repelling the participating units, including tanks and armored cars, by a well-prepared concentration of fire.

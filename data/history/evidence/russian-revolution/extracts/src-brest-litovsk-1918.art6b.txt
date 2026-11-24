@@ -1,0 +1,7 @@
+source: src-brest-litovsk-1918
+locator: art6b
+url: https://avalon.law.yale.edu/20th_century/bl34.asp
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+
+Finland and the Aland Islands will be also, without delay, cleared of Russian troops and the Russian Red Guard and Finnish ports of the Russian fleet and of Russian naval forces.

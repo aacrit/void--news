@@ -1,0 +1,5 @@
+rendering: void-translation
+of: src-martin-2017.para2b
+names: Commune=Commune; Adolphe Thiers=Adolphe Thiers
+
+He concludes that the number of deaths "of the Revolution" stands at between 35 000 and 40 000. The range, however imprecise, nevertheless becomes a reference, all the more because it is comparable to that of the repression of the Commune (1871). In other words, Adolphe Thiers's "Bloody Week" would have been as deadly as the two or three years of the "Terror", a comparison regularly made by partisans of the Revolution to minimise the importance of the episode of 1793-1794...

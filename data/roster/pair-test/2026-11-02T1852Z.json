@@ -1,0 +1,114 @@
+{
+ "collected_at": "2026-11-02T18:52:00Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 36,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16258519/Lying-driver-killed-friend-143mph-Lamborghini-crash-accused-trying-thwart-justice-skips-sentencing.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Lying driver who killed her friend in 143mph Lamborghini crash arrested in hospital after trying to 'avoid justice' by skipping sentencing hearing",
+      "published": "Mon, 02 Nov 2026 16:36:54 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/humaira-batool-lamborghini-crash-yorkshire-37835643",
+      "title": "Lamborghini driver who blamed friend she killed for 143mph crash arrested after ‘ruse’",
+      "published": "Mon, 2 Nov 2026 16:54:15 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 128,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 24,
+     "right": {
+      "url": "https://www.jpost.com/american-politics/article-913530",
+      "title": "El-Sayed faces pointed Israel questions as Michigan Senate race heats up",
+      "published": "Mon, 02 Nov 2026 09:42:19 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/usmidterms2026/2026-11-01/ty-article/.premium/haley-stevens-backs-gop-in-michigan-senate-race-after-israel-feud-with-el-sayed/000001a1-983c-df63-ade5-fa7f36ff0000",
+      "title": "Democrat Haley Stevens backs GOP in Michigan Senate race after Israel feud with El-Sayed",
+      "published": "Sun, 01 Nov 2026 20:01:21 +0200"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.jpost.com/influencers-26/50jews-26/article-908123",
+      "title": "No. 2: Benjamin Netanyahu: Shaping Israel’s politics and global image for a generation",
+      "published": "Thu, 10 Sep 2026 18:30:37 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/elections/2026-10-30/ty-article-magazine/.premium/from-assad-to-lieberman-the-israelization-of-the-golan-druze-reached-the-polls/000001a1-8c94-dd03-a7bf-9ef64c2b0000",
+      "title": "From Assad to Lieberman: The Israelization of the Druze in the Golan reached the polls",
+      "published": "Fri, 30 Oct 2026 18:48:28 +0200"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/article-913599",
+      "title": "Boy George meets with Herzog, visits Museum of Tolerance in Jerusalem during Israel trip",
+      "published": "Mon, 02 Nov 2026 17:57:30 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/life/2026-11-02/ty-article/.premium/israel-rolls-out-red-carpet-for-boy-george-im-getting-more-jewish/000001a1-9d09-de48-abb1-dde94f840000",
+      "title": "Israel rolls out red carpet for Boy George: 'I'm getting more Jewish'",
+      "published": "Mon, 02 Nov 2026 18:22:14 +0200"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 132,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 23,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/erdogan-sends-radio-message-to-azerbaijan-flying-over-airspace/news",
+      "title": "Erdoğan sends radio message to Azerbaijan flying over airspace",
+      "published": "Mon, 02 Nov 2026 15:05:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/erdogans-family-business-ties-complicate-azerbaijan-dispute/",
+      "title": "Erdogan’s family business ties complicate Azerbaijan dispute",
+      "published": "Mon, 26 Oct 2026 23:01:29 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 312,
+    "left": 10
+   }
+  }
+ }
+}

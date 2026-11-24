@@ -1,0 +1,8 @@
+source: src-appleman-1961
+locator: secbridge
+url: https://webdoc.sub.gwdg.de/ebook/p/2005/CMH_2/www.army.mil/cmh-pg/books/korea/20-2-1/sn03.htm
+read: 2026-10-09
+note: Roy E. Appleman, South to the Naktong, North to the Yalu, chapter III; read from the Göttingen State and University Library's 2005 copy of the Army's web edition, because history.army.mil answered HTTP 403 on the day
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+The gigantic explosions, which dropped two spans of the Han highway bridge into the water on the south side, were set off about 0215 with no warning to the military personnel and the civilian population crowding the bridges. Two KMAG officers, Col. Robert T. Hazlett and Captain Hausman, on their way to Suwon to establish communication with Tokyo, had just crossed the bridge when it blew up-Hausman said seven minutes after they crossed. Hazlett said five minutes. Hausman places the time of the explosion at 0215. Several other sources fix it approximately at the same time. Pedestrian and solid vehicular traffic, bumper to bumper, crowded all three lanes of the highway bridge. In Seoul the broad avenue leading up to the bridge was packed in all eight lanes with vehicles of all kinds, including army trucks and artillery pieces, as well as with marching soldiers and civilian pedestrians. The best informed American officers in Seoul at the time estimate that between 500 and 800 people were killed or drowned in the blowing of this bridge.

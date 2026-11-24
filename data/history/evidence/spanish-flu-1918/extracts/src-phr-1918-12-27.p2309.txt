@@ -1,0 +1,7 @@
+source: src-phr-1918-12-27
+locator: p2309
+url: https://archive.org/download/jstor-4574973/4574973_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+
+Pathometrical analyses have not been attempted for the obvious reason that the data at present available are not accurate or complete enough for anything more than very general consideration. For the same reason it has not been deemed advisable at this time to attempt any correlation of the types of epidemic curves in various localities with facts concerning the previous prevalence of respiratory or other diseases or with methods employed in attempts to control the epidemic or to mitigate its effects.

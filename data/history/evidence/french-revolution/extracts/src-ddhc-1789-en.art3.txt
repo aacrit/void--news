@@ -1,0 +1,7 @@
+source: src-ddhc-1789-en
+locator: art3
+url: https://www.conseil-constitutionnel.fr/en/declaration-of-human-and-civic-rights-of-26-august-1789
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+
+The principle of any Sovereignty lies primarily in the Nation. No corporate body, no individual may exercise any authority that does not expressly emanate from it.

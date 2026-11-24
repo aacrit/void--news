@@ -1,0 +1,8 @@
+source: src-diet-20070425-watanabe
+locator: secexecution
+url: https://www.shugiin.go.jp/internet/itdb_kaigirokua.nsf/html/kaigirokua/000516620070425008.htm
+read: 2026-10-09
+note: the text is the page's own text in Japanese, whitespace collapsed; a Void translation is beside it (.en.txt)
+note: Watanabe Shu, after the Minister's answer
+
+実際、確かにそこで便衣兵、ゲリラ兵を処刑したということも事実として当然あったでしょうし、実際問題として、さまざま、戦時中の話でありますから、それが、変な言い方ですけれども、正当な処刑という言葉はちょっと語弊がありますけれども、いわゆるハーグ陸戦法規に基づいた中での、これは戦場における行為としてはやむを得ない措置であったということも当然出てくるわけであります。

@@ -1,0 +1,7 @@
+source: src-clarkson-1808
+locator: secyear
+url: https://www.gutenberg.org/cache/epub/10633/pg10633.txt
+read: 2026-10-09
+note: the sentence that dates the Zong passage; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+In the year 1783, we find Mr. Sharp coming again into notice.

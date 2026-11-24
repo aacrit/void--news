@@ -1,0 +1,8 @@
+source: src-chu-chang-statement-1946
+locator: seckneeling
+url: https://www.legal-tools.org/doc/a4c38a/pdf/
+read: 2026-10-09
+note: the text is the scan's own OCR layer as the Legal Tools Database serves it, whitespace collapsed; the transcript's printed line numbers (1 to 25) and the OCR's glyph errors sit inside the text and are kept as the layer gives them
+note: transcript page 4,493, exhibit 314, joint statement of Chu Yong Ung and Chang Chi Hsiang, translated by Henry Chiu; Mr Sutton's aside on a typing error ('obviously a typographical error on this') is inside the reading and kept
+
+were lined up in front of the house, and two others 17 were killed, the father of CI1ANG CHI HSIANG, who was [3 then 13" ;:.- obviously a typographical error on this -- 19 "and the uncle of CHANG CHI HSIANG. There were about 20 eighty Japs. The father was shot and the uncle shot 21 and bayoneted. We were both eyewitnesses to this, We 22 were all kneeling to the Japanese at the tim~. 23 "After the shooting and bayoneting, the rest 24 25 of us escaped. None of the men were soldiers and all were residents of NA~~ING.
