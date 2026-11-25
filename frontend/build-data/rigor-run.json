@@ -1,10 +1,9 @@
 {
  "brief": {
-  "cut_sentences": 3,
+  "cut_sentences": 2,
   "cuts_by_reason": {
-   "date": 1,
    "name": 1,
-   "other": 1
+   "number": 1
   },
   "edition": "world",
   "grounding_ran": {
@@ -14,62 +13,72 @@
   }
  },
  "onair": {
-  "cut_sentences": 2,
+  "cut_sentences": 5,
   "cuts_by_reason": {
-   "name": 2
+   "number": 5
   },
   "grounding_ran": true
  },
  "stage2": {
   "candidates": 45,
-  "critique_read": 44,
+  "critique_read": 43,
   "critique_unread": 0,
-  "cut_sentences": 6,
+  "cut_sentences": 18,
   "cuts_by_reason": {
-   "number": 4,
-   "other story": 3
+   "number": 12,
+   "other story": 6
   },
   "dropped": 0,
   "fresh_ids": [
-   "161c667d-deff-4f06-82ae-cc1fb52bac94",
-   "176a6eab-8b31-4884-9f9f-a5094ca83519",
-   "19182276-0ba8-4d0f-a8c8-cc52e7ac2572",
-   "208ad45b-4370-4184-86b4-316e0a627a02",
-   "20dfdbe4-1697-4a08-8cef-f3393a8daf67",
-   "2308adb8-056a-46cc-8b71-18714edf4e9e",
-   "2ca73ac0-f1a6-4c17-b7f5-ea1bb5364314",
-   "3527a028-473c-428e-9c04-d9166ca2168b",
-   "4723f366-c2a1-4489-a7b7-d1a7d10d9852",
-   "4928f5c4-9e48-4e5a-88ce-b97b6c750716",
-   "4bb8c986-0ff7-46ac-b17a-29a14528d415",
-   "4bff8efc-2878-483d-8b65-fdf41e5dcb00",
-   "5368bdf9-6d12-450b-b720-28eb9b5b68a2",
-   "5ae1e57e-336a-4419-b6c7-222b270a82a6",
-   "5c040f33-2ba4-42c3-9aa6-83fe6eb32ea2",
-   "65489821-8c41-49a1-a945-6c4e353ce3ef",
-   "7173f9a2-a121-4aef-ab65-473138663375",
-   "730fd287-de19-4037-b1bf-09273d0fd340",
-   "73c5a1a9-d8d8-4af0-864c-13b33dbfc27d",
-   "78a27051-d0fe-47ba-97f2-8e75479802ba",
-   "95ea3b23-e34b-4c50-9502-ee260d955ec7",
-   "9ae49744-e628-413b-895c-68db5b1dd037",
-   "a7688588-d83f-4995-83fc-d39218a0a90d",
-   "a7fdecd9-0d2f-41c5-a3ed-f650eaf5014e",
-   "be9859ef-5439-40cc-b0d6-51d2acfa4e77",
-   "bfad5097-99c3-493e-bc71-0325c8f07178",
-   "d06268b2-8698-4433-a5e1-68858482a530",
-   "d90b219f-92c8-4efb-b34a-7a04c0624785",
-   "ecbc4b94-dc16-478c-b40f-b9385f5daa9a",
-   "edb323f7-b696-4cfd-a038-8d66b79d3a7d",
-   "f07aa6bf-44ca-4692-96d0-4d454513db6c",
-   "f9caf058-04d0-4052-bb7b-6c3e01ab3d44",
-   "fe006777-1a8d-4f21-950c-f65197978a31",
-   "fe784ba0-3ce5-4760-8b73-a0f59f23dcc0",
-   "fe7b26a1-dc45-40c6-8163-8f9400f72294"
+   "0b5ca359-32f5-4abc-aa4c-2ad4978ace3c",
+   "0e47f46c-5700-4fce-b667-4afcf8b70e72",
+   "14ce2632-442f-4e7c-be56-21a47ee73c28",
+   "1599c384-bb18-48c8-9ea4-8d7749153df6",
+   "19e10752-baaa-4693-aded-89998a440e02",
+   "212f84f8-dd4a-42b8-be87-50cb38d2331b",
+   "22d8b5cc-c79b-4e43-9b86-0dd286fece36",
+   "299f01eb-3d89-488b-8b68-3de16d70a767",
+   "396dcc59-18ef-4138-b101-1d170e9590f4",
+   "4548d6fc-c170-4913-a8ae-be450fd7e072",
+   "4f46cfa7-f3ad-4a54-b80c-0919d74a9559",
+   "4fe2772f-8769-48b8-b758-019e8dcd37cd",
+   "566121ca-a74c-4cd4-818f-be1933d1743b",
+   "5b200319-ff9b-4a03-8d4a-b2b7b1c08528",
+   "5d40f6d0-b553-4f39-87c8-1d2cffa636dc",
+   "5d7f97a5-6714-4dc9-bfc9-6106d702ea81",
+   "63e1f203-5f49-4de3-99f0-e7cfc94f0cd4",
+   "7347a42b-6f34-45d5-b76f-085212aa291a",
+   "75456537-827e-4519-b6d7-ef39f80b10d9",
+   "85fdc1d8-935b-41f9-bc73-41ebb558855e",
+   "88379e31-1c6d-4755-8ef7-2641277ea763",
+   "903d8921-4275-416d-a0e9-fa89a14eca90",
+   "95884cf2-ae71-452c-ae90-34ee0fcfba5e",
+   "a19bc143-2673-4c50-87be-1126de6bc495",
+   "a5224dd7-dcda-4949-9720-54ca42521c19",
+   "ab97eefb-5391-45ce-a802-12ad67617ad8",
+   "ae1216d7-4ced-4cd3-aa51-f5d0897825bb",
+   "ae47488b-91ba-466a-9e58-559a88c88ca0",
+   "b0b3fc71-e752-401b-b508-0bb2981d7687",
+   "b13467f8-d690-4ebf-a59c-a16f12741952",
+   "b2b8cf5e-0d8a-4d74-9c0b-cb3b8eeb9b44",
+   "b57e1699-a1fa-49ad-9b21-0ebbc12c2ae8",
+   "b8c3fdbb-a972-44a2-907e-c716ae50ee7b",
+   "c9ea522e-6593-45e0-b435-e67317ea5bf4",
+   "d408baa2-75c1-46e4-bd7d-7adae48990d4",
+   "d778fa9a-424c-4494-88b1-34d34aeb6503",
+   "dccfa248-0e9c-496a-84d8-339acee67892",
+   "e3f3c75b-fd00-4312-83b5-2ca2b340912f",
+   "e4da531c-5f22-463b-8021-21f54d05588f",
+   "e69f4644-47f8-401b-bad7-6572aa64185b",
+   "e7e7029f-2f55-411e-9f5f-56c9fad4c369",
+   "f0c3474f-adbe-465e-bbd2-768578b2b044",
+   "f1e58b99-c9f1-44ce-bd45-30956273409a",
+   "f40e7cc0-d7c7-4e89-abed-60eccfbe2207",
+   "f69f2a60-c18d-4fb8-9b77-a003442a78ef"
   ],
   "kept_failing": 0,
-  "regenerated": 11,
+  "regenerated": 4,
   "reviewed": true
  },
- "startedAt": "2026-11-24T10:38:19Z"
+ "startedAt": "2026-11-25T09:12:39Z"
 }
