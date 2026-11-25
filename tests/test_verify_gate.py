@@ -182,6 +182,14 @@ def main() -> int:
         print(f"FAIL: seam check (inshaAllah allowed={allowed}, policeOfficer caught={caught})")
         ok = False
 
+    # 2026-11-25: "easyJet" on the Sainsbury's card held main red. A brand's
+    # own intercap spelling is allowed by name.
+    if vp.check_concatenation(_P("Argos, Sainsbury's, easyJet, and JD Sports joined.")):
+        print("FAIL: seam check refuses the brand easyJet")
+        ok = False
+    else:
+        print("PASS: seam check allows easyJet")
+
     return 0 if ok else 1
 
 

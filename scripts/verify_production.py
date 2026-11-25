@@ -338,6 +338,9 @@ _CONCAT_ALLOW = {
     # El-Sayed card's "inshaAllah" held the edition red; it is a spelling, not
     # a scrape seam).
     "inshaallah", "mashaallah",
+    # Brands whose own spelling is lowercase-then-capital (2026-11-25: the
+    # Sainsbury's card's "easyJet" held main red; it is the airline's name).
+    "easyjet", "easyhotel", "iplayer", "ishares", "ebook", "ecommerce",
 }
 _CONCAT_RE = re.compile(r'\b([a-z]{3,})([A-Z][a-z]{2,})\b')
 _KNOWN_CONCATS = ("Israelisettler", "Senateconfirmed", "policeofficer", "primeminister")
