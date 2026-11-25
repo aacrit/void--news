@@ -188,6 +188,13 @@ CASES = [
               "summary": CLEAN_SUMMARY + " There are currently 841 active-duty generals "
                                          "and admirals."},
      "a count that goes stale"),
+    # 2026-11-24: "Trump Hosts Third Meme Coin Gala"; the summary never said
+    # third and E-13 reads digits only.
+    ("E-19", {"title": "Trump Hosts Third Meme Coin Gala",
+              "summary": CLEAN_SUMMARY,
+              "source_text": "Trump hosted a gala for top holders of his coin. "
+                             "Mortgage applications fell 12 percent."},
+     "an ordinal in the headline that no source carries"),
 ]
 
 
@@ -249,7 +256,8 @@ def main() -> int:
          {"title": CLEAN_TITLE,
           "summary": "President Donald Trump signed 14 orders on Monday. " + CLEAN_SUMMARY,
           "source_text": "Donald Trump signed 14 orders on Monday, beside President "
-                         "Emmanuel Macron. Mortgage applications fell 12 percent."}),
+                         "Emmanuel Macron. Mortgage applications fell 12 percent. "
+                         "It was the bank's third increase this quarter."}),
         ("an elided quotation with the ellipsis kept",
          {"title": "Defense Secretary Addresses Officers at Quantico",
           "summary": ("He told the officers that those who “clung to the woke "
@@ -263,10 +271,25 @@ def main() -> int:
           "summary": ("He said, “The clowns are out. The cowboys are in,” to "
                       "applause. " + CLEAN_SUMMARY),
           "source_text": ("He said: “The clowns are out. The cowboys are in.” "
-                          "Mortgage applications fell 12 percent.")}),
+                          "Mortgage applications fell 12 percent. It was the "
+                          "bank's third increase this quarter.")}),
         ("a dated count", {"title": CLEAN_TITLE,
                            "summary": CLEAN_SUMMARY + " The force had 841 generals and "
                                                       "admirals on September 30."}),
+        ("a sourced ordinal, in words or digits",
+         {"title": "Central Bank Raises Rate in Third Increase",
+          "summary": CLEAN_SUMMARY,
+          "source_text": "It was the bank's 3rd increase this year. Mortgage "
+                         "applications fell 12 percent."}),
+        ("First Lady, which is not a count",
+         {"title": "First Lady Welcomes the Tree", "summary": CLEAN_SUMMARY,
+          "source_text": "The first lady welcomed the tree. Mortgage "
+                         "applications fell 12 percent."}),
+        ("an ordinal against a record that predates the key",
+         {"title": "Trump Hosts Third Meme Coin Gala", "summary": CLEAN_SUMMARY,
+          "source_index": __import__("pipeline.editorial.grounding",
+                                     fromlist=["Verifier"]).Verifier(
+              {"format": 3, "numbers": ["12"]})}),
         ("an ordinary 'Meanwhile' that does not leave the story",
          {"title": CLEAN_TITLE,
           "summary": CLEAN_SUMMARY + " Meanwhile, the committee said it would publish "
@@ -274,7 +297,7 @@ def main() -> int:
     ]
     for label, cand in quiet:
         found = [f for f in std.validate_candidate(cand)
-                 if f.id in ("E-13", "E-14", "E-16", "E-17", "E-18")]
+                 if f.id in ("E-13", "E-14", "E-16", "E-17", "E-18", "E-19")]
         if found:
             print(f"FAIL: grounded rule fired on {label}: {[str(f) for f in found]}")
             ok = False

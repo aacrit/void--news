@@ -251,6 +251,28 @@ def numbers_in(text: str) -> list[str]:
     return sorted(out, key=lambda s: (len(s), s))
 
 
+# Ordinals, second to tenth, in words or digits ("third", "3rd"). Recorded
+# beside the numbers so E-19 can ask whether the sources carry the ordinal a
+# card states ("Trump Hosts Third Meme Coin Gala", 2026-11-24: the summary
+# never said third, and E-13 cannot see a word). "first" is out: "First Lady",
+# "for the first time" and "first round" are prose far more often than counts.
+# A record built before this key existed answers "unknown", never "absent".
+_ORDINAL_WORDS = {"second": "2", "third": "3", "fourth": "4", "fifth": "5",
+                  "sixth": "6", "seventh": "7", "eighth": "8", "ninth": "9",
+                  "tenth": "10"}
+_ORDINAL_RE = re.compile(
+    r"\b(?:(" + "|".join(_ORDINAL_WORDS) + r")|([2-9]|10)(?:nd|rd|th))\b",
+    re.IGNORECASE)
+
+
+def ordinals_in(text: str) -> list[str]:
+    """Ordinals second to tenth in `text`, as digit strings ("3" for third)."""
+    out = set()
+    for m in _ORDINAL_RE.finditer(text or ""):
+        out.add(_ORDINAL_WORDS[m.group(1).lower()] if m.group(1) else m.group(2))
+    return sorted(out, key=int)
+
+
 # --------------------------------------------------------------------------
 # Sentences, context words and proper names. Used at index time over the
 # sources and at check time over the card, so both sides tokenise alike.
@@ -486,6 +508,7 @@ def build_record(cluster_id: str, articles: list[dict[str, Any]],
     """One cluster's sources as a verification index. Stores no article text."""
     rows: list[dict[str, Any]] = []
     all_numbers: set[str] = set()
+    all_ordinals: set[str] = set()
     shingle_list: list[str] = []
     pairs: set[str] = set()
     junctions: set[str] = set()
@@ -497,6 +520,7 @@ def build_record(cluster_id: str, articles: list[dict[str, Any]],
         indexed = text[:PER_ARTICLE_CHARS]
         nums = numbers_in(indexed)
         all_numbers.update(nums)
+        all_ordinals.update(ordinals_in(indexed))
         shingle_list.extend(shingles_of(indexed))
         # Title, summary and body are separate passages: a sentence or a
         # punctuated junction must not run from the end of one into the next.
@@ -530,6 +554,7 @@ def build_record(cluster_id: str, articles: list[dict[str, Any]],
         "perArticleChars": PER_ARTICLE_CHARS,
         "truncated": any(r["truncated"] for r in rows),
         "numbers": sorted(all_numbers, key=lambda s: (len(s), s)),
+        "ordinals": sorted(all_ordinals, key=int),
         "quotes": {
             "shingleWords": SHINGLE_WORDS,
             "bits": bits,
@@ -584,7 +609,7 @@ class Verifier:
     """
 
     __slots__ = ("numbers", "_bloom", "_size", "truncated", "present",
-                 "_ctx", "_junc", "decimals")
+                 "_ctx", "_junc", "decimals", "ordinals")
 
     def __init__(self, record: dict[str, Any] | None):
         self.present = bool(record)
@@ -597,6 +622,8 @@ class Verifier:
         self._ctx = _bloom_of(rec.get("contexts"))
         self._junc = _bloom_of(rec.get("junctions"))
         self.decimals = int(rec.get("format") or 0) >= 3
+        # None, not empty, for a record that predates the key: unknown.
+        self.ordinals = set(rec["ordinals"]) if "ordinals" in rec else None
 
     @property
     def contexts(self) -> bool:
@@ -639,11 +666,12 @@ class TextIndex:
     """
 
     __slots__ = ("numbers", "_folded", "_pairs", "_junc", "truncated",
-                 "present", "decimals", "contexts", "punctuation")
+                 "present", "decimals", "contexts", "punctuation", "ordinals")
 
     def __init__(self, text: str):
         text = text or ""
         self.numbers = set(numbers_in(text))
+        self.ordinals = set(ordinals_in(text))
         self._folded = fold(text)
         passages = [p for p in re.split(r"\n", text) if p.strip()]
         self._pairs = {f"{n}|{k}" for p in passages for n, k in context_pairs(p)}

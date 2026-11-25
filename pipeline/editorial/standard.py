@@ -977,6 +977,30 @@ def e16_topic_shift(summary: str) -> list[Finding]:
 
 
 # ---------------------------------------------------------------------------
+# E-19: an ordinal in the headline that no source carries.
+#
+# E-13 reads digits only, by design, so "Trump Hosts Third Meme Coin Gala"
+# (2026-11-24) passed with no source check at all: the summary never said
+# third, and the index did not record words. Headline only, second to tenth,
+# and ADVISORY until a run of real editions shows how often it fires; "second"
+# is also a noun and a verb. A record without ordinals (every one written
+# before 2026-11-25) cannot confirm, so the rule is silent on it.
+def e19_ordinals_are_sourced(title: str, summary: str, sources) -> list[Finding]:
+    ev = _evidence(sources)
+    have = getattr(ev, "ordinals", None)
+    if have is None:
+        return []
+    out: list[Finding] = []
+    for n in _grounding.ordinals_in(title):
+        if n not in have:
+            word = next((w for w, d in _grounding._ORDINAL_WORDS.items() if d == n), n)
+            out.append(Finding(
+                "E-19",
+                f'headline states "{word}" ({n}), which no source article carries '
+                f'as an ordinal: "{title[:90]}"'))
+    return out
+
+
 # E-18: a count that goes stale.
 #
 # CLAUDE.md Rule 1: a number that changes with time is a future error. "There
@@ -1066,6 +1090,7 @@ VALIDATORS: list[Validator] = [
     Validator("E-16", "no sentence opens by changing the subject", ENFORCED, e16_topic_shift, "summary"),
     Validator("E-17", "a sourced number shares a word with a source sentence carrying it", ADVISORY, e17_numbers_are_attached, "grounded"),
     Validator("E-18", "no count that goes stale", ADVISORY, e18_stale_count, "summary"),
+    Validator("E-19", "an ordinal in the headline appears in its sources", ADVISORY, e19_ordinals_are_sourced, "grounded"),
 ]
 
 VALIDATORS_BY_ID = {v.id: v for v in VALIDATORS}
