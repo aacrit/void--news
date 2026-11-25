@@ -618,3 +618,8 @@ html:has(.np-root) body { background: transparent; }
 
   .np-colophon__link { text-decoration: none; }
 }
+
+/* CSAM gate: a withheld summary says so in print as on screen. */
+.np-article__summary--withheld {
+  font-style: italic;
+}

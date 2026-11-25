@@ -8,6 +8,7 @@ import { hapticLight } from "../lib/haptics";
 import { BASE_PATH } from "../lib/utils";
 import CardSummary from "./CardSummary";
 import { useInView } from "../lib/sharedObserver";
+import { withheldSummaryLine } from "../lib/summaryHygiene";
 
 interface StoryCardProps {
   story: Story;
@@ -127,7 +128,12 @@ export default function StoryCard({ story, index, onStoryClick, globalIndex, kbd
 
       {/* Summary — hidden when empty (Gemini pending or failed) */}
       {story.summary?.trim() && <p className="story-card__summary"><CardSummary text={story.summary} max={170} /></p>}
-      {!story.summary?.trim() && (
+      {!story.summary?.trim() && story.summaryWithheld && (
+        <p className="story-card__summary story-card__summary--withheld">
+          {withheldSummaryLine(story.source.count)}
+        </p>
+      )}
+      {!story.summary?.trim() && !story.summaryWithheld && (
         <p className="story-card__summary story-card__summary--pending">
           {story.source.count} source{story.source.count !== 1 ? 's' : ''} reporting
         </p>

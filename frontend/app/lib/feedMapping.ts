@@ -249,7 +249,8 @@ export function mapClustersToStories(
       typeof cluster.summary === "string" ? cluster.summary : String(cluster.summary ?? "");
     // CSAM gate: a child-sexual-abuse story renders headline + sources only. The
     // body (generated OR scraped) is never emitted, so blank it entirely here.
-    const safeSummary = isCSAMTopic(`${safeTitle} ${rawSummaryText}`)
+    const summaryWithheld = isCSAMTopic(`${safeTitle} ${rawSummaryText}`);
+    const safeSummary = summaryWithheld
       ? ""
       : cleanFeedSummary(rawSummaryText, safeTitle);
 
@@ -257,6 +258,7 @@ export function mapClustersToStories(
       id: cluster.id,
       title: safeTitle,
       summary: safeSummary,
+      summaryWithheld,
       source: {
         name: "Multiple Sources",
         count: sourceCount,

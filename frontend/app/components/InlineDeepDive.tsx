@@ -667,6 +667,8 @@ export default function InlineDeepDive({
           <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-2)" }}>The Story</h3>
           <DeepDiveSummary
             summary={story.summary}
+            withheld={story.summaryWithheld}
+            sourceCount={story.source.count}
             disputed={deepDive?.claimConsensus?.disputed_details}
           />
         </section>

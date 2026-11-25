@@ -727,6 +727,15 @@
   opacity: 0.5;
 }
 
+/* CSAM gate: the summary is withheld on purpose, and the card says so.
+   Full secondary ink, not the pending line's half opacity: this is a
+   statement to read, and it has to clear AA in both schemes. */
+.story-card__summary--withheld,
+.dd-summary__withheld {
+  font-style: italic;
+  color: var(--fg-secondary);
+}
+
 /* ── Lean coverage bar — reveals the left/right split the mean hides ─────── */
 .lean-coverage {
   display: flex;

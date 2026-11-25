@@ -177,6 +177,8 @@ export default function StandaloneDeepDive({
             <h2 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-2)" }}>The Story</h2>
             <DeepDiveSummary
               summary={story.summary}
+              withheld={story.summaryWithheld}
+              sourceCount={story.source.count}
               disputed={claimConsensus?.disputed_details}
             />
 

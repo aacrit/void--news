@@ -3,6 +3,7 @@
 import type { DisputedClaim } from "../lib/types";
 import { summaryParagraphs } from "../lib/summaryParagraphs";
 import { findDisputeMatches, markRange } from "./SummaryWithContradictions";
+import { withheldSummaryLine } from "../lib/summaryHygiene";
 
 /* ---------------------------------------------------------------------------
    DeepDiveSummary: "The Story", set as a lede and paragraphs at a reading
@@ -15,10 +16,22 @@ import { findDisputeMatches, markRange } from "./SummaryWithContradictions";
 export default function DeepDiveSummary({
   summary,
   disputed,
+  withheld,
+  sourceCount = 0,
 }: {
   summary: string;
   disputed?: DisputedClaim[];
+  /** The CSAM gate blanked the summary on purpose: say so, once. */
+  withheld?: boolean;
+  sourceCount?: number;
 }) {
+  if (withheld && !summary?.trim()) {
+    return (
+      <div className="dd-summary">
+        <p className="dd-summary__withheld">{withheldSummaryLine(sourceCount)}</p>
+      </div>
+    );
+  }
   const matches = findDisputeMatches(summary, disputed);
   const { paragraphs, offsets } = summaryParagraphs(
     summary,

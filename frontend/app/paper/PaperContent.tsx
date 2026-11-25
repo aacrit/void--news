@@ -8,6 +8,7 @@ import {
   distributeStories,
   splitDecks,
 } from "./paperUtils";
+import { withheldSummaryLine } from "../lib/summaryHygiene";
 import PrintButton from "./PrintButton";
 import "./paper.css";
 
@@ -71,7 +72,13 @@ function Article({ story, tier }: { story: Story; tier: ArticleTier }) {
         {count} {count === 1 ? "source": "sources"}
       </p>
 
-      <p className="np-article__summary">{body}</p>
+      {story.summaryWithheld && !body?.trim() ? (
+        <p className="np-article__summary np-article__summary--withheld">
+          {withheldSummaryLine(count)}
+        </p>
+      ) : (
+        <p className="np-article__summary">{body}</p>
+      )}
 
       <p className="np-article__meta">{lean.text}</p>
     </article>

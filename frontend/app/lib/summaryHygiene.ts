@@ -194,6 +194,15 @@ const CSAM_TOPIC =
   /\b(child (?:sexual abuse|sex abuse|pornography|porn|exploitation)|csam|sexually explicit (?:video|image|photo|material|content)s?\s+(?:involving|of|depicting)\s+(?:a\s+)?minors?|minors?\b[^.]{0,40}\b(?:sexual(?:ly)?\s+(?:abus|explicit|exploit)|molest|raped|sexually abused)|underage\s+(?:sex|porn|nude|explicit))/i;
 
 /** True when the text is about child sexual abuse material. */
+/** The line a card or Deep Dive shows in place of a summary the CSAM gate
+ *  withheld. Written so a reader can tell the gap is deliberate (2026-11-25:
+ *  the Grok lawsuit card read as a broken card). Rule-written, no model. */
+export function withheldSummaryLine(sourceCount: number): string {
+  const n = Math.max(0, Math.floor(sourceCount || 0));
+  const sources = n > 0 ? `its ${n} source${n === 1 ? "" : "s"}` : "its sources";
+  return `Summary withheld. This story concerns child sexual abuse material, so Void shows only the headline and ${sources}.`;
+}
+
 export function isCSAMTopic(text: string): boolean {
   return CSAM_TOPIC.test(text ?? "");
 }

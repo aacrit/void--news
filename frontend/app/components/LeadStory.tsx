@@ -7,6 +7,7 @@ import Sigil from "./Sigil";
 import { hapticLight } from "../lib/haptics";
 import { BASE_PATH } from "../lib/utils";
 import CardSummary from "./CardSummary";
+import { withheldSummaryLine } from "../lib/summaryHygiene";
 
 interface LeadStoryProps {
   story: Story;
@@ -71,7 +72,12 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, t
       {story.summary?.trim() && (
         <p className={useSplit ? "lead-summary" : "lead-story__summary"}><CardSummary text={story.summary} max={useSplit ? 240 : 400} /></p>
       )}
-      {!story.summary?.trim() && (
+      {!story.summary?.trim() && story.summaryWithheld && (
+        <p className={`${useSplit ? "lead-summary" : "lead-story__summary"} story-card__summary--withheld`}>
+          {withheldSummaryLine(story.source.count)}
+        </p>
+      )}
+      {!story.summary?.trim() && !story.summaryWithheld && (
         <p className={`${useSplit ? "lead-summary" : "lead-story__summary"} lead-story__summary--pending`}>
           {story.source.count} source{story.source.count !== 1 ? 's' : ''} covering this story
         </p>

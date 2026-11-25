@@ -9,6 +9,7 @@ import { hapticLight, hapticMedium } from "../lib/haptics";
 import { BASE_PATH } from "../lib/utils";
 import CardSummary from "./CardSummary";
 import { useInView } from "../lib/sharedObserver";
+import { withheldSummaryLine } from "../lib/summaryHygiene";
 
 interface MobileStoryCardProps {
   story: Story;
@@ -150,7 +151,12 @@ export default function MobileStoryCard({
               <Sigil data={story.sigilData} size="xl" instant tabbable={false} />
             </div>
             {story.summary?.trim() && <p className="msc__summary"><CardSummary text={story.summary} max={140} /></p>}
-            {!story.summary?.trim() && (
+            {!story.summary?.trim() && story.summaryWithheld && (
+              <p className="msc__summary story-card__summary--withheld">
+                {withheldSummaryLine(story.source.count)}
+              </p>
+            )}
+            {!story.summary?.trim() && !story.summaryWithheld && (
               <p className="msc__summary msc__summary--pending">
                 {story.source.count} source{story.source.count !== 1 ? 's' : ''} covering this story
               </p>

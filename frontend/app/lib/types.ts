@@ -273,6 +273,9 @@ export interface Story {
   id: string;
   title: string;
   summary: string;
+  /** True when the CSAM gate blanked the summary on purpose (headline and
+   *  sources only). The card says so instead of the "N sources" fallback. */
+  summaryWithheld?: boolean;
   source: Source;
   category: Category;
   publishedAt: string;
