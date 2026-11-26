@@ -1,0 +1,114 @@
+{
+ "collected_at": "2026-11-26T18:39:54Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 25,
+     "right": {
+      "url": "https://www.dailymail.com/sport/boxing/article-16324485/Tyson-Furys-mental-health-assessed-boxing-chiefs-schizophrenia-diagnosis-150m-blockbuster-Cardiff-showdown-Anthony-Joshua-risk.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Tyson Fury's mental health is being assessed by boxing chiefs after schizophrenia diagnosis with $150m blockbuster Cardiff showdown with Anthony Joshua at risk",
+      "published": "Thu, 26 Nov 2026 17:29:07 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/boxing/tyson-fury-fight-anthony-joshua-37919945",
+      "title": "Tyson Fury's mental health to be assessed before he's allowed to fight Anthony Joshua",
+      "published": "Thu, 26 Nov 2026 18:16:36 +0000"
+     }
+    },
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16324747/Top-Grandpa-Proud-Gordon-Ramsay-makes-way-hospital-daughter-Holly-gives-birth-child-husband-Adam-Peaty.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Proud new grandparents Gordon and Tana Ramsay arrive at Portland hospital with cupcakes in hand as daughter Holly gives birth to her first child with husband Adam Peaty",
+      "published": "Thu, 26 Nov 2026 17:56:37 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/3am/celebrity-news/gordon-tana-ramsay-cant-stop-37919816",
+      "title": "Gordon and Tana Ramsay can't stop smiling in first photos since becoming grandparents",
+      "published": "Thu, 26 Nov 2026 17:06:25 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 135,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 23,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/politics-and-diplomacy/article-916254",
+      "title": "Eisenkot-led government to include both Ra'am, United Torah Judaism in coalition, Abbas claims",
+      "published": "Thu, 26 Nov 2026 18:29:24 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/israel-politics/2026-11-25/ty-article/.premium/lieberman-says-government-with-clear-jewish-majority-possible-by-next-week/000001a2-1144-d7ab-afb2-bded9e3c0000",
+      "title": "Lieberman says Haredi-backed government with 'clear Jewish majority' possible by next week",
+      "published": "Wed, 25 Nov 2026 08:27:08 +0200"
+     }
+    },
+    {
+     "score": 21,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/politics-and-diplomacy/article-916226",
+      "title": "Democrats to receive internal security portfolio, Comms Ministry under coalition deal with Yashar",
+      "published": "Thu, 26 Nov 2026 15:47:52 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/haaretz-today/2026-11-26/ty-article/.highlight/will-this-man-de-ben-gvirize-israel/000001a2-17d8-d22a-a1bb-17fb613f0000",
+      "title": "Eisenkot gives the Democrats the most important mission facing Israel: de-Ben-Gvirizing it",
+      "published": "Thu, 26 Nov 2026 18:39:09 +0200"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/11/islamic-school-in-new-jersey-reports-no-foreign-ties-in-irs-filings-despite-proven-links-to-turkey/",
+      "title": "Islamic school in New Jersey reports no foreign ties in IRS filings despite proven links to Turkey",
+      "published": "Tue, 17 Nov 2026 23:01:12 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 315,
+    "left": 10
+   }
+  }
+ }
+}
