@@ -1,0 +1,50 @@
+{
+ "version": "1.2.0",
+ "title": "On Air \u00b7 Thursday 26 November 2026",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Today",
+   "kind": "headlines",
+   "endTime": 37.169
+  },
+  {
+   "startTime": 37.169,
+   "title": "Cairo Fuel Tanker Explosion",
+   "kind": "story",
+   "rank": 1,
+   "cluster_id": "f6c1f406-319a-40b7-85d1-50ea8fb33be3",
+   "endTime": 146.339
+  },
+  {
+   "startTime": 146.339,
+   "title": "North Korea Expels Diplomat",
+   "kind": "story",
+   "rank": 2,
+   "cluster_id": "5ac5134e-314d-44f1-97c7-9cda0d3641b1",
+   "endTime": 221.629
+  },
+  {
+   "startTime": 221.629,
+   "title": "The desk",
+   "kind": "briefs",
+   "endTime": 405.549
+  },
+  {
+   "startTime": 405.549,
+   "title": "Void Opinion",
+   "kind": "opinion",
+   "subtitle": "Fuel Tanker Overturns and Explodes on Ring Road Near Cairo",
+   "endTime": 528.923
+  },
+  {
+   "startTime": 528.923,
+   "endTime": 543.123,
+   "title": "Also from Void",
+   "kind": "promo",
+   "subtitle": "Weekly",
+   "promo": "weekly-03-shape"
+  }
+ ]
+}

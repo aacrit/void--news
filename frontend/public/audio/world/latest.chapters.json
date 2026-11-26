@@ -1,50 +1,50 @@
 {
  "version": "1.2.0",
- "title": "On Air \u00b7 Wednesday 25 November 2026",
+ "title": "On Air \u00b7 Thursday 26 November 2026",
  "author": "Void News",
  "chapters": [
   {
    "startTime": 0.0,
    "title": "Today",
    "kind": "headlines",
-   "endTime": 35.369
+   "endTime": 37.169
   },
   {
-   "startTime": 35.369,
-   "title": "Sheikh Hasina Plans Return to Bangladesh",
+   "startTime": 37.169,
+   "title": "Cairo Fuel Tanker Explosion",
    "kind": "story",
    "rank": 1,
-   "cluster_id": "a5224dd7-dcda-4949-9720-54ca42521c19",
-   "endTime": 133.969
+   "cluster_id": "f6c1f406-319a-40b7-85d1-50ea8fb33be3",
+   "endTime": 146.339
   },
   {
-   "startTime": 133.969,
-   "title": "Libyan Soldiers Die in Drone Strike",
+   "startTime": 146.339,
+   "title": "North Korea Expels Diplomat",
    "kind": "story",
    "rank": 2,
-   "cluster_id": "e3f3c75b-fd00-4312-83b5-2ca2b340912f",
-   "endTime": 229.949
+   "cluster_id": "5ac5134e-314d-44f1-97c7-9cda0d3641b1",
+   "endTime": 221.629
   },
   {
-   "startTime": 229.949,
+   "startTime": 221.629,
    "title": "The desk",
    "kind": "briefs",
-   "endTime": 371.699
+   "endTime": 405.549
   },
   {
-   "startTime": 371.699,
+   "startTime": 405.549,
    "title": "Void Opinion",
    "kind": "opinion",
-   "subtitle": "Exile Demands No State Aircraft From The People She Fled",
-   "endTime": 548.314
+   "subtitle": "Fuel Tanker Overturns and Explodes on Ring Road Near Cairo",
+   "endTime": 528.923
   },
   {
-   "startTime": 548.314,
-   "endTime": 562.515,
+   "startTime": 528.923,
+   "endTime": 543.123,
    "title": "Also from Void",
    "kind": "promo",
-   "subtitle": "History",
-   "promo": "history-03-particular"
+   "subtitle": "Weekly",
+   "promo": "weekly-03-shape"
   }
  ]
 }
