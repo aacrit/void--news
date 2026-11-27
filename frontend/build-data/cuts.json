@@ -1,28 +1,15 @@
 {
-  "builtAt": "2026-11-26T09:57:25.007602Z",
+  "builtAt": "2026-11-27T09:23:05.396708Z",
   "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
   "cards": [
     {
-      "id": "34670ac4-5a42-4731-a6c0-e91a14510264",
-      "title": "Pakistani Astronaut Arrives at Tiangong Space Station Aboard Shenzhou-24",
+      "id": "49aebd79-d171-4d84-a10c-babd2737a3fe",
+      "title": "Trump and NATO Chief Urge Restraint as Strikes Hit Russian Facilities",
       "sentences": [
         {
-          "text": "The 40-year-old Pakistan Air Force fighter pilot lifted off aboard a Long March-2F rocket from the Jiuquan Satellite Launch Centre in northwestern China alongside Chinese astronauts Tang Hongbo and Wu Yi.",
+          "text": "In a separate humanitarian development, Russia and Ukraine exchanged the bodies of nearly 300 soldiers, with Moscow returning 250 bodies and receiving 22 fallen soldiers in an operation facilitated by the International Committee of the Red Cross and Belarus.",
           "rule": "E-13",
-          "message": "summary puts 40 beside \"pakistan air force\", but no source sentence carrying 40 names it and one names another \"pakistan ...\": \"The 40-year-old Pakistan Air Force fighter pilot lifted off aboard a Long March-2F rocket \""
-        }
-      ],
-      "points": [],
-      "left": []
-    },
-    {
-      "id": "8089e086-fb27-403d-baec-9563e064da53",
-      "title": "Global Retailers Launch Black Friday Promotions as Consumers Shift Spending",
-      "sentences": [
-        {
-          "text": "Infinix Nigeria schedules its Black Friday grand finale for November 27 with an Instagram Live session featuring actor Stan Nze and a device giveaway.",
-          "rule": "E-13",
-          "message": "summary puts 27 beside \"infinix nigeria\", but no source sentence carrying 27 names it and one names another \"infinix ...\": \"Infinix Nigeria schedules its Black Friday grand finale for November 27 with an Instagram \""
+          "message": "summary puts 300 beside \"international committee\", but no source sentence carrying 300 names it and one names another \"international ...\": \"In a separate humanitarian development, Russia and Ukraine exchanged the bodies of nearly \""
         }
       ],
       "points": [],

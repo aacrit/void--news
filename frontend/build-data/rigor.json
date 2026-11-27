@@ -1,52 +1,52 @@
 {
- "builtAt": "2026-11-26T09:57:25.007602Z",
- "briefCreatedAt": "2026-11-26T09:56:50.314991+00:00",
+ "builtAt": "2026-11-27T09:23:05.396708Z",
+ "briefCreatedAt": "2026-11-27T09:22:42.524852+00:00",
  "products": {
   "card_headline": {
    "sentences": 30,
-   "anchored": 8,
-   "checked": 5,
+   "anchored": 3,
+   "checked": 3,
    "anchorTypes": [
     "number",
     "quote"
    ],
    "byAnchor": {
-    "number": 8
+    "number": 3
    },
-   "coverage": 16.7
+   "coverage": 10.0
   },
   "card_summary": {
-   "sentences": 187,
-   "anchored": 76,
-   "checked": 47,
+   "sentences": 194,
+   "anchored": 54,
+   "checked": 40,
    "byAnchor": {
-    "number": 76
+    "number": 54
    },
    "anchorTypes": [
     "number",
     "quote"
    ],
-   "coverage": 25.1
+   "coverage": 20.6
   },
   "points": {
-   "sentences": 157,
-   "anchored": 40,
-   "checked": 23,
-   "byAnchor": {
-    "number": 40
-   },
+   "sentences": 174,
+   "anchored": 35,
+   "checked": 27,
    "anchorTypes": [
     "number",
     "quote"
    ],
-   "coverage": 14.6,
-   "machinePointsExcluded": 3
+   "byAnchor": {
+    "number": 35
+   },
+   "coverage": 15.5,
+   "machinePointsExcluded": 0
   },
   "tldr": {
-   "sentences": 31,
-   "anchored": 27,
-   "checked": 27,
-   "coverage": 87.1,
+   "sentences": 37,
+   "anchored": 28,
+   "checked": 28,
+   "coverage": 75.7,
    "anchorTypes": [
     "number",
     "name",
@@ -54,33 +54,17 @@
     "quote"
    ],
    "byAnchor": {
-    "date": 6,
-    "name": 19,
-    "number": 15
+    "name": 25,
+    "number": 11
    },
    "groundingRan": true,
    "shipped": true
   },
   "opinion": {
-   "sentences": 9,
-   "anchored": 0,
-   "checked": 0,
-   "coverage": 0.0,
-   "anchorTypes": [
-    "number",
-    "name",
-    "date",
-    "quote"
-   ],
-   "byAnchor": {},
-   "groundingRan": true,
-   "shipped": true
-  },
-  "onair": {
-   "sentences": 62,
-   "anchored": 38,
-   "checked": 38,
-   "coverage": 61.3,
+   "sentences": 22,
+   "anchored": 5,
+   "checked": 5,
+   "coverage": 22.7,
    "anchorTypes": [
     "number",
     "name",
@@ -88,9 +72,28 @@
     "quote"
    ],
    "byAnchor": {
-    "date": 4,
-    "name": 27,
-    "number": 16
+    "date": 1,
+    "name": 4,
+    "number": 4
+   },
+   "groundingRan": true,
+   "shipped": true
+  },
+  "onair": {
+   "sentences": 54,
+   "anchored": 27,
+   "checked": 27,
+   "coverage": 50.0,
+   "anchorTypes": [
+    "number",
+    "name",
+    "date",
+    "quote"
+   ],
+   "byAnchor": {
+    "date": 1,
+    "name": 22,
+    "number": 14
    },
    "groundingRan": true,
    "shipped": true
@@ -99,10 +102,10 @@
  "evidence": {
   "shipped": 30,
   "freshKnown": true,
-  "fresh": 29,
+  "fresh": 30,
   "states": {
-   "confirmable": 21,
-   "index cap below writer window": 9
+   "confirmable": 23,
+   "index cap below writer window": 7
   }
  },
  "audit": {
@@ -112,21 +115,17 @@
    }
   },
   "bench": {
-   "advisory": {
-    "E-13 misattached": 1
-   },
    "cannot confirm": {
-    "E-13 misattached": 1
+    "E-13 absent": 1
    }
   }
  },
  "run": {
   "brief": {
-   "cut_sentences": 6,
+   "cut_sentences": 8,
    "cuts_by_reason": {
-    "name": 4,
-    "number": 1,
-    "other": 1
+    "name": 3,
+    "number": 5
    },
    "edition": "world",
    "grounding_ran": {
@@ -136,26 +135,25 @@
    }
   },
   "onair": {
-   "cut_sentences": 2,
+   "cut_sentences": 5,
    "cuts_by_reason": {
-    "name": 1,
-    "number": 1
+    "number": 5
    },
    "grounding_ran": true
   },
-  "startedAt": "2026-11-26T09:29:03Z",
+  "startedAt": "2026-11-27T09:07:32Z",
   "stage2": {
    "candidates": 45,
-   "critique_read": 44,
+   "critique_read": 45,
    "critique_unread": 0,
    "cut_sentences": 12,
    "cuts_by_reason": {
-    "number": 12,
+    "number": 10,
     "other story": 4
    },
    "dropped": 1,
    "kept_failing": 0,
-   "regenerated": 10,
+   "regenerated": 8,
    "reviewed": true,
    "fresh": 45
   }
@@ -179,5 +177,5 @@
   "F-5": "pass"
  },
  "floorDetail": {},
- "computedAt": "2026-11-26T09:57:41Z"
+ "computedAt": "2026-11-27T09:23:15Z"
 }

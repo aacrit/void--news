@@ -1,0 +1,50 @@
+{
+ "version": "1.2.0",
+ "title": "On Air \u00b7 Friday 27 November 2026",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Today",
+   "kind": "headlines",
+   "endTime": 37.319
+  },
+  {
+   "startTime": 37.319,
+   "title": "Musk Pledges SpaceX Shares",
+   "kind": "story",
+   "rank": 1,
+   "cluster_id": "01c3bdbc-4346-4759-90ab-27c5e41587ee",
+   "endTime": 119.779
+  },
+  {
+   "startTime": 119.779,
+   "title": "Court Halts Kenya Ebola Facility",
+   "kind": "story",
+   "rank": 2,
+   "cluster_id": "97a09131-fc44-443a-bf21-1fe8434546b0",
+   "endTime": 195.939
+  },
+  {
+   "startTime": 195.939,
+   "title": "The desk",
+   "kind": "briefs",
+   "endTime": 342.979
+  },
+  {
+   "startTime": 342.979,
+   "title": "Void Opinion",
+   "kind": "opinion",
+   "subtitle": "Courts Cannot Substitute for Diplomacy in Public Health",
+   "endTime": 514.008
+  },
+  {
+   "startTime": 514.008,
+   "endTime": 528.209,
+   "title": "Also from Void",
+   "kind": "promo",
+   "subtitle": "Void News",
+   "promo": "site-04-nothing-knows"
+  }
+ ]
+}
