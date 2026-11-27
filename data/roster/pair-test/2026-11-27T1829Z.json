@@ -1,0 +1,74 @@
+{
+ "collected_at": "2026-11-27T18:29:44Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 149,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/politics-and-diplomacy/article-916313",
+      "title": "Mansour Abbas set to declare Hamas a terror group, paving Ra'am's way to Eisenkot's coalition",
+      "published": "Fri, 27 Nov 2026 09:48:54 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/israel-politics/2026-11-27/ty-article/.premium/united-arab-list-leader-set-to-declare-hamas-a-terror-group-amid-eisenkot-talks/000001a2-1c4a-ded0-a5b6-dc6abda40000",
+      "title": "UAL leader Mansour Abbas set to declare Hamas a terror group amid Eisenkot talks",
+      "published": "Fri, 27 Nov 2026 12:37:42 +0200"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/11/islamic-school-in-new-jersey-reports-no-foreign-ties-in-irs-filings-despite-proven-links-to-turkey/",
+      "title": "Islamic school in New Jersey reports no foreign ties in IRS filings despite proven links to Turkey",
+      "published": "Tue, 17 Nov 2026 23:01:12 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 316,
+    "left": 10
+   }
+  }
+ }
+}
