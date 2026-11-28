@@ -1,50 +1,50 @@
 {
  "version": "1.2.0",
- "title": "On Air \u00b7 Friday 27 November 2026",
+ "title": "On Air \u00b7 Saturday 28 November 2026",
  "author": "Void News",
  "chapters": [
   {
    "startTime": 0.0,
    "title": "Today",
    "kind": "headlines",
-   "endTime": 37.319
+   "endTime": 43.359
   },
   {
-   "startTime": 37.319,
-   "title": "Musk Pledges SpaceX Shares",
+   "startTime": 43.359,
+   "title": "US Military Disables Commercial Vessel Attempting",
    "kind": "story",
    "rank": 1,
-   "cluster_id": "01c3bdbc-4346-4759-90ab-27c5e41587ee",
-   "endTime": 119.779
+   "cluster_id": "04f102ba-f8f1-4a7e-9261-f7729b218e0f",
+   "endTime": 168.539
   },
   {
-   "startTime": 119.779,
-   "title": "Court Halts Kenya Ebola Facility",
+   "startTime": 168.539,
+   "title": "Costa Rica Denies Entry to UN",
    "kind": "story",
    "rank": 2,
-   "cluster_id": "97a09131-fc44-443a-bf21-1fe8434546b0",
-   "endTime": 195.939
+   "cluster_id": "7c4916e8-7412-444f-b58f-e2cb53900ffa",
+   "endTime": 274.029
   },
   {
-   "startTime": 195.939,
+   "startTime": 274.029,
    "title": "The desk",
    "kind": "briefs",
-   "endTime": 342.979
+   "endTime": 411.769
   },
   {
-   "startTime": 342.979,
+   "startTime": 411.769,
    "title": "Void Opinion",
    "kind": "opinion",
-   "subtitle": "Courts Cannot Substitute for Diplomacy in Public Health",
-   "endTime": 514.008
+   "subtitle": "Sovereign Borders Outweigh International Credentials at Airport Terminal",
+   "endTime": 643.614
   },
   {
-   "startTime": 514.008,
-   "endTime": 528.209,
+   "startTime": 643.614,
+   "endTime": 657.815,
    "title": "Also from Void",
    "kind": "promo",
    "subtitle": "Void News",
-   "promo": "site-04-nothing-knows"
+   "promo": "site-03-both"
   }
  ]
 }

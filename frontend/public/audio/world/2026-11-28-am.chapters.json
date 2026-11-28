@@ -1,0 +1,50 @@
+{
+ "version": "1.2.0",
+ "title": "On Air \u00b7 Saturday 28 November 2026",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Today",
+   "kind": "headlines",
+   "endTime": 43.359
+  },
+  {
+   "startTime": 43.359,
+   "title": "US Military Disables Commercial Vessel Attempting",
+   "kind": "story",
+   "rank": 1,
+   "cluster_id": "04f102ba-f8f1-4a7e-9261-f7729b218e0f",
+   "endTime": 168.539
+  },
+  {
+   "startTime": 168.539,
+   "title": "Costa Rica Denies Entry to UN",
+   "kind": "story",
+   "rank": 2,
+   "cluster_id": "7c4916e8-7412-444f-b58f-e2cb53900ffa",
+   "endTime": 274.029
+  },
+  {
+   "startTime": 274.029,
+   "title": "The desk",
+   "kind": "briefs",
+   "endTime": 411.769
+  },
+  {
+   "startTime": 411.769,
+   "title": "Void Opinion",
+   "kind": "opinion",
+   "subtitle": "Sovereign Borders Outweigh International Credentials at Airport Terminal",
+   "endTime": 643.614
+  },
+  {
+   "startTime": 643.614,
+   "endTime": 657.815,
+   "title": "Also from Void",
+   "kind": "promo",
+   "subtitle": "Void News",
+   "promo": "site-03-both"
+  }
+ ]
+}

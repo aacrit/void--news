@@ -1,15 +1,132 @@
 {
-  "builtAt": "2026-11-27T09:23:05.396708Z",
+  "builtAt": "2026-11-28T09:16:39.749768Z",
   "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
   "cards": [
     {
-      "id": "49aebd79-d171-4d84-a10c-babd2737a3fe",
-      "title": "Trump and NATO Chief Urge Restraint as Strikes Hit Russian Facilities",
+      "id": "f2bddbb8-bd18-4508-8da1-7287a124985c",
+      "title": "European Union Leaders Fail to Reach Agreement on Long-Term Budget",
       "sentences": [
         {
-          "text": "In a separate humanitarian development, Russia and Ukraine exchanged the bodies of nearly 300 soldiers, with Moscow returning 250 bodies and receiving 22 fallen soldiers in an operation facilitated by the International Committee of the Red Cross and Belarus.",
+          "text": "Prime Minister Petteri Orpo of Finland proposed €250 billion in cuts to the European Commission's original €2 trillion proposal, while tensions escalated when prime ministers of Denmark, Sweden, Belgium, and Austria staged a walkout during smaller group negotiating sessions.",
           "rule": "E-13",
-          "message": "summary puts 300 beside \"international committee\", but no source sentence carrying 300 names it and one names another \"international ...\": \"In a separate humanitarian development, Russia and Ukraine exchanged the bodies of nearly \""
+          "message": "summary puts 250 beside \"prime minister petteri orpo of finland\", but no source sentence carrying 250 names it and one names another \"prime ...\": \"Prime Minister Petteri Orpo of Finland proposed €250 billion in cuts to the European Commi\""
+        }
+      ],
+      "points": [],
+      "left": []
+    },
+    {
+      "id": "04bce774-dcaf-48be-9583-50ecaf47f533",
+      "title": "New York City Mayor Undergoes Surgery After Sustaining Injury",
+      "sentences": [
+        {
+          "text": "New York City Mayor Zohran Mamdani underwent a successful 70-minute surgery on Friday to repair a torn right Achilles tendon sustained during a soccer match against the City Hall press corps last week.",
+          "rule": "E-13",
+          "message": "summary puts 70 beside \"new york city mayor zohran mamdani\", but no source sentence carrying 70 names it and one names another \"new ...\": \"New York City Mayor Zohran Mamdani underwent a successful 70-minute surgery on Friday to r\""
+        }
+      ],
+      "points": [],
+      "left": []
+    },
+    {
+      "id": "c61e7bd2-2d22-470e-a062-258e494fe46f",
+      "title": "Eisenkot Accuses Netanyahu Party of Stalling Israeli Coalition Talks",
+      "sentences": [
+        {
+          "text": "Eisenkot's Yashar party recently agreed to coalition deals with the left-leaning Democrats and the right-wing Israel Beiteinu, giving the emerging bloc 36 lawmakers, far short of the 61 needed for a parliamentary majority.",
+          "rule": "E-13",
+          "message": "summary puts 61 beside \"israel beiteinu\", but no source sentence carrying 61 names it and one names another \"israel ...\": \"Eisenkot's Yashar party recently agreed to coalition deals with the left-leaning Democrats\""
+        }
+      ],
+      "points": [],
+      "left": []
+    },
+    {
+      "id": "2152e745-0777-4066-ae9c-7bb5c624aa13",
+      "title": "EasyJet Flight Declares Emergency and Returns to Edinburgh Following Engine Failure",
+      "sentences": [
+        {
+          "text": "Aircraft Communications Addressing and Reporting System messages indicated that engine number one stalled two minutes after departure with exhaust gas temperatures exceeding limits, prompting the flight crew to shut down the engine and activate a Squawk 7700 international emergency signal.",
+          "rule": "E-13",
+          "message": "summary puts 7700 beside \"reporting system\", but no source sentence carrying 7700 names it and one names another \"reporting ...\": \"Aircraft Communications Addressing and Reporting System messages indicated that engine num\""
+        }
+      ],
+      "points": [],
+      "left": []
+    },
+    {
+      "id": "7e110070-941d-45cc-8feb-3bbd9d79b94b",
+      "title": "NBC Pulls Controversial Advertisement Following Advocacy Group Backlash",
+      "sentences": [
+        {
+          "text": "The 30-second spot, titled Every Three Seconds, was funded by the Institute for Middle East Understanding Policy Project.",
+          "rule": "E-13",
+          "message": "summary puts 30 beside \"middle east understanding policy project\", but no source sentence carrying 30 names it and one names another \"middle ...\": \"The 30-second spot, titled Every Three Seconds, was funded by the Institute for Middle Eas\""
+        }
+      ],
+      "points": [],
+      "left": []
+    },
+    {
+      "id": "dd61fe9f-ab31-4328-b146-0a650eadfbe7",
+      "title": "Pittsburgh Steelers Defeat Denver Broncos After Aaron Rodgers Release and Public Feud",
+      "sentences": [
+        {
+          "text": "Mason Rudolph started at quarterback, completing 9 of 15 passes for 142 yards and a touchdown to DK Metcalf, while the Steelers defense scored twice through a T.J. Watt fumble recovery and a Jalen Ramsey interception return.",
+          "rule": "E-13",
+          "message": "summary puts 15 beside \"jalen ramsey\", but no source sentence carrying 15 names it and one names another \"jalen ...\": \"Mason Rudolph started at quarterback, completing 9 of 15 passes for 142 yards and a touchd\""
+        }
+      ],
+      "points": [],
+      "left": []
+    },
+    {
+      "id": "59e7cfcc-714d-4fc2-aa53-c34099148792",
+      "title": "San Antonio Spurs Defeat Los Angeles Lakers in NBA Cup as Fan Shoves Luka Doncic",
+      "sentences": [
+        {
+          "text": "In other tournament action, the Toronto Raptors defeated the Brooklyn Nets 124-100 behind a triple-double from Immanuel Quickley and 34 points from Scottie Barnes, but were eliminated when the Atlanta Hawks defeated the Boston Celtics 87-86 to claim the Eastern Conference wild-card spot.",
+          "rule": "E-13",
+          "message": "summary puts 86 beside \"brooklyn nets\", but no source sentence carrying 86 names it and one names another \"brooklyn ...\": \"In other tournament action, the Toronto Raptors defeated the Brooklyn Nets 124-100 behind \""
+        }
+      ],
+      "points": [],
+      "left": []
+    },
+    {
+      "id": "26c35da3-bf3c-4bb5-ab23-2bfa867d869d",
+      "title": "Canadian Prosecutors Seek 25 Year Sentence for Kenneth Law in Suicide Case",
+      "sentences": [
+        {
+          "text": "Crown prosecutor Katie Doherty stated that 93 people, including twelve teenagers, died after using Law's products, which included 330 poison packages shipped to the United Kingdom linked to 79 deaths.",
+          "rule": "E-13",
+          "message": "summary puts 79 beside \"katie doherty\", but no source sentence carrying 79 names it and one names another \"katie ...\": \"Crown prosecutor Katie Doherty stated that 93 people, including twelve teenagers, died aft\""
+        }
+      ],
+      "points": [],
+      "left": []
+    },
+    {
+      "id": "629cd78c-eb27-4315-a121-7af6af0a3917",
+      "title": "Macy's Thanksgiving Day Parade Reschedules Centennial Event Following Severe Winter Storms",
+      "sentences": [],
+      "points": [
+        {
+          "text": "Local and regional US reports from outlets like The Center Square emphasized the broader macroeconomic and infrastructure impact, including power outages affecting over 500,000 households and flight cancellations.",
+          "rule": "E-13",
+          "message": "summary states 500000, which appears in none of the source articles: source it or cut it"
+        }
+      ],
+      "left": []
+    },
+    {
+      "id": "c15a1635-6bbc-4797-8be5-7b0b6b4624c1",
+      "title": "Robert Pattinson Confirmed as New James Bond Following Franchise Ownership Transition",
+      "sentences": [
+        {
+          "text": "Alongside the casting news, travel and entertainment reporting highlighted European filming locations used in past 007 films, such as La Caleta beach in Cadiz which doubled as Havana in Die Another Day, Matera in Italy used in No Time to Die, and Venetian locations featured across three films.",
+          "rule": "E-13",
+          "message": "summary puts 7 beside \"die another day\", but no source sentence carrying 7 names it and one names another \"die ...\": \"Alongside the casting news, travel and entertainment reporting highlighted European filmin\""
         }
       ],
       "points": [],
